@@ -4,28 +4,30 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Feature list place holder ',
+    title: 'Depleted Asset Protection',
     Svg: require('@site/static/img/favicon.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        A description of how the invariant curve works when assets are depleted due to excess borrowing of available assets.
       </>
     ),
+    link: './docs/design/depleted_asset_protection'
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({Svg, title, description, link}) {
   return (
-    <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+    <a href={link}>
+      <div className={clsx('col col--4')}>
+        <div className="text--center">
+          <Svg className={styles.featureSvg} role="img" />
+        </div>
+        <div className="text--center padding-horiz--md">
+          <h3>{title}</h3>
+          <p>{description}</p>
+        </div>
       </div>
-      <div className="text--center padding-horiz--md">
-        <h3>{title}</h3>
-        <p>{description}</p>
-      </div>
-    </div>
+    </a>
   );
 }
 

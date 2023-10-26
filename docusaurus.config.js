@@ -6,8 +6,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Ammalgam',
-  tagline: 'Building a Decentralized Lending Exchange (DLEX) on the EVM',
+  title: 'Ammalgam Documentation',
+  tagline: 'Describing the Decentralized Lending Exchange (DLEX)',
   favicon: 'img/favicon.svg',
 
   // Set the production url of your site here
@@ -42,7 +42,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/ammalgam-protocol/docs/',
+            'https://github.com/ammalgam-protocol/docs/blob/main/',
         },
         // leaving for context to add new tabs later
         // blog: {
