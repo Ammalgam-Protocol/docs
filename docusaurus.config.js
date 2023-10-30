@@ -19,7 +19,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'Ammalgam-Protocol', // Usually your GitHub org/user name.
-  projectName: 'Ammalgam Docs', // Usually your repo name.
+  projectName: 'Ammalgam', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -69,7 +69,7 @@ const config = {
       // Replace with your project's social card
       image: 'img/favicon.svg',
       navbar: {
-        title: 'Ammalgam Docs',
+        title: 'Ammalgam',
         logo: {
           alt: 'My Site Logo',
           src: 'img/favicon.svg',
@@ -83,7 +83,7 @@ const config = {
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
           {
-            href: 'https://github.com/ammaglam-protocol/',
+            href: 'https://github.com/ammalgam-protocol/',
             label: 'GitHub',
             position: 'right',
           },

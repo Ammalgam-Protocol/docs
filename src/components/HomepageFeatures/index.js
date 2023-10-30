@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import styles from './styles.module.css';
+import Link from '@docusaurus/Link';
 
 const FeatureList = [
   {
@@ -17,8 +18,8 @@ const FeatureList = [
 
 function Feature({Svg, title, description, link}) {
   return (
-    <a href={link}>
       <div className={clsx('col col--4')}>
+        <Link to={link}>
         <div className="text--center">
           <Svg className={styles.featureSvg} role="img" />
         </div>
@@ -26,8 +27,8 @@ function Feature({Svg, title, description, link}) {
           <h3>{title}</h3>
           <p>{description}</p>
         </div>
+        </Link>
       </div>
-    </a>
   );
 }
 
