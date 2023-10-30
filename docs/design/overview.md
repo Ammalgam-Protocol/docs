@@ -12,7 +12,7 @@ We begun development of Ammalgam by forking the Uniswap V2 contracts with the go
 
 The pair contracts have been split into seven contracts. The exterior contracts create six tokens representing the six functions of Ammalgam.
 
-![pair contracts](./pairContracts.svg)
+![pair contracts](./assets/PairContracts.svg)
 
 The Uniswap V2 Pair was itself an ERC-20 representing the share of swap liquidity a user deposited into the pair. Due to code size space constraints, we had to move as much logic out ot the original Pair contract which included the ERC-20 representing swap liquidity. Users can also deposit asset X or Y individually to be used as collateral and to be lent out to earn yield, but not to be used to fill swaps or earn swap fees. When borrowing X, Y, or swap liquidity (L) a transferrable debt token is issued to borrowers. We use the ERC-4626 vault standard to represent deposits and debts, but only use the ERC-20 for swap liquidity due to the fact that there are two underlying assets with a variable share to asset rate depending on price. 
 
