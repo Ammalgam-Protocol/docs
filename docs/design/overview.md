@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## Forking Uniswap V2
 
-We begun development of Ammalgam by forking the Uniswap V2 contracts with the goal of building a lending protocol into the Uniswap V2 pair contract. We were unable to maintain the single contract of the Uniswap v2 Pair due to the need for multiple ERC-20s for various added deposit borrow tokens. The factory remains the same in purpose, but some changes to the process of deploying a new pair due to the need to deploy multiple contracts for each new pair.
+We began development of Ammalgam by forking the Uniswap V2 contracts with the goal of building a lending protocol into the Uniswap V2 pair contract. We were unable to maintain the single contract of the Uniswap v2 Pair due to the need for multiple ERC-20s for various added deposit borrow tokens. The factory remains the same in purpose, but some changes to the process of deploying a new pair due to the need to deploy multiple contracts for each new pair.
 
 ## Pair contracts
 
