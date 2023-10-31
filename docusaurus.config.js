@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Ammalgam Documentation',
-  tagline: 'Describing the Decentralized Lending Exchange (DLEX)',
+  tagline: 'Decentralized Lending Exchange (DLEX)',
   favicon: 'img/favicon.svg',
 
   // Set the production url of your site here
@@ -71,8 +71,10 @@ const config = {
       navbar: {
         title: 'Ammalgam',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'Ammalgam Logo',
           src: 'img/favicon.svg',
+          width: 32,
+          height: 32,
         },
         items: [
           {
@@ -90,7 +92,6 @@ const config = {
         ],
       },
       footer: {
-        style: 'dark',
         links: [
           {
             title: 'Docs',

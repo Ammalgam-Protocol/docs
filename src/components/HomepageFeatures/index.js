@@ -19,15 +19,15 @@ const FeatureList = [
 function Feature({Svg, title, description, link}) {
   return (
       <div className={clsx('col col--4')}>
-        <Link to={link}>
         <div className="text--center">
           <Svg className={styles.featureSvg} role="img" />
         </div>
         <div className="text--center padding-horiz--md">
-          <h3>{title}</h3>
+          <Link to={link}>
+            <h3>{title}</h3>
+          </Link>
           <p>{description}</p>
         </div>
-        </Link>
       </div>
   );
 }
