@@ -5,14 +5,70 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Depleted Asset Protection',
-    Svg: require('@site/static/img/favicon.svg').default,
+    title: "DLEX",
+    Svg: require('@site/static/icons/open_with.svg').default,
     description: (
       <>
-        A description of how the invariant curve works when assets are depleted due to excess borrowing of available assets.
+        Combining lending and trading functions into one contract 
+        creating capital efficiency and enhanced utility for users
       </>
     ),
-    link: './docs/design/depleted_asset_protection'
+    link: './docs/overview#dlex'
+  },
+  {
+    title: 'Trading',
+    Svg: require('@site/static/icons/swap_horizontal.svg').default,
+    description: (
+      <>
+        A Decentralized Exchange (DEX) that allows for the trading 
+        of tokens and Automated Market Making for liquidity providers
+      </>
+    ),
+    link: './docs/overview#trading'
+  },
+  {
+    title: 'Lending',
+    Svg: require('@site/static/icons/swap_vertical.svg').default,
+    description: (
+      <>
+        A permissionless overcollateralized pairwise lending protocol
+      </>
+    ),
+    link: './docs/overview#lending'
+  },
+  {
+    title: 'Capital Efficiency',
+    Svg: require('@site/static/icons/money.svg').default,
+    description: (
+      <>
+        Giving market makers better returns by lending out unused
+        assets that occur in automated market making using the X * Y = K 
+        invariant
+      </>
+    ),
+    link: './docs/overview#capital-efficiency'
+  },
+  {
+    title: 'Utility',
+    Svg: require('@site/static/icons/delta_gamma.svg').default,
+    description: (
+      <>
+        Offering lending and trading functions in one contract gives gives 
+      </>
+    ),
+    link: './docs/overview#utility-δ-γ'
+  },
+  {
+    title: 'Autonomy',
+    Svg: require('@site/static/icons/permissionless.svg').default,
+    description: (
+      <>
+        Built without any external dependencies on oracles or other protocols
+        allowing for permissionless lending allowing for a first
+        to market lending and trading venue for the next big airdrop
+      </>
+    ),
+    link: './docs/overview#autonomy'
   },
 ];
 
