@@ -2,6 +2,8 @@
 sidebar_position: 2
 ---
 
+import { Tweet } from 'react-tweet';
+
 # Depleted Asset Protection
 
 ## Problem Description
@@ -10,18 +12,15 @@ Ammalgam is an automated market maker that lends out unutilized assets. As price
 
 Below are some examples of how the UST de-pegging exhausted reserves on Uniswap V3 UST/USDC pool and emptied the Binance UST/USDT book. These are shared to point out that this condition is not unique to Ammalgam’s design, but has happened in other DeFi protocols and centralized exchanges. For Ammalgam, it is critical to know what the market thinks each asset is worth at all times in order to appropriately value collateral for outstanding loans.
 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">1/ Fascinating little phenomenon happening in the Uniswap UST/USDC pool right now... The price in the pool is basically &quot;stuck&quot; at $0.952, despite the actual market price being $0.93. <a href="https://t.co/i6MQW7ubTd">pic.twitter.com/i6MQW7ubTd</a></p>&mdash; Doug Colkitt (@0xdoug) <a href="https://twitter.com/0xdoug/status/1523782169276997633?ref_src=twsrc%5Etfw">May 9, 2022</a></blockquote> 
+<Tweet id="1523782169276997633" />
 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Binance book is empty. Never seen that before <a href="https://t.co/ez4ZZT9sDR">pic.twitter.com/ez4ZZT9sDR</a></p>&mdash; Hasu⚡️🤖 (@hasufl) <a href="https://twitter.com/hasufl/status/1523817151471230976?ref_src=twsrc%5Etfw">May 10, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
+<Tweet id="1523817151471230976" />
 
 ## Approach
 
 To address these issues, Ammalgam has designed a tiered approach which intensifies to handle these death spirals as markets turn violent and subside during normal market conditions.  There are 4 levels of protection against the impact of market death spirals:
 
-- Allowing deposits of each assets individually to be lent out
+- Allowing deposits of each asset individually to be lent out
 - Lending limit threshold
 - Three tier lending utilization rate increases
 - Dynamic swap pricing
@@ -44,5 +43,5 @@ If this mechanism is still failing to stop the flow of liquidity out of the pair
 
 ### Dynamic Swap Pricing
  
-<iframe src="https://www.desmos.com/calculator/btodxumiqu?embed" frameborder="0" allowfullscreen width="100%" height="600"></iframe>
+<iframe src="https://www.desmos.com/calculator/btodxumiqu?embed" frameBorder="0" allowFullScreen width="100%" height="600"></iframe>
 
