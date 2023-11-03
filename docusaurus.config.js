@@ -98,6 +98,7 @@ const config = {
             label: 'Documentation',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
+          { to: '/contracts', type: 'docSidebar', sidebarId: 'contractSidebar', label: 'Contracts', position: 'left'},
           {
             href: 'https://github.com/ammalgam-protocol/',
             label: 'GitHub',
