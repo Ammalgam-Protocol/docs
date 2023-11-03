@@ -76,7 +76,7 @@ function Feature({Svg, title, description, link}) {
   return (
       <div className={clsx('col col--4')}>
         <div className="text--center">
-          <Svg className={styles.featureSvg} role="img" />
+          <Svg className={styles.featureSvg} role="img" fill='var(--ifm-font-color-base)' />
         </div>
         <div className="text--center padding-horiz--md">
           <Link to={link}>
