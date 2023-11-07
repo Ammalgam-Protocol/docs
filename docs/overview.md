@@ -7,7 +7,7 @@ import { Tweet } from 'react-tweet';
 
 ## DLEX
 
-We THIS IS A TEST are building a completely new primitive that combines lending and trading
+We THIS IS A TEST - SECOND TEST are building a completely new primitive that combines lending and trading
 into what we call a Decentralized Lending Exchange (DLEX). Unutilized assets in
 a traditional DEX are lent out to increase yields without increasing
 "Impermanent Loss" risk. This also unlocking the utility of having access to
