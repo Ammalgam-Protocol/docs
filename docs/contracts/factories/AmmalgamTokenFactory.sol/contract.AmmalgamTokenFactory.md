@@ -1,8 +1,8 @@
 # AmmalgamTokenFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/factories/AmmalgamTokenFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/factories/AmmalgamTokenFactory.sol)
 
 **Inherits:**
-[ITokenFactory](/docs/contracts/interfaces/factories/ITokenFactory.sol/interface.ITokenFactory.md)
+[ITokenFactory](/contracts/interfaces/factories/ITokenFactory.sol/interface.ITokenFactory.md)
 
 
 ## Functions

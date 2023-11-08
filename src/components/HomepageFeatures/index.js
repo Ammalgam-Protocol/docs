@@ -13,7 +13,7 @@ const FeatureList = [
         creating capital efficiency and enhanced utility for users
       </>
     ),
-    link: './docs/overview#dlex'
+    link: './docs/primary/overview#dlex'
   },
   {
     title: 'Trading',
@@ -24,7 +24,7 @@ const FeatureList = [
         of tokens and Automated Market Making for liquidity providers
       </>
     ),
-    link: './docs/overview#trading'
+    link: './docs/primary/overview#trading'
   },
   {
     title: 'Lending',
@@ -34,7 +34,7 @@ const FeatureList = [
         A permissionless overcollateralized pairwise lending protocol
       </>
     ),
-    link: './docs/overview#lending'
+    link: './docs/primary/overview#lending'
   },
   {
     title: 'Capital Efficiency',
@@ -46,7 +46,7 @@ const FeatureList = [
         invariant
       </>
     ),
-    link: './docs/overview#capital-efficiency'
+    link: './docs/primary/overview#capital-efficiency'
   },
   {
     title: 'Utility',
@@ -56,7 +56,7 @@ const FeatureList = [
         Offering lending and trading functions in one contract gives gives 
       </>
     ),
-    link: './docs/overview#utility-δ-γ'
+    link: './docs/primary/overview#utility-δ-γ'
   },
   {
     title: 'Autonomy',
@@ -68,7 +68,7 @@ const FeatureList = [
         to market lending and trading venue for the next big airdrop
       </>
     ),
-    link: './docs/overview#autonomy'
+    link: './docs/primary/overview#autonomy'
   },
 ];
 

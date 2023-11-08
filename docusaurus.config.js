@@ -92,13 +92,20 @@ const config = {
         },
         items: [
           {
+            to: '/primary',
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
-            position: 'left',
             label: 'Documentation',
+            position: 'left',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
-          { to: '/contracts', type: 'docSidebar', sidebarId: 'contractSidebar', label: 'Contracts', position: 'left'},
+          { 
+            to: '/contracts',
+            type: 'docSidebar',
+            sidebarId: 'contractsSidebar',
+            label: 'Contracts',
+            position: 'left'
+          },
           {
             href: 'https://github.com/ammalgam-protocol/',
             label: 'GitHub',
@@ -113,7 +120,7 @@ const config = {
             items: [
               {
                 label: 'Overview',
-                to: '/docs/overview',
+                to: '/docs/primary/overview',
               },
             ],
           },
@@ -151,7 +158,7 @@ const config = {
         theme: lightTheme,
         darkTheme,
       },
-    }),
+    }), 
 };
 
 module.exports = config;

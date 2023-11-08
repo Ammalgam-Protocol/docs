@@ -1,8 +1,8 @@
 # IAmmalgamDebtERC20
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/interfaces/tokens/IAmmalgamDebtERC20.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/interfaces/tokens/IAmmalgamDebtERC20.sol)
 
 **Inherits:**
-[IAmmalgamERC20](/docs/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
+[IAmmalgamERC20](/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
 
 This interface extends the IAmmalgamERC20 with additional methods.
 for handling debt allowances and claims in the Ammalgam protocol.

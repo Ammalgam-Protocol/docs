@@ -22,3 +22,6 @@ yarn-error.log*
 # IDE
 .idea
 .vscode
+
+# core-v1 repo generated from contract doc script
+core-v1

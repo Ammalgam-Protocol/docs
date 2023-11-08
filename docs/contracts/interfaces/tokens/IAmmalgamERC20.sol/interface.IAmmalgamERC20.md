@@ -1,5 +1,5 @@
 # IAmmalgamERC20
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/interfaces/tokens/IAmmalgamERC20.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/interfaces/tokens/IAmmalgamERC20.sol)
 
 **Inherits:**
 IERC20, IERC20Metadata, IERC20Permit
@@ -12,7 +12,7 @@ IERC20, IERC20Metadata, IERC20Permit
 
 Creates `amount` tokens and assigns them to `to` address, increasing the total supply.
 
-*Emits a Transfer event with `from` set to the zero address.*
+*Emits a IERC20.Transfer event with `from` set to the zero address.*
 
 
 ```solidity
@@ -30,7 +30,7 @@ function mint(address to, uint256 amount) external;
 
 Destroys `amount` tokens from `from` address, reducing the total supply.
 
-*Emits a Transfer event with `to` set to the zero address.*
+*Emits a IERC20.Transfer event with `to` set to the zero address.*
 
 
 ```solidity

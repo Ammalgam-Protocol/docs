@@ -1,8 +1,8 @@
 # IAmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/interfaces/IAmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/interfaces/IAmmalgamPair.sol)
 
 **Inherits:**
-[IAmmalgamERC20Controller](/docs/contracts/interfaces/tokens/IAmmalgamERC20Controller.sol/interface.IAmmalgamERC20Controller.md), [ITransferValidator](/docs/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
+[IAmmalgamERC20Controller](/contracts/interfaces/tokens/IAmmalgamERC20Controller.sol/interface.IAmmalgamERC20Controller.md), [ITransferValidator](/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
 
 
 ## Functions
@@ -18,7 +18,7 @@ function MINIMUM_LIQUIDITY() external pure returns (uint256);
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`uint256`|1000.|
+|`<none>`|`uint256`|1000|
 
 
 ### LTV
@@ -149,7 +149,7 @@ function updateExternalLiquidity(uint112 externalLiquidity_) external;
 Mints tokens and assigns them to `to` address.
 
 *Calculates the amount of tokens to mint based on reserves and balances. Requires liquidity > 0.
-Emits a Mint event.*
+Emits a #Mint event.*
 
 
 ```solidity
@@ -174,7 +174,7 @@ Burns liquidity tokens from the contract and sends the underlying assets to `to`
 
 *Calculates the amounts of assets to be returned based on liquidity.
 Requires amountX and amountY to be greater than 0.
-Emits a Burn event and performs a safe transfer of assets.*
+Emits a #Burn event and performs a safe transfer of assets.*
 
 
 ```solidity
@@ -202,7 +202,7 @@ Executes a swap of tokens.
 and that the amount out does not exceed the reserves.
 An optimistically transfer of tokens is performed.
 A callback is executed if `data` is not empty.
-Emits a Swap event.*
+Emits a #Swap event.*
 
 
 ```solidity

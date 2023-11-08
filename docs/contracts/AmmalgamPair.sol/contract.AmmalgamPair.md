@@ -1,8 +1,8 @@
 # AmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/AmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/AmmalgamPair.sol)
 
 **Inherits:**
-[IAmmalgamPair](/docs/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md), [AmmalgamERC20Controller](/docs/contracts/tokens/AmmalgamERC20Controller.sol/contract.AmmalgamERC20Controller.md)
+[IAmmalgamPair](/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md), [AmmalgamERC20Controller](/contracts/tokens/AmmalgamERC20Controller.sol/contract.AmmalgamERC20Controller.md)
 
 
 ## State Variables

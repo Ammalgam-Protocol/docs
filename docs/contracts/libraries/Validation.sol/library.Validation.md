@@ -1,5 +1,5 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/libraries/Validation.sol)
 
 
 ## State Variables
@@ -130,7 +130,7 @@ Calculates the impact of buying debt in the dex with slippage simplified to only
 *Uses a few formulas to simplify to not need reserves to calculate the required collateral to buy the debt.
 ```math
 phi = 1 - fee
-reserveIn = { L * sqrt(p) if Lx > Ly
+reserveIn = { L * sqrt(p) if Lx > Ly`
 { L / sqrt(p) otherwise
 reserveOut = { L / sqrt(p) if Lx > Ly
 { L * sqrt(p) otherwise
@@ -138,13 +138,19 @@ in * phi = reserveOut * reserveIn / (reserveOut - out) - reserveIn
 in * phi = reserveIn * (reserveOut / (reserveOut - out) - 1)
 in * phi = reserveIn * (reserveOut - (reserveOut - out) / (reserveOut - out)
 in * phi = reserveIn * (out / (reserveOut - out))
+```
 if Lx > Ly:
+math ```
 inL * 2 * sqrt(p) * phi = L * sqrt(p) * (outL * 2 / sqrt(p) / (L / sqrt(p) - outL * 2 / sqrt(p)))
 note in and out * 2 due to being half of the liquidity which is both x and y
 inL * phi = L / (L - 2 * outL)
-otherwise case cancels in a similar manner resulting in the same formula.
-inL * phi = L * outL / (L - 2 * outL)*
 ```
+otherwise case cancels in a similar manner resulting in the same formula.
+```math
+inL * phi = L * outL / (L - 2 * outL)
+```
+end*
+
 
 ```solidity
 function increaseForSlippage(uint256 debtL, uint256 activeLiquidity) private pure returns (uint256);

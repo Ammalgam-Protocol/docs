@@ -1,5 +1,5 @@
 # ITokenFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/interfaces/factories/ITokenFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/interfaces/factories/ITokenFactory.sol)
 
 Interface for the AmmalgamTokenFactory contract, which is responsible for creating new instances of AmmalgamERC20 tokens.
 

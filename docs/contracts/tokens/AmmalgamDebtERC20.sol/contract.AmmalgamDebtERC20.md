@@ -1,8 +1,8 @@
 # AmmalgamDebtERC20
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/tokens/AmmalgamDebtERC20.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/tokens/AmmalgamDebtERC20.sol)
 
 **Inherits:**
-[AmmalgamERC20Base](/docs/contracts/tokens/AmmalgamERC20Base.sol/abstract.AmmalgamERC20Base.md), [IAmmalgamDebtERC20](/docs/contracts/interfaces/tokens/IAmmalgamDebtERC20.sol/interface.IAmmalgamDebtERC20.md)
+[AmmalgamERC20Base](/contracts/tokens/AmmalgamERC20Base.sol/abstract.AmmalgamERC20Base.md), [IAmmalgamDebtERC20](/contracts/interfaces/tokens/IAmmalgamDebtERC20.sol/interface.IAmmalgamDebtERC20.md)
 
 
 ## Functions

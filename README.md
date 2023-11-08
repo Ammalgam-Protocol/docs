@@ -43,28 +43,17 @@ build the website and push to the `gh-pages` branch.
 
 ### Updating docs
 
-Currently not automated, but from the core-v1 repo run
+requires [rust](https://www.rust-lang.org/tools/install) and
+[foundry](https://book.getfoundry.sh/) and access to [core-v1](https://github.com/Ammalgam-Protocol/core-v1)
+to run.
+
 ```bash
-forge doc --build
+./script/build_docs_and_transform.sh
 ```
 
-Copy generated docs folder `docs/src/contracts` to this docs folder here
+Script pulls most recent version of core-v1 from github. If using a local
+version core-v1 pass a folder
+
 ```bash
-cp -r [core-v1]/docs/contracts ./docs/
+./script/build_docs_and_transform.sh "../core-v1"
 ```
-
-Change the title of each README.md from `# Content` to the name of its parent 
-folder. 
-
-Add an index to the first README.md and change the title to Overview so it
-appears first.
-
-```
----
-sidebar_position: 1
----
-
-# Overview
-```
-
-globally search and replace '(/contracts/' with '(/docs/contracts/' to fix links

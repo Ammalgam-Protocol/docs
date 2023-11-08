@@ -1,5 +1,5 @@
 # IAmmalgamERC20Controller
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/04a3f1fa0f3d490fb4de634cc2e3c4a82c163e7a/contracts/interfaces/tokens/IAmmalgamERC20Controller.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/55eccbeef5b0ef289c29a5edda7e20c492c25998/contracts/interfaces/tokens/IAmmalgamERC20Controller.sol)
 
 The interface of a ERC20 facade for multiple token types with functionality similar to ERC1155.
 
