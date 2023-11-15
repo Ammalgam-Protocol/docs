@@ -71,7 +71,7 @@ function getBorrowedInL(InputParams memory inputParams)
 ### convertXToL
 
 The original math:
-L * activeLiquidityScaler = x / 2 * sqrt(p)
+$ L * activeLiquidityScaler = x / 2 * \sqrt{p} $
 previous equation:
 amountL = Math.mulDiv(amount, POW2_96, 2 * sqrtPriceX96Range, rounding);
 adding activeLiquidityScaler:
@@ -95,7 +95,7 @@ function convertXToL(
 
 ### convertYToL
 
-The simplified math: L = y * sqrt(p) / 2
+The simplified math: $L = y * \sqrt{p} / 2$
 Math.mulDiv(amount, sqrtPriceX96Range, 2 * POW2_96, rounding);
 amountL = amount * sqrtPriceX96RangeScaled / 2 * POW2_96
 sqrtPriceX96RangeScaled = sqrtPriceX96Range / activeLiquidityScaler / POW2_96;
@@ -125,32 +125,67 @@ function checkLtv(CheckLtvParams memory checkLtvParams, InputParams memory input
 
 ### increaseForSlippage
 
-Calculates the impact of buying debt in the dex with slippage simplified to only use liquidity and
+Calculates the impact slippage of buying the debt in the dex using the currently
+available liquidity $L = \sqrt{x \cdot y}$.
+Uses a few formulas to simplify to not need reserves to calculate the required collateral to buy the debt.
 
-*Uses a few formulas to simplify to not need reserves to calculate the required collateral to buy the debt.
-```math
-phi = 1 - fee
-reserveIn = { L * sqrt(p) if Lx > Ly`
-{ L / sqrt(p) otherwise
-reserveOut = { L / sqrt(p) if Lx > Ly
-{ L * sqrt(p) otherwise
-in * phi = reserveOut * reserveIn / (reserveOut - out) - reserveIn
-in * phi = reserveIn * (reserveOut / (reserveOut - out) - 1)
-in * phi = reserveIn * (reserveOut - (reserveOut - out) / (reserveOut - out)
-in * phi = reserveIn * (out / (reserveOut - out))
-```
-if Lx > Ly:
-math ```
-inL * 2 * sqrt(p) * phi = L * sqrt(p) * (outL * 2 / sqrt(p) / (L / sqrt(p) - outL * 2 / sqrt(p)))
-note in and out * 2 due to being half of the liquidity which is both x and y
-inL * phi = L / (L - 2 * outL)
-```
-otherwise case cancels in a similar manner resulting in the same formula.
-```math
-inL * phi = L * outL / (L - 2 * outL)
-```
-end*
+Let the fee be represented as 
 
+```math
+\phi = 1 - fee
+```
+
+The reserves available in and out for swapping can be defined in terms of $L$, and price $p$
+```math
+\begin{align*}  
+reserveIn &= L \cdot \sqrt{p} \\
+reserveOut &= \frac{L}{ \sqrt{p} } \\
+\end{align*}
+```
+
+The swap amount $in$ and $out$ can also be defined in terms of $L_{in}$ and
+$L_{out}$ 
+```math
+\begin{align*}
+in &= L_{in} \cdot 2 \cdot \sqrt{p}
+out &= \frac{  2 \cdot L_{out} }{ \sqrt{p} }
+\end{align*}
+
+```
+
+Starting with our swap equation we solve for $in$
+
+```math
+\begin{align*}  
+(in \cdot \phi + reserveIn)(reserveOut - out) &= reserveOut \cdot reserveIn \\ 
+
+in \cdot \phi &= \frac{reserveOut \cdot reserveIn} {reserveOut - out} - reserveIn \\ 
+in \cdot \phi &= reserveIn \cdot \left(\frac{reserveOut } {reserveOut - out} - 1 \right) \\
+in \cdot \phi &= reserveIn \cdot \frac{ reserveOut - (reserveOut - out) } { reserveOut - out } \\
+in \cdot \phi &= \frac{ reserveIn \cdot out } { reserveOut - out } \\
+\end{align*}
+```
+
+We now plug in liquidity values in place of $reserveIn$, $reserveOut$, $in$, and $out$.
+```math
+\begin{align*}
+L_{in} \cdot 2 \cdot \sqrt{p} \cdot \phi 
+  &=  \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
+    { \frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} } } \\
+
+L_{in} \cdot \phi 
+  &= \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
+    { 2 \cdot \sqrt{p} \cdot  \left(\frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} }\right)} \\
+ 
+L_{in}
+  &=  \frac { L \cdot  L_{out} }
+    { \phi  \cdot (L - 2 \cdot L_{out}) } \\
+\end{align*}
+```
+
+Using $L_{out}$ described in our method as `debtL`, $L$ or `activeLiquidity`,
+and our fee, we use the above equation to solve for the amount of liquidity that
+must come in to buy the debt.
 
 ```solidity
 function increaseForSlippage(uint256 debtL, uint256 activeLiquidity) private pure returns (uint256);
@@ -195,10 +230,10 @@ error AmmalgamCannotBorrowAgainstSameCollateral();
 error AmmalgamMaxBorrowReached();
 ```
 
-### AmmalgamDepositIsNotStrictlyBigger
+### AmmalgamDepositIsNotStrictL_yBigger
 
 ```solidity
-error AmmalgamDepositIsNotStrictlyBigger();
+error AmmalgamDepositIsNotStrictL_yBigger();
 ```
 
 ### AmmalgamLTV
