@@ -8,136 +8,181 @@ import { Tweet } from 'react-tweet';
 
 ### DLEX
 
-We are building a completely new primitive that combines lending and trading
-into what we call a Decentralized Lending Exchange (DLEX). Unutilized assets in
-a traditional DEX are lent out to increase yields without increasing
-"Impermanent Loss" risk. This also unlocking the utility of having access to
-lending natively in a DEX allowing for AMM shares to be used as collateral to
-borrow against.
+Ammalgam is a completely new primitive that combines lending and trading into
+one protocol called a Decentralized Lending Exchange (DLEX). This simple
+combination creates Capital Efficiency resulting in 20% increases in yield for
+Liquidity Providers (LPs). It offers unbounded utility through unlimited
+trading strategies, catering to both advanced users and those preferring a UI
+designed for passive LPs. Lastly, it ensures true autonomy that is
+permissionless and oracle-free, with zero dependencies.
 
-Additionally, we built a mechanism to allow for borrow AMM
-shares themselves which can be used as a hedge for impermanent loss or to make
-straddles. The feedback we have gotten from sophisticated traders in the space
-is extremely positive because what we are building is so powerful while our UI
-makes the complexity intuitive and accessible.
+### Exchange
 
-### Trading
+Ammalgam is a fork of Uniswap V2. but is designed to allow LP positions with
+payouts similar to concentrated liquidity and thus has parity with any DEX.
+Ammalgam uses leverage when creating concentrated liquidity-like positions so
+users need to monitor for liquidations, however, they are compensated by earning
+fees way beyond the similar range created when using concentrated liquidity. In
+essence, instead of monitoring ranges, LPs now focus on liquidations but benefit
+from increased fees and, consequently, higher yields.
 
-Ammalgam was forked from Uniswap v2 and thus has parity with any DEX.
-Although we don't support concentrated liquidity, we offer similar functionality
-in the form of leverage. Users can borrow the underlying x and y in the Pair
-against their market making position allowing for the creation of larger
-positions that what is possible with their own assets. This gives the exact same
-payout or risk of a concentrated liquidity position in while it is in range, but
-also allows for the position to continue to earn swap fees when the price leaves
-the range. This also requires users have to monitor the price and its effect on
-their position since it can be liquidated if the impermanent loss from price
-change diminishes the value such that their debt is no longer has sufficient
-collateral to secure it.
 
 ### Lending
 
-We built an over-collateralized lending protocol into the Uniswap v2 Pair
-contract. This means that the two assets in the pair contract can be borrowed
-and deposited to earn lending yield but not be included in the reserves used to
-quote swaps.
+The lending and borrowing component of the DLEX involves the lending of X, Y,
+and K, derived from the X * Y = K Constant Market Maker (CMM) formula. The DLEX
+offers expanded lending options in DeFi through three distinct methods:
 
-Additionally, we allow users to borrow liquidity or market maker shares to give
-exposure to positive gamma, or "impermanent gain". This is done by allowing the
-underlying x and y in the Pair to be borrowed together in proportion to the
-trading reserves and tracking the debt in units of $L$, or $L = \sqrt{k} =
-\sqrt{x + y}$. This means that debt in $L$ are static, but the underlying assets
-$x$ and $y$ will depend on the price. As an asset increases in value, a borrower
-will owe less of the asset that increased in value and more of the asset that
-decreased in value.
+* Lending unutilized assets (X or Y) from the traditional V2 trading pool, which
+  quotes swaps. This approach introduces new fees for Liquidity Providers (LPs),
+  enhancing market-making yields.
+* Traditional DeFi lending and borrowing of X and Y, which is not included in
+  the trading reserves used to quote swaps. This is possible because Ammalgam
+  built an overcollateralized lending protocol directly into the Uniswap V2 Pair
+  Contract. 
+* The DLEX structure uniquely permits the borrowing of K. This novel feature,
+  previously unfeasible, significantly impacts market making. When an LP
+  participates in market making, they effectively deposit K into an exchange by
+  supplying both assets of a pair. K remains constant, but as the deposited X
+  and Y fluctuate in value relative to each other, they can cause impermanent
+  loss. Borrowing K allows one to directly counteract this impermanent loss in
+  any pair, leading to what is termed "Impermanent Gain." This concept is also
+  known as "borrowing liquidity" or "positive gamma." 
+
 
 ### Capital Efficiency
 
-Market making using uniswap v2 is considered inefficient because most of the
-assets are not being. This is because the algorithm to quote swap has to
-support a price range of 0 to $\infty$. Uniswap v3 tried to solve this problem
-by introducing concentrated liquidity. This did increase yields for market
-makers, but also increased the rate at which a market makers position lost value
-as the price changed. The v3 solution was in fact solving a problem by
-leveraging the underlying inefficiency.
+Market making using uniswap V2 is considered inefficient because most of the
+assets are not being used.[^unused_assets] The algorithm to quote swaps has to
+support price ranges from 0 to infinity so most of the deposited liquidity is
+not supporting trading, but actually sitting idle. Uniswap V3 tried to solve
+this problem by introducing concentrated liquidity, which increased yields for
+market makers, but also magnified impermanent loss (e.g., increased the rate at
+which a market maker's position loses value as price changes). The V3 solution
+was, in fact, solving a problem by leveraging the underlying inefficiency -
+adding yield by adding risk. Many passive and retail investors are unaware of
+the additional risk they are taking with concentrated liquidity.
 
-Ammalgam rethinks this problem from a different angle. What if we could build
-what Hayden suggests at the protocol level?
+[^unused_assets]: link?
+
+Ammalgam addresses the issue by first leveraging idle assets in V2 to increase
+fees for LPs. If this enhanced capital efficiency does not fully meet trader’s
+needs, they have the option to apply additional leverage for further yield
+increases. 
+
+In the tweet below, Hayden suggests LPs diversify their assets between V3 and
+lending protocols to mitigate the heightened risks associated with V3 market
+making. The DLEX addresses this issue with a single, innovative primitive.
+Additionally, it utilizes the unused assets in V2 to generate additional yield
+for LPs.
 
 <Tweet id="1452832342788169732" />
 
-This is what Ammalgam does, it lends out the excess assets in the Uniswap v2
-Pair. If that is not enough by itself, this efficiency can be further leveraged
-for those who understand the risks and rewards of doing so.
 
 ### Utility (δ, γ)
 
-Ammalgam recomposes DeFi into one protocol! With both trading and lending as
-native features of our protocol, we unlock a massive amount of utility not
-currently accessible in DeFi in one protocol. We can create a mind blowing
-amount of uses from this combination that can be described in two variables
-familiar to options traders, delta and gamma.
+The DLEX is far more than a platform for merely lending and trading assets
+within a single protocol. Integrating lending and trading as native features
+unleashes an array of functionality and trading strategies, surpassing the
+capabilities of traditional DEXs or Lending Protocols , whether used
+independently or in combination.
 
-Delta gives users the ability to go long or short by borrowing an asset and
-selling it for the other. Gamma describes the amount of exposure to market
-making, including negative exposure by borrowing market maker shares. The
-payout charts accessible can be seen in the desmos chart below.
+This new utility stems from two concepts familiar to options traders which,
+Ammalgam now simplifies for retail traders: delta and gamma.
+
+* Delta essentially represents the lending or borrowing of an asset, such as X or
+Y on a DLEX. For example, X is USDC and Y is Bitcoin, one can short Bitcoin on a
+DLEX by borrowing Bitcoin and selling it for USDC. 
+* Gamma refers to exposure in market making, the flip side of the X * Y =K
+formula. With gamma on a DLEX, one can borrow K, essentially inverting
+traditional market making. Instead of supplying X and Y, which creates inherent
+exposure to impermanent loss, borrowing K flips this exposure to ‘impermanent
+gain’.
+
+Delta allows strategies by manipulating borrowed or lent assets. These range
+from traditional market making to leveraged market making (akin to concentrated
+liquidity) to short market making to delta neutral market making. 
+
+For instance, in the current DeFi space, establishing a delta neutral market
+making position requires interacting with multiple protocols, often requiring
+advanced technical skills like coding flash loans. While DeFi’s composability
+enables interaction with various protocols for a delta neutral position, each
+protocol extracts fees. Ammalgam obviates the need for technical skills and
+eliminates the extraneous fees from each protocol, thus recomposing DeFi.
+
+Adding the ability to borrow or lend Gamma, a DLEX empowers users to create
+options and perpetuals, including straddles, and access to impermanent gain. 
+
+If a market maker anticipates the prices to remain outside of a narrow range, up
+or down, they currently need to combine options protocols with other tools.
+However, in a DLEX, borrowing gamma suffices to create the desired payout
+matching future expectations.
+
+By integrating lending and trading with just two inputs, delta and gamma,
+Ammalgam supersedes DEXs, lending protocols, options protocols, hedging
+protocols (such as Squeeth) and perpetuals. It achieves this permissionlessly,
+without dependencies, and operates oracle free. Essentially any conceived
+payout strategy can be crafted with or without leverage.
 
 <iframe 
-  src="https://www.desmos.com/calculator/zzgneljqca"
-  frameBorder="0" 
-  allowFullScreen
-  width="100%"
-  height="600">
+ src="https://www.desmos.com/calculator/zzgneljqca"
+ frameBorder="0" 
+ allowFullScreen
+ width="100%"
+ height="600">
 </iframe>
 
 #### Recipes
 
-We also have tried to simplify this somewhat overwhelming range of positions by
-creating a set of "recipes".
+Ammalgam intends to democratize DeFi for retail investors. As such, the UI is
+designed to show the impact of delta and gamma on any position simply and
+transparently. Ammalgam further created a preset menu of recipes for users: 
 
-- Market making
-- Short or Long
-- Leveraged Market Making
-- Delta Neutral Market Making
-- Short or Long Market Making
-- Straddle
-- Call or Put
+* Market Making (descriptions of each to follow or be linked)
+* Short or Long
+* Leveraged Market Making
+* Delta Neutral Market Making
+* Short or Long Market Making
+* Straddles
+* Calls or Puts
+* Perpetuals
+
 
 #### Payout charts
 
-When selecting a recipe or configuring a custom strategy with (δ, γ), our UI
-shows the respective payout chart for that position giving users immediate
-feedback of the effect of their changes.
+Traders have historically relied on payout charts to determine the value of a
+position in relation to price movement. Ammalgam offers users instant access to
+assessing the potential payout of a position concerning price fluctuations.
 
 #### Heat map
 
-Additionally we have built a visualization tool that shows the impact of both
-price change and the fees earned or paid over time. The heat map shows the
-positions value after any given period of time and price change by representing
-position value as a color (heat). Time is the horizontal axis and price change
-is the vertical access. Below is an example of the heat map for the delta
-neutral market making
+Many correctly argue that passive LPs are adversely affected by V3, often due to
+the amplified effect of impermanent loss from the inherent leverage in
+concentrated liquidity. As payout charts remain static over time, these risks
+may not be immediately apparent to many retail traders. Ammalgam’s UI introduces
+a novel visualization tool that displays the impact of price fluctuations and
+the fees earned or incurred by LPs throughout the anticipated duration of their
+position. This tool clearly delineates the expected positive (green) or negative
+(red) portfolio values in relation to price changes at a future point in time.
 
 ![Heat map](/charts/Delta_Neutral_Payout_Heat_Map.png)
 
 ### Autonomy
 
-Our protocol is completely free from oracles and is self contained without any
-dependencies on other contracts with the exception of ERC-20 contracts. This
-means that we can be the first market for both lending and trading for the next
-big on chain airdrop.
+Ammalgam operates independently of oracles and relies solely on itself, except
+for interactions with ERC-20 contracts. This autonomy positions Ammalgam to be a
+pioneering platform in both lending and trading for upcoming, major, onchain
+airdrops.
 
-We did this with no assumptions of arbitrage or externally available trade
-liquidity and asked what would be required to make this safe. When borrowing,
-the protocol checks the current available liquidity that could be used to
-liquidate the proposed debt as well as all the currently opened debts in a
-similar range and ensure that the proposed debt could be liquidated with the
-internally available trade liquidity. We also treat price as a range rather than
-a single number. When a price between two assets changes rapidly, this price
-range expands. This expansion limit what can be borrowed against the asset
-lowering in value and holds the limit of what can be borrowed against the
-asset increasing in value the same as before the price change. New debts that
-borrowing against collateral increasing in value can not use the new higher
-value as the rate of exchange until that value has been maintained for a
-substantial amount of time.
+This is achieved without relying on assumptions of arbitrage or external trade
+liquidity and focused instead on ensuring safety. When initiating borrowing, the
+protocol evaluates the available liquidity that could be utilized for
+liquidating the proposed debt, as well as existing debts within a similar range.
+This ensures that the new debt can be liquidated using an available internal
+trade liquidity. Furthermore, we treat price as a range, not a fixed number. As
+the price between two assets changes rapidly, the price range adjusts. This
+adjustment restricts borrowing against the devaluing asset and maintains the
+borrowing limit against the appreciating asset at its pre-change level. Debts
+incurred against appreciating collateral can not leverage its newly increased
+value as the basis for exchange until that value has stabilized for a
+significant duration.
