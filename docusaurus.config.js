@@ -8,6 +8,13 @@ const { themes } = require('prism-react-renderer');
 const lightTheme = themes.github;
 const darkTheme = themes.dracula;
 
+const ammalgamLogo = {
+  alt: 'Ammalgam Logo',
+  src: 'img/ammalgam-logo-light.svg',
+  srcDark: 'img/ammalgam-logo-dark.svg',
+  height: 32,
+}
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Ammalgam Documentation',
@@ -59,7 +66,7 @@ const config = {
         //     // 'https://github.com/ammalgam-protocol/tree/main/packages/create-docusaurus/templates/shared/',
         // },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve('./src/css/custom.scss'),
         },
         gtag: {
           trackingID: 'G-2EZK5Z57G9',
@@ -80,16 +87,9 @@ const config = {
   themeConfig:
   /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Replace with your project's social card
       image: 'img/favicon.svg',
       navbar: {
-        title: 'Ammalgam',
-        logo: {
-          alt: 'Ammalgam Logo',
-          src: 'img/favicon.svg',
-          width: 32,
-          height: 32,
-        },
+        logo: ammalgamLogo,
         items: [
           {
             type: 'docSidebar',
@@ -97,10 +97,16 @@ const config = {
             position: 'left',
             label: 'Documentation',
           },
-          // {to: '/blog', label: 'Blog', position: 'left'},
+          {
+            href: 'https://discord.gg/QJTyB5PAXw/',
+            className: 'header-discord-link',
+            'aria-label': 'Ammalgam Discord',
+            position: 'right',
+          },
           {
             href: 'https://github.com/ammalgam-protocol/',
-            label: 'GitHub',
+            className: 'header-github-link',
+            'aria-label': 'Ammalgam GitHub',
             position: 'right',
           },
         ],
@@ -113,6 +119,10 @@ const config = {
               {
                 label: 'Overview',
                 to: '/docs/overview',
+              },
+              {
+                label: 'Litepaper',
+                to: '/docs/litepaper',
               },
             ],
           },
@@ -135,7 +145,7 @@ const config = {
             items: [
               {
                 label: 'Mirror',
-                to: 'https://mirror.xyz/0x127d2749824e8a064Fe49246eD8DbD30859d4bCf',
+                href: 'https://mirror.xyz/0x127d2749824e8a064Fe49246eD8DbD30859d4bCf',
               },
               {
                 label: 'GitHub',
@@ -144,13 +154,15 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Ammalgam DAO Docs Built with Docusaurus.`,
+        logo: ammalgamLogo,
+        copyright: `Copyright © ${new Date().getFullYear()} Ammalgam DAO. Built with Docusaurus.`,
       },
       prism: {
         theme: lightTheme,
         darkTheme,
       },
     }),
+    plugins: ['docusaurus-plugin-sass'],
 };
 
 module.exports = config;
