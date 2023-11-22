@@ -1,12 +1,12 @@
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 
-import styles from './styles.module.css';
+import styles from './styles.module.scss';
 
 const FeatureList = [
   {
     title: "DLEX",
-    Svg: require('@site/static/icons/open_with.svg').default,
+    Svg: require('@site/static/icons/dlex.svg').default,
     description: (
       <>
         Combining lending and trading functions into one contract 
@@ -17,7 +17,7 @@ const FeatureList = [
   },
   {
     title: 'Trading',
-    Svg: require('@site/static/icons/swap_horizontal.svg').default,
+    Svg: require('@site/static/icons/trading.svg').default,
     description: (
       <>
         A Decentralized Exchange (DEX) that allows for the trading 
@@ -28,7 +28,7 @@ const FeatureList = [
   },
   {
     title: 'Lending',
-    Svg: require('@site/static/icons/swap_vertical.svg').default,
+    Svg: require('@site/static/icons/lending.svg').default,
     description: (
       <>
         A permissionless overcollateralized pairwise lending protocol
@@ -38,7 +38,7 @@ const FeatureList = [
   },
   {
     title: 'Capital Efficiency',
-    Svg: require('@site/static/icons/money.svg').default,
+    Svg: require('@site/static/icons/capital.svg').default,
     description: (
       <>
         Giving market makers better returns by lending out unused
@@ -50,7 +50,7 @@ const FeatureList = [
   },
   {
     title: 'Utility',
-    Svg: require('@site/static/icons/delta_gamma.svg').default,
+    Svg: require('@site/static/icons/utility.svg').default,
     description: (
       <>
         Offering lending and trading functions in one contract gives gives 
@@ -60,7 +60,7 @@ const FeatureList = [
   },
   {
     title: 'Autonomy',
-    Svg: require('@site/static/icons/permissionless.svg').default,
+    Svg: require('@site/static/icons/autonomy.svg').default,
     description: (
       <>
         Built without any external dependencies on oracles or other protocols
@@ -74,17 +74,21 @@ const FeatureList = [
 
 function Feature({Svg, title, description, link}) {
   return (
-      <div className={clsx('col col--4')}>
-        <div className="text--center">
-          <Svg className={styles.featureSvg} role="img" fill='var(--ifm-font-color-base)' />
-        </div>
-        <div className="text--center padding-horiz--md">
-          <Link to={link}>
+    <div className={clsx('col col--4')}>
+      <Link className={styles.link} to={link}>
+        <div className="card padding--lg h-100">
+          <div className="card__header">
+            <div className={styles.featureIconContainer}>
+              <Svg role="img" fill='var(--ifm-color-primary)' />
+            </div>
             <h3>{title}</h3>
-          </Link>
-          <p>{description}</p>
+          </div>
+          <div className={clsx(`card__body ${styles.description}`)}>
+            {description}
+          </div>
         </div>
-      </div>
+      </Link>
+    </div>
   );
 }
 
@@ -92,7 +96,8 @@ export default function HomepageFeatures() {
   return (
     <section className={styles.features}>
       <div className="container">
-        <div className="row">
+        <h4 className={styles.heading}>OVERVIEW</h4>
+        <div className={clsx(`row ${styles.rowGap}`)}>
           {FeatureList.map((props, idx) => (
             <Feature key={idx} {...props} />
           ))}

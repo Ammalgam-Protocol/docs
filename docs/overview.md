@@ -1,18 +1,21 @@
 ---
 sidebar_position: 1
 ---
+
 import { Tweet } from 'react-tweet';
 
 # Overview
 
-## DLEX
+### DLEX
 
 We are building a completely new primitive that combines lending and trading
 into what we call a Decentralized Lending Exchange (DLEX). Unutilized assets in
 a traditional DEX are lent out to increase yields without increasing
 "Impermanent Loss" risk. This also unlocking the utility of having access to
 lending natively in a DEX allowing for AMM shares to be used as collateral to
-borrow against. Additionally, we built a mechanism to allow for borrow AMM
+borrow against.
+
+Additionally, we built a mechanism to allow for borrow AMM
 shares themselves which can be used as a hedge for impermanent loss or to make
 straddles. The feedback we have gotten from sophisticated traders in the space
 is extremely positive because what we are building is so powerful while our UI
@@ -30,14 +33,14 @@ also allows for the position to continue to earn swap fees when the price leaves
 the range. This also requires users have to monitor the price and its effect on
 their position since it can be liquidated if the impermanent loss from price
 change diminishes the value such that their debt is no longer has sufficient
-collateral to secure it. 
+collateral to secure it.
 
 ### Lending
 
 We built a overcollateralized lending protocol into the Uniswap v2 Pair
 contract. This means that the two assets in the pair contract can be borrowed
 and deposited to earn lending yield but not be included in the reserves used to
-quote swaps. 
+quote swaps.
 
 Additionally, we allow users to borrow liquidity or market maker shares to give
 exposure to positive gamma, or "impermanent gain". This is done by allowing the
@@ -51,15 +54,15 @@ decreased in value.
 ### Capital Efficiency
 
 Market making using uniswap v2 is considered inefficient because most of the
-assets are not being. This is because the algorithm to quote swap has to 
+assets are not being. This is because the algorithm to quote swap has to
 support a price range of 0 to $\infty$. Uniswap v3 tried to solve this problem
 by introducing concentrated liquidity. This did increase yields for market
 makers, but also increased the rate at which a market makers position lost value
 as the price changed. The v3 solution was in fact solving a problem by
 leveraging the underlying inefficiency.
 
-Ammalgam rethinks this problem from a different angle. What if we could build 
-what Hayden suggests at the protocol level? 
+Ammalgam rethinks this problem from a different angle. What if we could build
+what Hayden suggests at the protocol level?
 
 <Tweet id="1452832342788169732" />
 
@@ -73,12 +76,12 @@ Ammalgam recomposes DeFi into one protocol! With both trading and lending as
 native features of our protocol, we unlock a massive amount of utility not
 currently accessible in DeFi in one protocol. We can create a mind blowing
 amount of uses from this combination that can be described in two variables
-familiar to options traders, delta and gamma. 
+familiar to options traders, delta and gamma.
 
 Delta gives users the ability to go long or short by borrowing an asset and
 selling it for the other. Gamma describes the amount of exposure to market
 making, including negative exposure by borrowing market maker shares. The
-payout charts accessible can be seen in the desmos chart below. 
+payout charts accessible can be seen in the desmos chart below.
 
 <iframe 
   src="https://www.desmos.com/calculator/zzgneljqca"
@@ -91,7 +94,7 @@ payout charts accessible can be seen in the desmos chart below.
 #### Recipes
 
 We also have tried to simplify this somewhat overwhelming range of positions by
-creating a set of "recipes". 
+creating a set of "recipes".
 
 - Market making
 - Short or Long
@@ -105,7 +108,7 @@ creating a set of "recipes".
 
 When selecting a recipe or configuring a custom strategy with (δ, γ), our UI
 shows the respective payout chart for that position giving users immediate
-feedback of the effect of their changes. 
+feedback of the effect of their changes.
 
 #### Heat map
 
@@ -123,7 +126,7 @@ neutral market making
 Our protocol is completely free from oracles and is self contained without any
 dependencies on other contracts with the exception of ERC-20 contracts. This
 means that we can be the first market for both lending and trading for the next
-big on chain airdrop. 
+big on chain airdrop.
 
 We did this with no assumptions of arbitrage or externally available trade
 liquidity and asked what would be required to make this safe. When borrowing,
