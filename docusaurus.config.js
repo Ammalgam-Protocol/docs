@@ -17,7 +17,7 @@ const ammalgamLogo = {
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Ammalgam Documentation',
+  title: 'Ammalgam Protocol',
   tagline: 'Decentralized Lending Exchange (DLEX)',
   favicon: 'img/favicon.svg',
 
@@ -98,13 +98,13 @@ const config = {
             label: 'Documentation',
           },
           {
-            href: 'https://discord.gg/QJTyB5PAXw/',
+            href: 'https://discord.gg/QJTyB5PAXw',
             className: 'header-discord-link',
             'aria-label': 'Ammalgam Discord',
             position: 'right',
           },
           {
-            href: 'https://github.com/ammalgam-protocol/',
+            href: 'https://github.com/ammalgam-protocol',
             className: 'header-github-link',
             'aria-label': 'Ammalgam GitHub',
             position: 'right',

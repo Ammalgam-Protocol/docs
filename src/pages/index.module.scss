@@ -1,0 +1,12 @@
+.heroBanner {
+  background-image: url('/img/header.svg');
+  color: #fff;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+}

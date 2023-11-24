@@ -37,7 +37,7 @@ collateral to secure it.
 
 ### Lending
 
-We built a overcollateralized lending protocol into the Uniswap v2 Pair
+We built an over-collateralized lending protocol into the Uniswap v2 Pair
 contract. This means that the two assets in the pair contract can be borrowed
 and deposited to earn lending yield but not be included in the reserves used to
 quote swaps.

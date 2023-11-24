@@ -31,7 +31,7 @@ const FeatureList = [
     Svg: require('@site/static/icons/lending.svg').default,
     description: (
       <>
-        A permissionless overcollateralized pairwise lending protocol
+        A permissionless over-collateralized pairwise lending protocol
       </>
     ),
     link: './docs/overview#lending'
