@@ -19,6 +19,7 @@
   --ifm-font-family-base: "Space Grotesk";
   --ifm-global-radius: 1.5rem;
   --ifm-card-border-radius: var(--ifm-global-radius);
+  --ifm-code-border-radius: 0.25rem;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 
   /* Menu */
@@ -89,8 +90,8 @@
 }
 
 h1 {
-  font-size: 2.5rem;
-  font-weight: 500;
+  font-size: 2.5rem !important;
+  font-weight: 500 !important;
 }
 
 /* Utils */
