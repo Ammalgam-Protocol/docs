@@ -119,8 +119,8 @@ h1 {
   text-align: center;
 }
 
-/* Navbar styles */
-.navbar__items--right .navbar__link {
+/* Social media styles */
+.header-github-link, .header-discord-link {
   height: 2rem;
   padding: 0 0.75rem;
 
@@ -146,7 +146,7 @@ h1 {
 }
 
 .header-discord-link {
-  padding-right: 0rem !important;
+  padding-right: 0 !important;
 }
 
 .header-discord-link:before {
