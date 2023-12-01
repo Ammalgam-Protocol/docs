@@ -7,7 +7,7 @@ sidebar_position: 1
 ## TL;DR
 
 - We spiffed up and are planning on publicly announcing our [docs](https://docs.ammalgam.xyz) next week.
-- [Landing page](https://ammalgam) update in time for documentation announcement.
+- [Landing page](https://ammalgam.xyz) update in time for documentation announcement.
 - We are targeting publicly sharing and announcing  our [dApp](https://ammalgam.vercel.app/) before the end of the year.
 - Added ERC-4626 interface to our tokens, a first step in adding interest rate logic.
 - Slow fundraising allowed me to dive into the code and making a huge dent in wrapping up no oracle work.
