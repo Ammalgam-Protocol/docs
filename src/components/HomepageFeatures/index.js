@@ -53,7 +53,7 @@ const FeatureList = [
     Svg: require('@site/static/icons/utility.svg').default,
     description: (
       <>
-        Offering lending and trading functions in one contract gives gives 
+        Offering lending and trading functions in one contract gives 
       </>
     ),
     link: './docs/overview#utility-δ-γ'
