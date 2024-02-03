@@ -24,7 +24,16 @@ Very excited that we have 2.1M in commitments and two larger firms expressing in
 
 ### Front End
 
-The front end team has been making great progress responding to feedback from the Alpha DApp release. I created a board in Notion to track all of our high level priorities for the front end. 
+The front end team has been making great progress responding to feedback from
+the Alpha DApp release. I created a board in Notion to track all of our high
+level priorities for the front end. 
+
+<iframe src="https://v2-embednotion.com/a2fd2b1594b44dadb5e3a173953f8a3b?v=afe3fe04f17b4c8ab6c5467f527fb165&pvs=4"
+  frameBorder="0" 
+  allowFullScreen
+  width="100%"
+  height="600"
+></iframe>  
 
 We continue to do our Sprint reviews publicly in Discord every other week. We
 are also tweeting those progress updates on X:
