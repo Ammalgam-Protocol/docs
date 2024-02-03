@@ -53,7 +53,7 @@ offers expanded lending options in DeFi through three distinct methods:
 ### Capital Efficiency
 
 Market making using uniswap V2 is considered inefficient because most of the
-assets are not being used.[^unused_assets] The algorithm to quote swaps has to
+assets are not being used. The algorithm to quote swaps has to
 support price ranges from 0 to infinity so most of the deposited liquidity is
 not supporting trading, but actually sitting idle. Uniswap V3 tried to solve
 this problem by introducing concentrated liquidity, which increased yields for
@@ -63,7 +63,6 @@ was, in fact, solving a problem by leveraging the underlying inefficiency -
 adding yield by adding risk. Many passive and retail investors are unaware of
 the additional risk they are taking with concentrated liquidity.
 
-[^unused_assets]: link?
 
 Ammalgam addresses the issue by first leveraging idle assets in V2 to increase
 fees for LPs. If this enhanced capital efficiency does not fully meet trader’s
@@ -125,7 +124,7 @@ without dependencies, and operates oracle free. Essentially any conceived
 payout strategy can be crafted with or without leverage.
 
 <iframe 
- src="https://www.desmos.com/calculator/zzgneljqca"
+ src="https://www.desmos.com/calculator/zzgneljqca?embed"
  frameBorder="0" 
  allowFullScreen
  width="100%"

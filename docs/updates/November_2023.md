@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # November 2023
 
-## TL;DR
+## tl;dr
 
 - We spiffed up and are planning on publicly announcing our [docs](https://docs.ammalgam.xyz) next week.
 - [Landing page](https://ammalgam.xyz) update in time for documentation announcement.
