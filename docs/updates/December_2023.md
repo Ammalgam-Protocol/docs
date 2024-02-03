@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # December 2023
 
-## TL;DR
+## tl;dr
 
 - [Alpha DApp Release](https://x.com/ammalgam/status/1740849747387375766), Please retweet!
 - Improved design eliminates need for price dependent liquidations
