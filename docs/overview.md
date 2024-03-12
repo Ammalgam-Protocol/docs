@@ -124,7 +124,7 @@ without dependencies, and operates oracle free. Essentially any conceived
 payout strategy can be crafted with or without leverage.
 
 <iframe 
- src="https://www.desmos.com/calculator/zzgneljqca?embed"
+ src="https://www.desmos.com/calculator/zzgneljqca"
  frameBorder="0" 
  allowFullScreen
  width="100%"
