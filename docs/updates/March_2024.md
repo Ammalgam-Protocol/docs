@@ -12,13 +12,13 @@ sidebar_position: 5
 
 ## Development
 
-Last month, we added a new contract engineer, who has been an amazing addition
-to the core team. Our was able to add value immediately and has taken on a lot
-of complex work. We also moved one front-end engineer to contracts.  With these
-shifts and my time starting to free up post-raise, we have effectively expanded
-the contract team from 1 to 4 engineers. The raising of funds took a major toll
-on our velocity, but with that wrapping up, we are ready to pick up the pace and
-finish strong.
+Last month, we added a new engineer, who has been an amazing addition
+to the core team. The engineer was able to add value immediately and has taken
+on a lot of complex work. We also moved one front-end engineer to contracts.
+With these shifts and my time starting to free up post-raise, we have
+effectively expanded the contract team from 1 to 4 engineers. The raising of
+funds took a major toll on our velocity, but with that wrapping up, we are ready
+to pick up the pace and finish strong.
 
 We are also recruiting a second front-end developer (please reach out with any
 referrals!) and continue UX research to make our UI more intuitive.
