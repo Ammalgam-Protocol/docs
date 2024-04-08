@@ -37,7 +37,3 @@ a preliminary plan for a TVL round, and designed a points / incentive system.
 We will soon initiate efforts to evaluate which L2s to launch on after mainnet
 release.  If you have thoughts / ideas you want to share or helpful connections,
 please reach out.
-
-Details on the draft TVL incentives are below.  Please let us know if you have
-feedback or are interested in providing liquidity for additional token
-allocation (or have referrals who may be interested).
