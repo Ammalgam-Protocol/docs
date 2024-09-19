@@ -10,7 +10,7 @@ import { Tweet } from 'react-tweet';
 
 Ammalgam is a completely new primitive that combines lending and trading into
 one protocol called a Decentralized Lending Exchange (DLEX). This simple
-combination creates Capital Efficiency resulting in 20% increases in yield for
+combination creates Capital Efficiency resulting in 60% increases in yield for
 Liquidity Providers (LPs). It offers unbounded utility through unlimited
 trading strategies, catering to both advanced users and those preferring a UI
 designed for passive LPs. Lastly, it ensures true autonomy that is
@@ -26,29 +26,27 @@ fees way beyond the similar range created when using concentrated liquidity. In
 essence, instead of monitoring ranges, LPs now focus on liquidations but benefit
 from increased fees and, consequently, higher yields.
 
-
 ### Lending
 
 The lending and borrowing component of the DLEX involves the lending of X, Y,
-and K, derived from the X * Y = K Constant Market Maker (CMM) formula. The DLEX
+and K, derived from the X \* Y = K Constant Market Maker (CMM) formula. The DLEX
 offers expanded lending options in DeFi through three distinct methods:
 
-* Lending unutilized assets (X or Y) from the traditional V2 trading pool, which
+- Lending unutilized assets (X or Y) from the traditional V2 trading pool, which
   quotes swaps. This approach introduces new fees for Liquidity Providers (LPs),
   enhancing market-making yields.
-* Traditional DeFi lending and borrowing of X and Y, which is not included in
+- Traditional DeFi lending and borrowing of X and Y, which is not included in
   the trading reserves used to quote swaps. This is possible because Ammalgam
   built an overcollateralized lending protocol directly into the Uniswap V2 Pair
-  Contract. 
-* The DLEX structure uniquely permits the borrowing of K. This novel feature,
+  Contract.
+- The DLEX structure uniquely permits the borrowing of K. This novel feature,
   previously unfeasible, significantly impacts market making. When an LP
   participates in market making, they effectively deposit K into an exchange by
   supplying both assets of a pair. K remains constant, but as the deposited X
   and Y fluctuate in value relative to each other, they can cause impermanent
   loss. Borrowing K allows one to directly counteract this impermanent loss in
   any pair, leading to what is termed "Impermanent Gain." This concept is also
-  known as "borrowing liquidity" or "positive gamma." 
-
+  known as "borrowing liquidity" or "positive gamma."
 
 ### Capital Efficiency
 
@@ -63,11 +61,10 @@ was, in fact, solving a problem by leveraging the underlying inefficiency -
 adding yield by adding risk. Many passive and retail investors are unaware of
 the additional risk they are taking with concentrated liquidity.
 
-
 Ammalgam addresses the issue by first leveraging idle assets in V2 to increase
 fees for LPs. If this enhanced capital efficiency does not fully meet trader’s
 needs, they have the option to apply additional leverage for further yield
-increases. 
+increases.
 
 In the tweet below, Hayden suggests LPs diversify their assets between V3 and
 lending protocols to mitigate the heightened risks associated with V3 market
@@ -76,7 +73,6 @@ Additionally, it utilizes the unused assets in V2 to generate additional yield
 for LPs.
 
 <Tweet id="1452832342788169732" />
-
 
 ### Utility (δ, γ)
 
@@ -89,18 +85,18 @@ independently or in combination.
 This new utility stems from two concepts familiar to options traders which,
 Ammalgam now simplifies for retail traders: delta and gamma.
 
-* Delta essentially represents the lending or borrowing of an asset, such as X or
-Y on a DLEX. For example, X is USDC and Y is Bitcoin, one can short Bitcoin on a
-DLEX by borrowing Bitcoin and selling it for USDC. 
-* Gamma refers to exposure in market making, the flip side of the X * Y =K
-formula. With gamma on a DLEX, one can borrow K, essentially inverting
-traditional market making. Instead of supplying X and Y, which creates inherent
-exposure to impermanent loss, borrowing K flips this exposure to ‘impermanent
-gain’.
+- Delta essentially represents the lending or borrowing of an asset, such as X or
+  Y on a DLEX. For example, X is USDC and Y is Bitcoin, one can short Bitcoin on a
+  DLEX by borrowing Bitcoin and selling it for USDC.
+- Gamma refers to exposure in market making, the flip side of the X \* Y =K
+  formula. With gamma on a DLEX, one can borrow K, essentially inverting
+  traditional market making. Instead of supplying X and Y, which creates inherent
+  exposure to impermanent loss, borrowing K flips this exposure to ‘impermanent
+  gain’.
 
 Delta allows strategies by manipulating borrowed or lent assets. These range
 from traditional market making to leveraged market making (akin to concentrated
-liquidity) to short market making to delta neutral market making. 
+liquidity) to short market making to delta neutral market making.
 
 For instance, in the current DeFi space, establishing a delta neutral market
 making position requires interacting with multiple protocols, often requiring
@@ -110,7 +106,7 @@ protocol extracts fees. Ammalgam obviates the need for technical skills and
 eliminates the extraneous fees from each protocol, thus recomposing DeFi.
 
 Adding the ability to borrow or lend Gamma, a DLEX empowers users to create
-options and perpetuals, including straddles, and access to impermanent gain. 
+options and perpetuals, including straddles, and access to impermanent gain.
 
 If a market maker anticipates the prices to remain outside of a narrow range, up
 or down, they currently need to combine options protocols with other tools.
@@ -135,17 +131,16 @@ payout strategy can be crafted with or without leverage.
 
 Ammalgam intends to democratize DeFi for retail investors. As such, the UI is
 designed to show the impact of delta and gamma on any position simply and
-transparently. Ammalgam further created a preset menu of recipes for users: 
+transparently. Ammalgam further created a preset menu of recipes for users:
 
-* Market Making (descriptions of each to follow or be linked)
-* Short or Long
-* Leveraged Market Making
-* Delta Neutral Market Making
-* Short or Long Market Making
-* Straddles
-* Calls or Puts
-* Perpetuals
-
+- Market Making (descriptions of each to follow or be linked)
+- Short or Long
+- Leveraged Market Making
+- Delta Neutral Market Making
+- Short or Long Market Making
+- Straddles
+- Calls or Puts
+- Perpetuals
 
 #### Payout charts
 
