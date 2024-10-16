@@ -1,5 +1,5 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/922bb12a291a5f6729dd85abc24fc6fec504a108/contracts/libraries/Validation.sol)
 
 
 ## State Variables
@@ -13,7 +13,7 @@ uint256 public constant POW2_96 = 79_228_162_514_264_337_593_543_950_336;
 ## Functions
 ### validateSolvency
 
-Added TokenType and uint256s for amount, balance from, and balance to
+Added uint8 and uint256s for amount, balance from, and balance to
 to enable to pass a value for the current balance of a token to avoid one
 check of a balance that can be done from within a token.
 
@@ -27,10 +27,10 @@ function validateSolvency(InputParams memory inputParams) internal pure;
 
 ```solidity
 function verifyNotSameAssetsSuppliedAndBorrowed(
-    uint256 depositedX,
-    uint256 depositedY,
-    uint256 borrowedX,
-    uint256 borrowedY
+    uint256 depositedXAssets,
+    uint256 depositedYAssets,
+    uint256 borrowedXAssets,
+    uint256 borrowedYAssets
 ) internal pure;
 ```
 
@@ -52,26 +52,24 @@ function verifyMaxBorrowL(VerifyMaxBorrowLParams memory params) internal pure;
 
 
 ```solidity
-function getDepositsInL(InputParams memory inputParams)
-    private
-    pure
-    returns (uint256 netDepositedXinL, uint256 netDepositedYinL);
+function getDepositsInL(
+    InputParams memory inputParams
+) private pure returns (uint256 netDepositedXinLAssets, uint256 netDepositedYinLAssets);
 ```
 
 ### getBorrowedInL
 
 
 ```solidity
-function getBorrowedInL(InputParams memory inputParams)
-    private
-    pure
-    returns (uint256 netBorrowedXinL, uint256 netBorrowedYinL);
+function getBorrowedInL(
+    InputParams memory inputParams
+) private pure returns (uint256 netBorrowedXinLAssets, uint256 netBorrowedYinLAssets);
 ```
 
 ### convertXToL
 
 The original math:
-$ L * activeLiquidityScaler = x / 2 * \sqrt{p} $
+L * activeLiquidityScaler = x / (2 * sqrt(p))
 previous equation:
 amountL = Math.mulDiv(amount, POW2_96, 2 * sqrtPriceX96Range, rounding);
 adding activeLiquidityScaler:
@@ -95,7 +93,7 @@ function convertXToL(
 
 ### convertYToL
 
-The simplified math: $L = y * \sqrt{p} / 2$
+The simplified math: L = y * sqrt(p) / 2
 Math.mulDiv(amount, sqrtPriceX96Range, 2 * POW2_96, rounding);
 amountL = amount * sqrtPriceX96RangeScaled / 2 * POW2_96
 sqrtPriceX96RangeScaled = sqrtPriceX96Range / activeLiquidityScaler / POW2_96;
@@ -126,66 +124,55 @@ function checkLtv(CheckLtvParams memory checkLtvParams, InputParams memory input
 ### increaseForSlippage
 
 Calculates the impact slippage of buying the debt in the dex using the currently
-available liquidity $L = \sqrt{x \cdot y}$.
-Uses a few formulas to simplify to not need reserves to calculate the required collateral to buy the debt.
-
-Let the fee be represented as 
-
+available liquidity $L = \sqrt{x \cdot y}$. Uses a few formulas to simplify to not need
+reserves to calculate the required collateral to buy the debt.
+Let the fee be represented as
 ```math
 \phi = 1 - fee
 ```
-
 The reserves available in and out for swapping can be defined in terms of $L$, and price $p$
 ```math
-\begin{align*}  
+\begin{align*}
 reserveIn &= L \cdot \sqrt{p} \\
 reserveOut &= \frac{L}{ \sqrt{p} } \\
 \end{align*}
 ```
-
 The swap amount $in$ and $out$ can also be defined in terms of $L_{in}$ and
-$L_{out}$ 
+$L_{out}$
 ```math
 \begin{align*}
 in &= L_{in} \cdot 2 \cdot \sqrt{p}
 out &= \frac{  2 \cdot L_{out} }{ \sqrt{p} }
 \end{align*}
-
 ```
-
 Starting with our swap equation we solve for $in$
-
 ```math
-\begin{align*}  
-(in \cdot \phi + reserveIn)(reserveOut - out) &= reserveOut \cdot reserveIn \\ 
-
-in \cdot \phi &= \frac{reserveOut \cdot reserveIn} {reserveOut - out} - reserveIn \\ 
+\begin{align*}
+(in \cdot \phi + reserveIn)(reserveOut - out) &= reserveOut \cdot reserveIn \\
+in \cdot \phi &= \frac{reserveOut \cdot reserveIn} {reserveOut - out} - reserveIn \\
 in \cdot \phi &= reserveIn \cdot \left(\frac{reserveOut } {reserveOut - out} - 1 \right) \\
 in \cdot \phi &= reserveIn \cdot \frac{ reserveOut - (reserveOut - out) } { reserveOut - out } \\
 in \cdot \phi &= \frac{ reserveIn \cdot out } { reserveOut - out } \\
 \end{align*}
 ```
-
 We now plug in liquidity values in place of $reserveIn$, $reserveOut$, $in$, and $out$.
 ```math
 \begin{align*}
-L_{in} \cdot 2 \cdot \sqrt{p} \cdot \phi 
-  &=  \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
-    { \frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} } } \\
-
-L_{in} \cdot \phi 
-  &= \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
-    { 2 \cdot \sqrt{p} \cdot  \left(\frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} }\right)} \\
- 
+L_{in} \cdot 2 \cdot \sqrt{p} \cdot \phi
+&=  \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
+{ \frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} } } \\
+L_{in} \cdot \phi
+&= \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
+{ 2 \cdot \sqrt{p} \cdot  \left(\frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} }\right)} \\
 L_{in}
-  &=  \frac { L \cdot  L_{out} }
-    { \phi  \cdot (L - 2 \cdot L_{out}) } \\
+&=  \frac { L \cdot  L_{out} }
+{ \phi  \cdot (L - 2 \cdot L_{out}) } \\
 \end{align*}
 ```
-
 Using $L_{out}$ described in our method as `debtL`, $L$ or `activeLiquidity`,
 and our fee, we use the above equation to solve for the amount of liquidity that
 must come in to buy the debt.
+
 
 ```solidity
 function increaseForSlippage(uint256 debtL, uint256 activeLiquidity) private pure returns (uint256);
@@ -206,16 +193,10 @@ function checkLeverage(CheckLtvParams memory checkLtvParams, uint8 allowedLevera
 ```
 
 ## Errors
-### AmmalgamTransferAmtExceedsBalance
+### InsufficientLiquidity
 
 ```solidity
-error AmmalgamTransferAmtExceedsBalance();
-```
-
-### AmmalgamInsufficientLiquidity
-
-```solidity
-error AmmalgamInsufficientLiquidity();
+error InsufficientLiquidity();
 ```
 
 ### AmmalgamCannotBorrowAgainstSameCollateral
@@ -230,10 +211,10 @@ error AmmalgamCannotBorrowAgainstSameCollateral();
 error AmmalgamMaxBorrowReached();
 ```
 
-### AmmalgamDepositIsNotStrictL_yBigger
+### AmmalgamDepositIsNotStrictlyBigger
 
 ```solidity
-error AmmalgamDepositIsNotStrictL_yBigger();
+error AmmalgamDepositIsNotStrictlyBigger();
 ```
 
 ### AmmalgamLTV
@@ -259,16 +240,15 @@ error AmmalgamTooMuchLeverage();
 
 ```solidity
 struct InputParams {
-    uint256 depositedX;
-    uint256 depositedY;
-    uint256 depositedL;
-    uint256 borrowedX;
-    uint256 borrowedY;
-    uint256 borrowedL;
-    TokenType tokenType;
-    address toCheck;
-    uint256 amount;
-    uint256 balanceFrom;
+    uint256 depositedXAssets;
+    uint256 depositedYAssets;
+    uint256 depositedLAssets;
+    uint256 borrowedXAssets;
+    uint256 borrowedYAssets;
+    uint256 borrowedLAssets;
+    uint8 tokenType;
+    uint256 amountInAssets;
+    uint256 balanceFromInAssets;
     uint256 sqrtPriceX96Min;
     uint256 sqrtPriceX96Max;
     uint256 activeLiquidityScaler;
@@ -282,11 +262,11 @@ struct InputParams {
 
 ```solidity
 struct CheckLtvParams {
-    uint256 netDepositedXinL;
-    uint256 netDepositedYinL;
-    uint256 netBorrowedXinL;
-    uint256 netBorrowedYinL;
-    uint256 depositedL;
+    uint256 netDepositedXinLAssets;
+    uint256 netDepositedYinLAssets;
+    uint256 netBorrowedXinLAssets;
+    uint256 netBorrowedYinLAssets;
+    uint256 depositedLAssets;
     uint8 ltv;
 }
 ```

@@ -1,29 +1,12 @@
 # ITokenFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/interfaces/factories/ITokenFactory.sol)
-
-Interface for the AmmalgamTokenFactory contract, which is responsible for creating new instances of AmmalgamERC20 tokens.
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/922bb12a291a5f6729dd85abc24fc6fec504a108/contracts/interfaces/factories/ITokenFactory.sol)
 
 
 ## Functions
-### newTokens
-
-Creates new instances of AmmalgamERC20 tokens for the given token addresses.
+### createToken
 
 
 ```solidity
-function newTokens(address tokenX, address tokenY) external returns (IAmmalgamERC20[6] memory);
+function createToken(ERC20BaseConfig memory config, address _asset) external returns (IAmmalgamERC20);
 ```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`tokenX`|`address`|The address of tokenX.|
-|`tokenY`|`address`|The address of tokenY.|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`<none>`|`IAmmalgamERC20[6]`|An array of IAmmalgamERC20 tokens consisting of [liquidityToken, depositXToken, depositYToken, borrowXToken, borrowYToken, borrowLToken].|
-
 
