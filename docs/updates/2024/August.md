@@ -39,7 +39,7 @@ The remaining work we have to do includes three high level items, interest logic
 
 We have deployed a prerelease interest rate logic. This is a big milestone as it allows for us to finalize designs on the front end to show accrued interest.
 
-![Screenshot 2024-09-09 at 1.40.24 PM.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/002edca2-75be-4ac7-bab0-95260fc38672/ef325f9d-a42f-4eeb-9df6-8f559a272234/Screenshot_2024-09-09_at_1.40.24_PM.png)
+![Deploying on Sepolia](./assets/Deployed_Code.png)
 
 https://sepolia.etherscan.io/address/0x80891ae9f474c4105a5f6b13a68610cb9d1337a5
 
