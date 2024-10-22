@@ -1,4 +1,15 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/docs/updates/November_2023", "destination": "/docs/updates/2023/November", "permanent": true },
+    { "source": "/docs/updates/December_2023", "destination": "/docs/updates/2022/December", "permanent": true },
+    { "source": "/docs/updates/January_2024", "destination": "/docs/updates/2024/January", "permanent": true },
+    { "source": "/docs/updates/February_2024", "destination": "/docs/updates/2024/February", "permanent": true },
+    { "source": "/docs/updates/March_2024", "destination": "/docs/updates/2024/March", "permanent": true },
+    { "source": "/docs/updates/April_2024", "destination": "/docs/updates/2024/April", "permanent": true },
+    { "source": "/docs/updates/May_2024", "destination": "/docs/updates/2024/May", "permanent": true },
+    { "source": "/docs/updates/June_2024", "destination": "/docs/updates/2024/June", "permanent": true },
+    { "source": "/docs/updates/July_2024", "destination": "/docs/updates/2024/July", "permanent": true }
+  ]
 }
 
