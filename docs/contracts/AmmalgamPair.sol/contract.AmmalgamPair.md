@@ -1,85 +1,72 @@
 # AmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/AmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/922bb12a291a5f6729dd85abc24fc6fec504a108/contracts/AmmalgamPair.sol)
 
 **Inherits:**
-[IAmmalgamPair](/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md), [AmmalgamERC20Controller](/contracts/tokens/AmmalgamERC20Controller.sol/contract.AmmalgamERC20Controller.md)
+[IAmmalgamPair](/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md), [TokenController](/contracts/tokens/TokenController.sol/contract.TokenController.md)
 
 
 ## State Variables
 ### MINIMUM_LIQUIDITY
 
 ```solidity
-uint256 public constant MINIMUM_LIQUIDITY = 10 ** 3;
+uint256 private constant MINIMUM_LIQUIDITY = 10 ** 3;
 ```
 
 
 ### LTV
 
 ```solidity
-uint8 public constant override LTV = 75;
+uint8 private constant LTV = 75;
 ```
 
 
 ### MAX_BORROW
 
 ```solidity
-uint8 public constant MAX_BORROW = 90;
+uint8 private constant MAX_BORROW = 90;
 ```
 
 
 ### ALLOWED_LIQUIDITY_LEVERAGE
 
 ```solidity
-uint8 public constant override ALLOWED_LIQUIDITY_LEVERAGE = 100;
+uint8 private constant ALLOWED_LIQUIDITY_LEVERAGE = 100;
 ```
 
 
 ### BUFFER
 
 ```solidity
-uint8 public constant BUFFER = 95;
-```
-
-
-### externalLiquidity
-
-```solidity
-uint112 public override externalLiquidity = 0;
+uint8 private constant BUFFER = 95;
 ```
 
 
 ### factory
 
 ```solidity
-address public immutable factory;
+address private immutable factory;
 ```
 
 
 ### feeToSetter
 
 ```solidity
-address public immutable feeToSetter;
+address private immutable feeToSetter;
 ```
 
 
-### activeLiquidity
+### sharesToAssetsScaler
 
 ```solidity
-uint112 private activeLiquidity;
+Scalers internal sharesToAssetsScaler =
+    Scalers({sharesToAssets: [uint128(RAY), uint128(RAY), uint128(RAY), uint128(RAY), uint128(RAY), uint128(RAY)]});
 ```
 
 
-### activeLiquidityScaler
+### lastLendingTimestampUpdate
 
 ```solidity
-uint256 private activeLiquidityScaler;
-```
-
-
-### obs
-
-```solidity
-GeometricBWAP.Observations private obs;
+uint256 private lastLendingTimestampUpdate;
 ```
 
 
@@ -97,38 +84,38 @@ uint112 private reserveY;
 ```
 
 
-### depositedX
+### missingX
 
 ```solidity
-uint112 private depositedX;
+uint112 private missingX;
 ```
 
 
-### depositedY
+### missingY
 
 ```solidity
-uint112 private depositedY;
+uint112 private missingY;
 ```
 
 
-### borrowedX
+### shares
 
 ```solidity
-uint112 private borrowedX;
+uint112[6] internal shares;
 ```
 
 
-### borrowedY
+### externalLiquidity
 
 ```solidity
-uint112 private borrowedY;
+uint112 internal externalLiquidity = 0;
 ```
 
 
-### kLast
+### observations
 
 ```solidity
-uint256 public kLast;
+GeometricBWAP.Observations internal observations;
 ```
 
 
@@ -139,26 +126,26 @@ uint256 private unlocked = 1;
 ```
 
 
-### missingX
-
-```solidity
-uint112 public override missingX;
-```
-
-
-### missingY
-
-```solidity
-uint112 public override missingY;
-```
-
-
 ## Functions
+### _lock
+
+
+```solidity
+function _lock() private view;
+```
+
 ### lock
 
 
 ```solidity
 modifier lock();
+```
+
+### _onlyFeeToSetter
+
+
+```solidity
+function _onlyFeeToSetter() private view;
 ```
 
 ### onlyFeeToSetter
@@ -175,11 +162,18 @@ modifier onlyFeeToSetter();
 constructor();
 ```
 
+### missingAssets
+
+
+```solidity
+function missingAssets() public view returns (uint112, uint112);
+```
+
 ### updateExternalLiquidity
 
 
 ```solidity
-function updateExternalLiquidity(uint112 externalLiquidity_) external override onlyFeeToSetter;
+function updateExternalLiquidity(uint112 externalLiquidity_) external onlyFeeToSetter;
 ```
 
 ### mint
@@ -210,6 +204,19 @@ function swap(uint256 amountXOut, uint256 amountYOut, address to, bytes calldata
 function deposit(address to) external lock;
 ```
 
+### updateDepositShares
+
+
+```solidity
+function updateDepositShares(
+    uint8 depositedTokenType,
+    uint256 amount,
+    uint112 reserve,
+    uint112 missing,
+    address to
+) private returns (uint256 adjustReserves);
+```
+
 ### withdraw
 
 withdraw X and/or Y
@@ -219,11 +226,39 @@ withdraw X and/or Y
 function withdraw(address to) external lock;
 ```
 
+### updateWithdrawShares
+
+
+```solidity
+function updateWithdrawShares(address to, uint8 depositedTokenType) private returns (uint256 assets);
+```
+
 ### borrow
 
 
 ```solidity
-function borrow(address to, uint256 amountX, uint256 amountY, bytes calldata data) external lock;
+function borrow(address to, uint256 amountXAssets, uint256 amountYAssets, bytes calldata data) external lock;
+```
+
+### borrowHelper
+
+
+```solidity
+function borrowHelper(
+    Validation.VerifyMaxBorrowXYParams memory maxBorrowParams,
+    address to,
+    uint256 amountAssets,
+    uint112 reserve,
+    uint8 borrowedTokenType,
+    uint8 depositedTokenType
+) private;
+```
+
+### updateBorrowOrDepositSharesHelper
+
+
+```solidity
+function updateBorrowOrDepositSharesHelper(address to, uint8 tokenType, uint256 amountAssets) private;
 ```
 
 ### borrowLiquidity
@@ -244,14 +279,26 @@ function borrowLiquidity(
 function repay(address onBehalfOf) public lock;
 ```
 
+### repayHelper
+
+
+```solidity
+function repayHelper(
+    address onBehalfOf,
+    uint256 amountAssets,
+    uint112 reserve,
+    uint112 missing,
+    uint8 borrowTokenType
+) private returns (uint256 adjustedReserves);
+```
+
 ### repayLiquidity
 
 
 ```solidity
-function repayLiquidity(address onBehalfOf)
-    public
-    lock
-    returns (uint256 amountX, uint256 amountY, uint256 repayAmountL);
+function repayLiquidity(
+    address onBehalfOf
+) public lock returns (uint256 amountX, uint256 amountY, uint256 repayAmountL);
 ```
 
 ### depletionReserveAdjustmentWhenLiquidityIsAdded
@@ -273,7 +320,7 @@ function depletionReserveAdjustmentWhenLiquidityIsAdded(
     uint112 reserve_,
     uint256 amount_,
     uint256 missing_,
-    uint256 activeLiquidity_
+    uint256 activeLiquidityAssets
 ) private pure returns (uint256);
 ```
 
@@ -319,125 +366,213 @@ function getReserves() public view returns (uint112 _reserveX, uint112 _reserveY
 function updateMissingAssets() private;
 ```
 
-### _update
+### accrueInterest
 
 
 ```solidity
-function _update(uint256 balanceX, uint256 balanceY, uint112 _reserveX, uint112 _reserveY) private;
+function accrueInterest() private returns (uint112, uint112);
 ```
 
-### _mintFee
+### updateObservation
 
 
 ```solidity
-function _mintFee(uint112 _reserveX, uint112 _reserveY) private returns (bool feeOn);
+function updateObservation(uint112 _reserveX, uint112 _reserveY) private;
+```
+
+### updateReserves
+
+
+```solidity
+function updateReserves(uint256 _reserveX, uint256 _reserveY) private;
 ```
 
 ### validateSolvency
 
 
 ```solidity
-function validateSolvency(TokenType tokenType, address toCheck, uint256 amount, uint256 balanceFrom) public view;
-```
-
-### getNetAmounts
-
-
-```solidity
-function getNetAmounts() private view returns (uint256 amountX, uint256 amountY);
+function validateSolvency(uint8 tokenType, address toCheck, uint256 sharesSentIn, uint256 sharesFrom) public view;
 ```
 
 ### configLongTermInterval
 
 
 ```solidity
-function configLongTermInterval(uint24 longTermIntervalConfig) external onlyFeeToSetter;
+function configLongTermInterval(uint24 longTermIntervalConfigFactor) external onlyFeeToSetter;
 ```
 
-### getObservations
+### getNetBalances
 
 
 ```solidity
-function getObservations() external view override returns (GeometricBWAP.Observations memory);
+function getNetBalances(uint112 _reserveX, uint112 _reserveY) internal view returns (uint256, uint256);
 ```
 
-### getTickRange
+### transferAssets
 
 
 ```solidity
-function getTickRange() external view returns (int24, int24);
+function transferAssets(address to, uint256 amountX, uint256 amountY) private;
+```
+
+### convertSharesToAssets
+
+
+```solidity
+function convertSharesToAssets(uint8 tokenType, uint256 _shares) private view returns (uint256 _assets);
+```
+
+### convertSharesToAssets
+
+
+```solidity
+function convertSharesToAssets(
+    uint8 tokenType,
+    uint256 _shares,
+    Math.Rounding rounding
+) private view returns (uint256);
+```
+
+### convertAssetsToShares
+
+
+```solidity
+function convertAssetsToShares(uint8 tokenType, uint256 _assets) private view returns (uint112 _shares);
+```
+
+### isDeposit
+
+
+```solidity
+function isDeposit(uint8 tokenType) private pure returns (bool);
+```
+
+### getLiquidityScalerAndActiveLiquidityAssets
+
+
+```solidity
+function getLiquidityScalerAndActiveLiquidityAssets() internal view returns (uint256, uint256, uint112);
+```
+
+### getAssets
+
+
+```solidity
+function getAssets(uint8 tokenType, address toCheck) private view returns (uint256);
+```
+
+### getAssets
+
+
+```solidity
+function getAssets(uint8 tokenType) private view returns (uint256);
+```
+
+### calcMinLiquidityConsideringDepletion
+
+
+```solidity
+function calcMinLiquidityConsideringDepletion(
+    uint112 _reserveX,
+    uint112 _reserveY,
+    uint256 amountX,
+    uint256 amountY,
+    uint112 activeLiquidityAssets,
+    uint256 scalerDL
+) private view returns (uint256 liquidity);
+```
+
+### calcLiquidityConsideringDepletion
+
+
+```solidity
+function calcLiquidityConsideringDepletion(
+    uint112 reserve,
+    uint256 amount,
+    uint256 missing,
+    uint112 activeLiquidityAssets,
+    uint256 scalerDL
+) private pure returns (uint256 liquidity);
+```
+
+### computeScaler
+
+
+```solidity
+function computeScaler(uint8 tokenType) public view returns (uint128 newScaler);
+```
+
+### toUint112
+
+
+```solidity
+function toUint112(uint256 value) private pure returns (uint112);
 ```
 
 ## Errors
-### AmmalgamLocked
+### Locked
 
 ```solidity
-error AmmalgamLocked();
+error Locked();
 ```
 
-### AmmalgamForbidden
+### Forbidden
 
 ```solidity
-error AmmalgamForbidden();
+error Forbidden();
 ```
 
-### AmmalgamInsufficientLiquidityMinted
+### InsufficientLiquidityMinted
 
 ```solidity
-error AmmalgamInsufficientLiquidityMinted();
+error InsufficientLiquidityMinted();
 ```
 
-### AmmalgamInsufficientLiquidityBurned
+### InsufficientLiquidityBurned
 
 ```solidity
-error AmmalgamInsufficientLiquidityBurned();
+error InsufficientLiquidityBurned();
 ```
 
-### AmmalgamInsufficientOutputAmount
+### InsufficientOutputAmount
 
 ```solidity
-error AmmalgamInsufficientOutputAmount();
+error InsufficientOutputAmount();
 ```
 
-### AmmalgamInsufficientInputAmount
+### InsufficientInputAmount
 
 ```solidity
-error AmmalgamInsufficientInputAmount();
+error InsufficientInputAmount();
 ```
 
-### AmmalgamInsufficientLiquidity
+### InsufficientLiquidity
 
 ```solidity
-error AmmalgamInsufficientLiquidity();
+error InsufficientLiquidity();
 ```
 
-### AmmalgamInvalidToAddress
+### InvalidToAddress
 
 ```solidity
-error AmmalgamInvalidToAddress();
+error InvalidToAddress();
 ```
 
-### AmmalgamK
+### K
 
 ```solidity
-error AmmalgamK();
+error K();
 ```
 
-### AmmalgamDepositOverflow
+### InsufficientRepayLiquidity
 
 ```solidity
-error AmmalgamDepositOverflow();
+error InsufficientRepayLiquidity();
 ```
 
-### AmmalgamInsufficientRepayLiquidity
+### Overflow
 
 ```solidity
-error AmmalgamInsufficientRepayLiquidity();
-```
-
-### AmmalgamOverflow
-
-```solidity
-error AmmalgamOverflow();
+error Overflow();
 ```
 
