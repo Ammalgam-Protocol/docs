@@ -1,29 +1,11 @@
 # TickMath
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/libraries/TickMath.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/922bb12a291a5f6729dd85abc24fc6fec504a108/contracts/libraries/TickMath.sol)
 
 Computes sqrt price for ticks of size 1.0001, i.e. sqrt(1.0001^tick) as fixed point Q64.96 numbers. Supports
 prices between 2**-128 and 2**128
 
 
 ## State Variables
-### MIN_TICK
-*The minimum tick that may be passed to #getSqrtRatioAtTick computed from log base 1.0001 of 2**-128*
-
-
-```solidity
-int24 internal constant MIN_TICK = -887_272;
-```
-
-
-### MAX_TICK
-*The maximum tick that may be passed to #getSqrtRatioAtTick computed from log base 1.0001 of 2**128*
-
-
-```solidity
-int24 internal constant MAX_TICK = -MIN_TICK;
-```
-
-
 ### MIN_SQRT_RATIO
 *The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)*
 
