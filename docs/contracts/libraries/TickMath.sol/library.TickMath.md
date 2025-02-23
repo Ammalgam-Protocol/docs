@@ -1,92 +1,128 @@
 # TickMath
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/libraries/TickMath.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/083c00a2031e49494b12e5e222d9534812423631/contracts/libraries/TickMath.sol)
 
-Computes sqrt price for ticks of size 1.0001, i.e. sqrt(1.0001^tick) as fixed point Q64.96 numbers. Supports
-prices between 2**-128 and 2**128
+Computes sqrt price for ticks of size B=(1-2^-9)^-1 as fixed point Q128 numbers. Supports
+prices between 2**-112 and 2**112-1
 
 
 ## State Variables
-### MIN_TICK
-*The minimum tick that may be passed to #getSqrtRatioAtTick computed from log base 1.0001 of 2**-128*
-
+### B_IN_Q128
 
 ```solidity
-int24 internal constant MIN_TICK = -887_272;
+uint256 internal constant B_IN_Q128 = 0x100804020100804020100804020100805;
+```
+
+
+### BASE_CHANGE_CONSTANT_IN_Q128
+
+```solidity
+int256 private constant BASE_CHANGE_CONSTANT_IN_Q128 = 0xb145b7be86780ae93f;
+```
+
+
+### TICK_LOW_ERROR_CORRECTION_IN_Q128
+
+```solidity
+int256 private constant TICK_LOW_ERROR_CORRECTION_IN_Q128 = 0x1f6d22eefc342687357a94df44b0dbf;
+```
+
+
+### TICK_HI_ERROR_CORRECTION_IN_Q128
+
+```solidity
+int256 private constant TICK_HI_ERROR_CORRECTION_IN_Q128 = 0xb33c8bdbc23c5eaf1cd8140681512562;
+```
+
+
+### MIN_PRICE_IN_Q128
+
+```solidity
+uint256 internal constant MIN_PRICE_IN_Q128 = 0x10000;
+```
+
+
+### MAX_PRICE_IN_Q128
+
+```solidity
+uint256 internal constant MAX_PRICE_IN_Q128 = 0xffffffffffffffffffffffffffff00000000000000000000000000000000;
+```
+
+
+### MIN_SQRT_PRICE_IN_Q128
+
+```solidity
+uint256 constant MIN_SQRT_PRICE_IN_Q128 = 0xffc029ab6df090b37e;
+```
+
+
+### MAX_SQRT_PRICE_IN_Q128
+
+```solidity
+uint256 constant MAX_SQRT_PRICE_IN_Q128 = 0xffbfc6509a7540f2db82e1f475e2c218a22bd92d7c18c3;
+```
+
+
+### MIN_TICK
+
+```solidity
+int16 internal constant MIN_TICK = -0x4d8f;
 ```
 
 
 ### MAX_TICK
-*The maximum tick that may be passed to #getSqrtRatioAtTick computed from log base 1.0001 of 2**128*
-
 
 ```solidity
-int24 internal constant MAX_TICK = -MIN_TICK;
-```
-
-
-### MIN_SQRT_RATIO
-*The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)*
-
-
-```solidity
-uint160 internal constant MIN_SQRT_RATIO = 4_295_128_739;
-```
-
-
-### MAX_SQRT_RATIO
-*The maximum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MAX_TICK)*
-
-
-```solidity
-uint160 internal constant MAX_SQRT_RATIO = 1_461_446_703_485_210_103_287_273_052_203_988_822_378_723_970_342;
+int16 internal constant MAX_TICK = -MIN_TICK - 1;
 ```
 
 
 ## Functions
-### getSqrtRatioAtTick
-
-Calculates sqrt(1.0001^tick) * 2^96
-
-*Throws if |tick| > max tick*
+### getSqrtPriceAtTick
 
 
 ```solidity
-function getSqrtRatioAtTick(int24 tick) internal pure returns (uint160 sqrtPriceX96);
+function getSqrtPriceAtTick(
+    int16 tick
+) internal pure returns (uint256 sqrtPriceInQ128);
 ```
-**Parameters**
 
-|Name|Type|Description|
-|----|----|-----------|
-|`tick`|`int24`|The input tick for the above formula|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`sqrtPriceX96`|`uint160`|A Fixed point Q64.96 number representing the sqrt of the ratio of the two assets (token1/token0) at the given tick|
-
-
-### getTickAtSqrtRatio
-
-Calculates the greatest tick value such that getRatioAtTick(tick) `<=` ratio
-
-*Throws in case sqrtPriceX96 < MIN_SQRT_RATIO, as MIN_SQRT_RATIO is the lowest value getRatioAtTick may
-ever return.*
+### getTickAtPrice
 
 
 ```solidity
-function getTickAtSqrtRatio(uint160 sqrtPriceX96) internal pure returns (int24 tick);
+function getTickAtPrice(
+    uint256 priceInQ128
+) internal pure returns (int16);
 ```
-**Parameters**
 
-|Name|Type|Description|
-|----|----|-----------|
-|`sqrtPriceX96`|`uint160`|The sqrt ratio for which to compute the tick as a Q64.96|
+### getPriceAtTick
 
-**Returns**
 
-|Name|Type|Description|
-|----|----|-----------|
-|`tick`|`int24`|The greatest tick for which the ratio is less than or equal to the input ratio|
+```solidity
+function getPriceAtTick(
+    int16 tick
+) internal pure returns (uint256 priceInQ128);
+```
 
+### applyMultiplications
+
+
+```solidity
+function applyMultiplications(
+    uint256 absTick
+) private pure returns (uint256 valueInQ128);
+```
+
+## Errors
+### PriceOutOfBounds
+
+```solidity
+error PriceOutOfBounds();
+```
+
+### TickOutOfBounds
+
+```solidity
+error TickOutOfBounds();
+```
 

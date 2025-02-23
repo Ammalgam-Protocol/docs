@@ -1,8 +1,8 @@
 # AmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/factories/AmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/083c00a2031e49494b12e5e222d9534812423631/contracts/factories/AmmalgamFactory.sol)
 
 **Inherits:**
-[IAmmalgamFactory](/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md), [IAmmalgamFactoryCallback](/contracts/interfaces/factories/IAmmalgamFactoryCallback.sol/interface.IAmmalgamFactoryCallback.md)
+[IAmmalgamFactory](/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md), [IFactoryCallback](/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
 
 
 ## State Variables
@@ -10,6 +10,20 @@
 
 ```solidity
 address public immutable tokenFactory;
+```
+
+
+### pairFactory
+
+```solidity
+address public immutable pairFactory;
+```
+
+
+### pluginRegistry
+
+```solidity
+address public immutable pluginRegistry;
 ```
 
 
@@ -27,17 +41,10 @@ address public feeToSetter;
 ```
 
 
-### pairBytes
-
-```solidity
-bytes private pairBytes;
-```
-
-
 ### config
 
 ```solidity
-IAmmalgamFactoryCallback.TokenFactoryConfig private config;
+IFactoryCallback.TokenFactoryConfig private config;
 ```
 
 
@@ -67,7 +74,7 @@ modifier onlyFeeToSetter();
 
 
 ```solidity
-constructor(address _feeToSetter, address _tokenFactory, bytes memory _pairBytes);
+constructor(address _feeToSetter, address _tokenFactory, address _pairFactory, address _pluginRegistry);
 ```
 
 ### allPairsLength
@@ -84,25 +91,36 @@ function allPairsLength() external view returns (uint256);
 function createPair(address tokenA, address tokenB) external returns (address pair);
 ```
 
-### getTokenFactoryConfig
+### getConfig
 
 
 ```solidity
-function getTokenFactoryConfig() external view override returns (IAmmalgamFactoryCallback.TokenFactoryConfig memory);
+function getConfig() private view returns (IFactoryCallback.TokenFactoryConfig memory);
+```
+
+### generateTokensWithinFactory
+
+
+```solidity
+function generateTokensWithinFactory() external returns (IERC20, IERC20, IAmmalgamERC20[6] memory);
 ```
 
 ### setFeeTo
 
 
 ```solidity
-function setFeeTo(address newFeeTo) external onlyFeeToSetter;
+function setFeeTo(
+    address newFeeTo
+) external onlyFeeToSetter;
 ```
 
 ### setFeeToSetter
 
 
 ```solidity
-function setFeeToSetter(address newFeeToSetter) external onlyFeeToSetter;
+function setFeeToSetter(
+    address newFeeToSetter
+) external onlyFeeToSetter;
 ```
 
 ## Events
@@ -119,51 +137,57 @@ event NewFeeToSetter(address indexed feeToSetter);
 ```
 
 ## Errors
-### AmmalgamIdenticalAddresses
+### IdenticalAddresses
 
 ```solidity
-error AmmalgamIdenticalAddresses();
+error IdenticalAddresses();
 ```
 
-### AmmalgamZeroAddress
+### ZeroAddress
 
 ```solidity
-error AmmalgamZeroAddress();
+error ZeroAddress();
 ```
 
-### AmmalgamFeeToIsZeroAddress
+### FeeToIsZeroAddress
 
 ```solidity
-error AmmalgamFeeToIsZeroAddress();
+error FeeToIsZeroAddress();
 ```
 
-### AmmalgamFeeToSetterIsZeroAddress
+### FeeToSetterIsZeroAddress
 
 ```solidity
-error AmmalgamFeeToSetterIsZeroAddress();
+error FeeToSetterIsZeroAddress();
 ```
 
-### AmmalgamPairExists
+### PairExists
 
 ```solidity
-error AmmalgamPairExists();
+error PairExists();
 ```
 
-### AmmalgamBytecodeLengthZero
+### BytecodeLengthZero
 
 ```solidity
-error AmmalgamBytecodeLengthZero();
+error BytecodeLengthZero();
 ```
 
-### AmmalgamFailedOnDeploy
+### FailedOnDeploy
 
 ```solidity
-error AmmalgamFailedOnDeploy();
+error FailedOnDeploy();
 ```
 
-### AmmalgamForbidden
+### Forbidden
 
 ```solidity
-error AmmalgamForbidden();
+error Forbidden();
+```
+
+### NewTokensFailed
+
+```solidity
+error NewTokensFailed();
 ```
 
