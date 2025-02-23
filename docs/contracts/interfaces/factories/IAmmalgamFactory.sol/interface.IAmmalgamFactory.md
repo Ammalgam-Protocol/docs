@@ -1,5 +1,5 @@
 # IAmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/interfaces/factories/IAmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/interfaces/factories/IAmmalgamFactory.sol)
 
 
 ## Functions
@@ -61,7 +61,9 @@ Returns the pair address at a specific index.
 
 
 ```solidity
-function allPairs(uint256 index) external view returns (address pair);
+function allPairs(
+    uint256 index
+) external view returns (address pair);
 ```
 **Parameters**
 
@@ -119,7 +121,9 @@ Changes the fee recipient address.
 
 
 ```solidity
-function setFeeTo(address newFeeTo) external;
+function setFeeTo(
+    address newFeeTo
+) external;
 ```
 **Parameters**
 
@@ -134,7 +138,9 @@ Changes the address that can change the fee recipient.
 
 
 ```solidity
-function setFeeToSetter(address newFeeToSetter) external;
+function setFeeToSetter(
+    address newFeeToSetter
+) external;
 ```
 **Parameters**
 
