@@ -1,16 +1,43 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/083c00a2031e49494b12e5e222d9534812423631/contracts/libraries/Validation.sol)
+
+SPDX-License-Identifier: GPL-3.0-only
 
 
 ## State Variables
-### POW2_96
+### MAX_BORROW_PERCENTAGE
 
 ```solidity
-uint256 public constant POW2_96 = 79_228_162_514_264_337_593_543_950_336;
+uint256 private constant MAX_BORROW_PERCENTAGE = 90;
 ```
 
 
 ## Functions
+### getCheckLtvParams
+
+
+```solidity
+function getCheckLtvParams(
+    InputParams memory inputParams
+) internal pure returns (CheckLtvParams memory checkLtvParams);
+```
+
+### validateBalanceAndLiqAndNotSameAssetsSuppliedAndBorrowed
+
+
+```solidity
+function validateBalanceAndLiqAndNotSameAssetsSuppliedAndBorrowed(
+    InputParams memory inputParams
+) internal pure;
+```
+
+### validateLTVAndLeverage
+
+
+```solidity
+function validateLTVAndLeverage(InputParams memory inputParams, CheckLtvParams memory checkLtvParams) internal pure;
+```
+
 ### validateSolvency
 
 Added TokenType and uint256s for amount, balance from, and balance to
@@ -19,7 +46,9 @@ check of a balance that can be done from within a token.
 
 
 ```solidity
-function validateSolvency(InputParams memory inputParams) internal pure;
+function validateSolvency(
+    InputParams memory inputParams
+) internal pure;
 ```
 
 ### verifyNotSameAssetsSuppliedAndBorrowed
@@ -27,10 +56,10 @@ function validateSolvency(InputParams memory inputParams) internal pure;
 
 ```solidity
 function verifyNotSameAssetsSuppliedAndBorrowed(
-    uint256 depositedX,
-    uint256 depositedY,
-    uint256 borrowedX,
-    uint256 borrowedY
+    uint256 depositedXAssets,
+    uint256 depositedYAssets,
+    uint256 borrowedXAssets,
+    uint256 borrowedYAssets
 ) internal pure;
 ```
 
@@ -38,184 +67,187 @@ function verifyNotSameAssetsSuppliedAndBorrowed(
 
 
 ```solidity
-function verifyMaxBorrowXY(VerifyMaxBorrowXYParams memory params) internal pure;
+function verifyMaxBorrowXY(
+    VerifyMaxBorrowXYParams memory params
+) internal pure;
 ```
 
 ### verifyMaxBorrowL
 
 
 ```solidity
-function verifyMaxBorrowL(VerifyMaxBorrowLParams memory params) internal pure;
+function verifyMaxBorrowL(
+    VerifyMaxBorrowLParams memory params
+) internal pure;
 ```
 
 ### getDepositsInL
 
 
 ```solidity
-function getDepositsInL(InputParams memory inputParams)
-    private
-    pure
-    returns (uint256 netDepositedXinL, uint256 netDepositedYinL);
+function getDepositsInL(
+    InputParams memory inputParams
+) private pure returns (uint256 netDepositedXinLAssets, uint256 netDepositedYinLAssets);
 ```
 
 ### getBorrowedInL
 
 
 ```solidity
-function getBorrowedInL(InputParams memory inputParams)
-    private
-    pure
-    returns (uint256 netBorrowedXinL, uint256 netBorrowedYinL);
+function getBorrowedInL(
+    InputParams memory inputParams
+) private pure returns (uint256 netBorrowedXinLAssets, uint256 netBorrowedYinLAssets);
 ```
 
 ### convertXToL
 
 The original math:
-$ L * activeLiquidityScaler = x / 2 * \sqrt{p} $
+L * activeLiquidityScalerInQ128 = x / (2 * sqrt(p))
 previous equation:
-amountL = Math.mulDiv(amount, POW2_96, 2 * sqrtPriceX96Range, rounding);
-adding activeLiquidityScaler:
-amountL = (amount * POW2_96 / (2 * sqrtPriceX96Range)) / (activeLiquidityScaler / POW2_96);
+amountLAssets = Math.mulDiv(amount, Q128, 2 * sqrtPriceInQ128Range, rounding);
+adding activeLiquidityScalerInQ128:
+amountLAssets = (amount * Q128 / (2 * sqrtPriceInQ128Range)) / (activeLiquidityScalerInQ128 / Q128);
 simplify to:
-(amount * POW2_96 * POW2_96) / (2 * sqrtPriceX96Range * activeLiquidityScaler)
+(amount * Q128 * Q128) / (2 * sqrtPriceInQ128Range * activeLiquidityScalerInQ128)
 final equation:
-amountL = Math.mulDiv(Math.mulDiv(amount, POW2_96, sqrtPriceX96Range, rounding), POW2_96, 2 * activeLiquidityScaler, rounding);
+amountLAssets = Math.mulDiv(Math.mulDiv(amount, Q128, sqrtPriceInQ128Range, rounding), Q128, 2 * activeLiquidityScalerInQ128, rounding);
 or more simplified (failed for some tests)
-amountL = Math.mulDiv(amount, POW2_96 * POW2_96, 2 * sqrtPriceX96Range * activeLiquidityScaler);
+amountLAssets = Math.mulDiv(amount, Q128 * Q128, 2 * sqrtPriceInQ128Range * activeLiquidityScalerInQ128);
 
 
 ```solidity
 function convertXToL(
     uint256 amount,
-    uint256 sqrtPriceX96Range,
-    uint256 activeLiquidityScaler,
+    uint256 sqrtPriceInQ128Range,
+    uint256 activeLiquidityScalerInQ128,
     Math.Rounding rounding
-) private pure returns (uint256 amountL);
+) private pure returns (uint256 amountLAssets);
 ```
 
 ### convertYToL
 
-The simplified math: $L = y * \sqrt{p} / 2$
-Math.mulDiv(amount, sqrtPriceX96Range, 2 * POW2_96, rounding);
-amountL = amount * sqrtPriceX96RangeScaled / 2 * POW2_96
-sqrtPriceX96RangeScaled = sqrtPriceX96Range / activeLiquidityScaler / POW2_96;
+The simplified math: L = y * sqrt(p) / 2
+Math.mulDiv(amount, sqrtPriceInQ128Range, 2 * Q128, rounding);
+amountLAssets = amount * sqrtPriceInQ128RangeScaled / 2 * Q128
+sqrtPriceInQ128RangeScaled = sqrtPriceInQ128Range / activeLiquidityScalerInQ128 / Q128;
 simplify to:
-amount * sqrtPriceX96Range / activeLiquidityScaler / POW2_96 / 2 * POW2_96
+amount * sqrtPriceInQ128Range / activeLiquidityScalerInQ128 / Q128 / 2 * Q128
 simplify to:
-(amount * sqrtPriceX96Range) / (activeLiquidityScaler * 2)
+(amount * sqrtPriceInQ128Range) / (activeLiquidityScalerInQ128 * 2)
 final equation:
-amountL = Math.mulDiv(amount, sqrtPriceX96Range, 2 * activeLiquidityScaler, rounding);
+amountLAssets = Math.mulDiv(amount, sqrtPriceInQ128Range, 2 * activeLiquidityScalerInQ128, rounding);
 
 
 ```solidity
 function convertYToL(
     uint256 amount,
-    uint256 sqrtPriceX96Range,
-    uint256 activeLiquidityScaler,
+    uint256 sqrtPriceInQ128Range,
+    uint256 activeLiquidityScalerInQ128,
     Math.Rounding rounding
-) private pure returns (uint256 amountL);
+) private pure returns (uint256 amountLAssets);
+```
+
+### calcDebtAndCollateral
+
+
+```solidity
+function calcDebtAndCollateral(
+    CheckLtvParams memory checkLtvParams,
+    InputParams memory inputParams
+) internal pure returns (uint256 debtLiquidityAssets, uint256 collateralLiquidityAssets);
 ```
 
 ### checkLtv
 
 
 ```solidity
-function checkLtv(CheckLtvParams memory checkLtvParams, InputParams memory inputParams) private pure;
+function checkLtv(
+    CheckLtvParams memory checkLtvParams,
+    InputParams memory inputParams
+) private pure returns (uint256 debtLiquidityAssets, uint256 collateralLiquidityAssets);
 ```
 
 ### increaseForSlippage
 
 Calculates the impact slippage of buying the debt in the dex using the currently
-available liquidity $L = \sqrt{x \cdot y}$.
-Uses a few formulas to simplify to not need reserves to calculate the required collateral to buy the debt.
-
-Let the fee be represented as 
-
+available liquidity $L = \sqrt{x \cdot y}$. Uses a few formulas to simplify to not need
+reserves to calculate the required collateral to buy the debt.
+Let the fee be represented as
 ```math
 \phi = 1 - fee
 ```
-
 The reserves available in and out for swapping can be defined in terms of $L$, and price $p$
 ```math
-\begin{align*}  
+\begin{align*}
 reserveIn &= L \cdot \sqrt{p} \\
 reserveOut &= \frac{L}{ \sqrt{p} } \\
 \end{align*}
 ```
-
 The swap amount $in$ and $out$ can also be defined in terms of $L_{in}$ and
-$L_{out}$ 
+$L_{out}$
 ```math
 \begin{align*}
 in &= L_{in} \cdot 2 \cdot \sqrt{p}
 out &= \frac{  2 \cdot L_{out} }{ \sqrt{p} }
 \end{align*}
-
 ```
-
 Starting with our swap equation we solve for $in$
-
 ```math
-\begin{align*}  
-(in \cdot \phi + reserveIn)(reserveOut - out) &= reserveOut \cdot reserveIn \\ 
-
-in \cdot \phi &= \frac{reserveOut \cdot reserveIn} {reserveOut - out} - reserveIn \\ 
+\begin{align*}
+(in \cdot \phi + reserveIn)(reserveOut - out) &= reserveOut \cdot reserveIn \\
+in \cdot \phi &= \frac{reserveOut \cdot reserveIn} {reserveOut - out} - reserveIn \\
 in \cdot \phi &= reserveIn \cdot \left(\frac{reserveOut } {reserveOut - out} - 1 \right) \\
 in \cdot \phi &= reserveIn \cdot \frac{ reserveOut - (reserveOut - out) } { reserveOut - out } \\
 in \cdot \phi &= \frac{ reserveIn \cdot out } { reserveOut - out } \\
 \end{align*}
 ```
-
 We now plug in liquidity values in place of $reserveIn$, $reserveOut$, $in$, and $out$.
 ```math
 \begin{align*}
-L_{in} \cdot 2 \cdot \sqrt{p} \cdot \phi 
-  &=  \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
-    { \frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} } } \\
-
-L_{in} \cdot \phi 
-  &= \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
-    { 2 \cdot \sqrt{p} \cdot  \left(\frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} }\right)} \\
- 
+L_{in} \cdot 2 \cdot \sqrt{p} \cdot \phi
+&=  \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
+{ \frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} } } \\
+L_{in} \cdot \phi
+&= \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
+{ 2 \cdot \sqrt{p} \cdot  \left(\frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} }\right)} \\
 L_{in}
-  &=  \frac { L \cdot  L_{out} }
-    { \phi  \cdot (L - 2 \cdot L_{out}) } \\
+&=  \frac { L \cdot  L_{out} }
+{ \phi  \cdot (L - 2 \cdot L_{out}) } \\
 \end{align*}
 ```
-
-Using $L_{out}$ described in our method as `debtL`, $L$ or `activeLiquidity`,
+Using $L_{out}$ described in our method as `debtLiquidityAssets`, $L$ or `activeLiquidityAssets`,
 and our fee, we use the above equation to solve for the amount of liquidity that
 must come in to buy the debt.
 
+
 ```solidity
-function increaseForSlippage(uint256 debtL, uint256 activeLiquidity) private pure returns (uint256);
+function increaseForSlippage(
+    uint256 debtLiquidityAssets,
+    uint256 activeLiquidityAssets
+) private pure returns (uint256);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`debtL`|`uint256`|The amount of debt with units of L that will need to be purchased in case of liquidation.|
-|`activeLiquidity`|`uint256`|The amount of liquidity in the pool available to swap against.|
+|`debtLiquidityAssets`|`uint256`|The amount of debt with units of L that will need to be purchased in case of liquidation.|
+|`activeLiquidityAssets`|`uint256`|The amount of liquidity in the pool available to swap against.|
 
 
 ### checkLeverage
 
 
 ```solidity
-function checkLeverage(CheckLtvParams memory checkLtvParams, uint8 allowedLeverage) private pure;
+function checkLeverage(
+    CheckLtvParams memory checkLtvParams
+) private pure;
 ```
 
 ## Errors
-### AmmalgamTransferAmtExceedsBalance
+### InsufficientLiquidity
 
 ```solidity
-error AmmalgamTransferAmtExceedsBalance();
-```
-
-### AmmalgamInsufficientLiquidity
-
-```solidity
-error AmmalgamInsufficientLiquidity();
+error InsufficientLiquidity();
 ```
 
 ### AmmalgamCannotBorrowAgainstSameCollateral
@@ -230,10 +262,10 @@ error AmmalgamCannotBorrowAgainstSameCollateral();
 error AmmalgamMaxBorrowReached();
 ```
 
-### AmmalgamDepositIsNotStrictL_yBigger
+### AmmalgamDepositIsNotStrictlyBigger
 
 ```solidity
-error AmmalgamDepositIsNotStrictL_yBigger();
+error AmmalgamDepositIsNotStrictlyBigger();
 ```
 
 ### AmmalgamLTV
@@ -254,27 +286,22 @@ error AmmalgamMaxSlippage();
 error AmmalgamTooMuchLeverage();
 ```
 
+### AmmalgamTransferAmtExceedsBalance
+
+```solidity
+error AmmalgamTransferAmtExceedsBalance();
+```
+
 ## Structs
 ### InputParams
 
 ```solidity
 struct InputParams {
-    uint256 depositedX;
-    uint256 depositedY;
-    uint256 depositedL;
-    uint256 borrowedX;
-    uint256 borrowedY;
-    uint256 borrowedL;
-    TokenType tokenType;
-    address toCheck;
-    uint256 amount;
-    uint256 balanceFrom;
-    uint256 sqrtPriceX96Min;
-    uint256 sqrtPriceX96Max;
-    uint256 activeLiquidityScaler;
-    uint112 activeLiquidity;
-    uint8 ltv;
-    uint8 allowedLeverage;
+    uint256[6] userAssets;
+    uint256 sqrtPriceMinInQ128;
+    uint256 sqrtPriceMaxInQ128;
+    uint256 activeLiquidityScalerInQ128;
+    uint256 activeLiquidityAssets;
 }
 ```
 
@@ -282,12 +309,11 @@ struct InputParams {
 
 ```solidity
 struct CheckLtvParams {
-    uint256 netDepositedXinL;
-    uint256 netDepositedYinL;
-    uint256 netBorrowedXinL;
-    uint256 netBorrowedYinL;
-    uint256 depositedL;
-    uint8 ltv;
+    uint256 netDepositedXinLAssets;
+    uint256 netDepositedYinLAssets;
+    uint256 netBorrowedXinLAssets;
+    uint256 netBorrowedYinLAssets;
+    uint256 depositedLAssets;
 }
 ```
 
@@ -296,12 +322,11 @@ struct CheckLtvParams {
 ```solidity
 struct VerifyMaxBorrowXYParams {
     uint256 amount;
-    uint256 deposited;
-    uint256 borrowed;
-    uint112 reserve;
-    uint8 maxBorrow;
-    uint256 totalLiquidity;
-    uint256 borrowedLiquidity;
+    uint256 depositedAssets;
+    uint256 borrowedAssets;
+    uint256 reserve;
+    uint256 totalLiquidityAssets;
+    uint256 borrowedLiquidityAssets;
 }
 ```
 
@@ -309,16 +334,10 @@ struct VerifyMaxBorrowXYParams {
 
 ```solidity
 struct VerifyMaxBorrowLParams {
-    uint256 amountL;
-    uint112 reserveX;
-    uint112 reserveY;
-    uint8 maxBorrow;
-    uint256 depositedX;
-    uint256 depositedY;
-    uint256 totalLiquidity;
-    uint256 borrowedX;
-    uint256 borrowedY;
-    uint256 borrowedL;
+    uint256[6] totalAssets;
+    uint256 newBorrowedLAssets;
+    uint256 reserveXAssets;
+    uint256 reserveYAssets;
 }
 ```
 
