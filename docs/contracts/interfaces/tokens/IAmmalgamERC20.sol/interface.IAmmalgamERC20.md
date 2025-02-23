@@ -1,5 +1,5 @@
 # IAmmalgamERC20
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8a7f458eaa44bd6bb81314db98899ee7d35f8c57/contracts/interfaces/tokens/IAmmalgamERC20.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/interfaces/tokens/IAmmalgamERC20.sol)
 
 **Inherits:**
 IERC20, IERC20Metadata, IERC20Permit
@@ -8,7 +8,7 @@ IERC20, IERC20Metadata, IERC20Permit
 
 
 ## Functions
-### mint
+### ownerMint
 
 Creates `amount` tokens and assigns them to `to` address, increasing the total supply.
 
@@ -16,17 +16,19 @@ Creates `amount` tokens and assigns them to `to` address, increasing the total s
 
 
 ```solidity
-function mint(address to, uint256 amount) external;
+function ownerMint(address sender, address to, uint256 assets, uint256 shares) external;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
+|`sender`|`address`||
 |`to`|`address`|The account to deliver the tokens to.|
-|`amount`|`uint256`|The number of tokens to be minted.|
+|`assets`|`uint256`|The quantity of assets represented by the shares.|
+|`shares`|`uint256`|The amount of shares to mint.|
 
 
-### burn
+### ownerBurn
 
 Destroys `amount` tokens from `from` address, reducing the total supply.
 
@@ -34,13 +36,114 @@ Destroys `amount` tokens from `from` address, reducing the total supply.
 
 
 ```solidity
-function burn(address from, uint256 amount) external;
+function ownerBurn(address sender, address from, uint256 assets, uint256 shares) external;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
+|`sender`|`address`||
 |`from`|`address`|The account to deduct the tokens from.|
-|`amount`|`uint256`|The number of tokens to be burned.|
+|`assets`|`uint256`|The quantity of assets represented by the shares.|
+|`shares`|`uint256`|The amount of shares to be burned.|
 
+
+## Events
+### Mint
+*Emitted when tokens are minted*
+
+
+```solidity
+event Mint(address indexed sender, address indexed to, uint256 shares);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`sender`|`address`||
+|`to`|`address`|Address where minted tokens are sent|
+|`shares`|`uint256`|The amount of tokens being minted|
+
+### Burn
+*Emitted when tokens are burned*
+
+
+```solidity
+event Burn(address indexed sender, address indexed to, uint256 shares);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`sender`|`address`|Supplies Ammalgam Liquidity token into the pair contract and receives the minted assets in exchange|
+|`to`|`address`|Address where burned tokens are sent|
+|`shares`|`uint256`|The amount of tokens being burned|
+
+### Borrow
+*Emitted on a borrow of tokens*
+
+
+```solidity
+event Borrow(address indexed sender, address indexed to, uint256 assets, uint256 shares);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`sender`|`address`|The address initiating the borrowing action|
+|`to`|`address`|The address receiving the borrowed tokens|
+|`assets`|`uint256`|The address of the borrowed token|
+|`shares`|`uint256`|The amount of tokens being borrowed|
+
+### Repay
+*Emitted on a repayment of tokens*
+
+
+```solidity
+event Repay(address indexed sender, address indexed onBehalfOf, uint256 assets, uint256 shares);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`sender`|`address`|The address initiating the repayment action|
+|`onBehalfOf`|`address`|The address of the account on whose behalf tokens are repaid|
+|`assets`|`uint256`|The address of the repaid token|
+|`shares`|`uint256`|The amount of tokens being repaid|
+
+### BorrowLiquidity
+*Emitted on a liquidity borrow*
+
+
+```solidity
+event BorrowLiquidity(address indexed sender, uint256 borrowAmountLShares, address indexed to);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`sender`|`address`|The address initiating the borrowing action|
+|`borrowAmountLShares`|`uint256`|The amount of liquidity borrowed|
+|`to`|`address`|Address where the borrowed liquidity is sent|
+
+### RepayLiquidity
+*Emitted on a liquidity repayment*
+
+
+```solidity
+event RepayLiquidity(address indexed sender, address indexed onBehalfOf, uint256 repayAmountLShares);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`sender`|`address`|Supplies borrowed liquidity into the pair contract and the corresponding Ammalgam Debt tokens will be destroyed|
+|`onBehalfOf`|`address`|Address for whom the repayment is made|
+|`repayAmountLShares`|`uint256`|The amount of liquidity being repaid|
 
