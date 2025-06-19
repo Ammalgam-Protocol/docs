@@ -12,7 +12,7 @@ In the typical invariant $X \cdot Y = K$, As $X$ or $Y$ approaches zero, the cos
 
 In the case that asset $X$ is depleting we modify the value being used in $X\cdot Y=K$. Let $X$ be the virtual reserves, the quantity that would be in the pool if there was nothing being lent. Let $X_M$ be the quality of the asset that is missing due to lending. Let B be the buffer (90%) of assets remaining of $X$, and $X_A$ be the adjusted value of $X$ passed to our invariant function $X \cdot Y=K$ .
 
-![Ammalgam UI Visualization](/img/image-8.png)
+![Ammalgam UI Visualization](./assets/dynamic_swap_pricing.png)
 
 To show this by example take a look at the Desmos chart showing $Y \cdot X_A = k$ in green.
 

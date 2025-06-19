@@ -10,7 +10,7 @@ Users can borrow across multiple collateral types - tokens ($X$, $Y$) and liquid
 ### Loan to Value
 Each loan must be worth less than 75% of collateral provided to secure it, and often much less depending on the depth of liquidity with respect to the size of the loan. When borrowing one asset against the other, the calculation of loan to value (LTV) is as expected, $L_{TV} = \frac{Debt Value}{ Collateral Value}$. When we calculate the loan to value for market making positions, the calculation may not be as obvious. First we look at what we call $L_X$ and $L_Y$, the individual quantity of $X$ and $Y$ in the market making position and net it with the amount of $X$ and $Y$ deposited and borrowed. If the net of $X$ or $Y$ is negative, then that asset is treated as the debt and the other asset is treated as the collateral. We use the following equation to calculate LTV:
 
-![Ammalgam UI Visualization](/img/image-2.png)
+![Ammalgam UI Visualization](./assets/loan_to_value.png)
 
 Each variable $X$, $Y$, $L_X$, & $L_Y$ can be negative or positive depending if it represents debt or collateral. If both $X + L_X < 0$ and $Y + L_Y < 0$, there is no collateral and the validation will fail and if both values are positive, there is no net debt and the validation of LTV passes.
 

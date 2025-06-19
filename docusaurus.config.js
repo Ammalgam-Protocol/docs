@@ -119,10 +119,6 @@ const config = {
                 label: "Overview",
                 to: "/docs/overview",
               },
-              {
-                label: "Litepaper",
-                to: "/docs/litepaper",
-              },
             ],
           },
           {

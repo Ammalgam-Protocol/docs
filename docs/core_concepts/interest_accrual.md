@@ -6,7 +6,7 @@ sidebar_position: 8
 
 In our original design, the relationship between where interest is accrued and where it is distributed is a bit tricky since market making liquidity can be borrowed and the individual assets are also lent out. This is because most of these individual assets are not used in an AMM with Uniswap V2 type liquidity. Here is a drawing showing where X, Y, and K are being borrowed from.
 
-![Ammalgam UI Visualization](/img/image-5.png)
+![Ammalgam UI Visualization](./assets/interest_accrual.png)
 
 ### Borrowed $X$ and $Y$
 
@@ -22,11 +22,11 @@ We use a slightly modified version of the two tier utilization model used by Com
 
 If 40% yield rates are still not bringing liquidity back to the pair, the market is really starting to unwind. At this stage the FUD is catching on and there may even be enough market momentum to lead to cascading liquidations and forced selling. But, it's probably too early to call it a death spiral. The protocol has already stopped borrowing for the scarce asset, but more trades are taking it than bringing it. As these trades continue to take out liquidity, we introduce a third interest rate tier. Money market protocols use a two tier model. The first slowly increases rates as borrow utilization goes from 0% to some sweet spot, typically 80%. After this, rates start to increase faster between the sweet spot and 100% utilization. Our third tier allows for a third, more aggressive, rate increase once a reserve's health is at risk. Now each trade taking liquidity is noticeably raising interest rates further increasing the pain of borrowing and enticing what would be otherwise bystanders to jump in with liquidity to yield farm the high rate. Once rates surpass 100, 200, 500% annualized, it is hard imagine the market not noticing and stepping in to relieve the pressure.
 
-![Ammalgam UI Visualization](/img/image-6.png)
+![Ammalgam UI Visualization](./assets/interest_accrual_2.png)
 
 Compounds two interest rate model
 
-![Ammalgam UI Visualization](/img/image-7.png)
+![Ammalgam UI Visualization](./assets/interest_accrual_3.png)
 
 AMMalgam's three tier model
 

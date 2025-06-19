@@ -2,7 +2,7 @@
 [Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/PluginRegistry.sol)
 
 **Inherits:**
-[IPluginRegistry](/contracts/interfaces/tokens/IPluginRegistry.sol/interface.IPluginRegistry.md), Ownable
+[IPluginRegistry](/docs/developer_guide/contracts/interfaces/tokens/IPluginRegistry.sol/interface.IPluginRegistry.md), Ownable
 
 
 ## State Variables

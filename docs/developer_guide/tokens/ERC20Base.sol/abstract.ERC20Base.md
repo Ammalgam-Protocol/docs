@@ -2,7 +2,7 @@
 [Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/ERC20Base.sol)
 
 **Inherits:**
-ERC20Plugins, Ownable, ERC20Permit, [IAmmalgamERC20](/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
+ERC20Plugins, Ownable, ERC20Permit, [IAmmalgamERC20](/docs/developer_guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
 
 
 ## State Variables

@@ -2,7 +2,7 @@
 [Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
-ERC4626, [ERC20Base](/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
+ERC4626, [ERC20Base](/docs/developer_guide/tokens/ERC20Base.sol/abstract.ERC20Base.md)
 
 
 ## Functions
@@ -15,7 +15,7 @@ constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset
 
 ### ownerMint
 
-*override [AmmalgamERC20Base-ownerMint](/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownermint).*
+*override [AmmalgamERC20Base-ownerMint](/docs/developer_guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownermint).*
 
 
 ```solidity
@@ -33,7 +33,7 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override [AmmalgamERC20Base-ownerBurn](/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownerburn).*
+*override [AmmalgamERC20Base-ownerBurn](/docs/developer_guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownerburn).*
 
 
 ```solidity
@@ -51,7 +51,7 @@ function ownerBurn(address sender, address to, uint256 assets, uint256 shares) p
 
 ### _deposit
 
-*ERC4626 facade for [IAmmalgamPair-deposit](/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#deposit).
+*ERC4626 facade for [IAmmalgamPair-deposit](/docs/developer_guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#deposit).
 both deposit and mint calls _deposit*
 
 
@@ -61,7 +61,7 @@ function _deposit(address caller, address receiver, uint256 assets, uint256) int
 
 ### _withdraw
 
-*ERC4626 facade for [IAmmalgamPair-withdraw](/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#withdraw).
+*ERC4626 facade for [IAmmalgamPair-withdraw](/docs/developer_guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#withdraw).
 both withdraw and redeem calls _withdraw*
 
 

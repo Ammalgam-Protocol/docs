@@ -2,7 +2,7 @@
 [Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/factories/AmmalgamFactory.sol)
 
 **Inherits:**
-[IAmmalgamFactory](/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md), [IFactoryCallback](/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
+[IAmmalgamFactory](/docs/developer_guide/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md), [IFactoryCallback](/docs/developer_guide/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
 
 
 ## State Variables

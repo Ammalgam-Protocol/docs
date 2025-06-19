@@ -2,7 +2,7 @@
 [Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/interfaces/IAmmalgamPair.sol)
 
 **Inherits:**
-[ITokenController](/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md), [ITransferValidator](/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
+[ITokenController](/docs/developer_guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md), [ITransferValidator](/docs/developer_guide/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
 
 
 ## Functions
