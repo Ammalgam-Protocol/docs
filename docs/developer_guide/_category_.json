@@ -1,6 +1,6 @@
 {
-  "label": "Design",
-  "position": 3,
+  "label": "Developer Guide",
+  "position": 5,
   "collapsed": true,
   "link": {
     "type": "generated-index"

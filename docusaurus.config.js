@@ -156,8 +156,7 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Ammalgam DAO. Built with Docusaurus.`,
       },
       prism: {
-        theme: lightTheme,
-        darkTheme,
+        theme: darkTheme,
       },
     }),
   plugins: ["docusaurus-plugin-sass"],
