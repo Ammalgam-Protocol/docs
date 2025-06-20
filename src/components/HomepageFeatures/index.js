@@ -5,7 +5,7 @@ import styles from './styles.module.scss';
 
 const FeatureList = [
   {
-    title: "DLEX",
+    title: "Overview",
     Svg: require('@site/static/icons/dlex.svg').default,
     description: (
       <>
@@ -13,10 +13,10 @@ const FeatureList = [
         creating capital efficiency and enhanced utility for users
       </>
     ),
-    link: './docs/overview#dlex'
+    link: './docs/overview'
   },
   {
-    title: 'Trading',
+    title: 'Core Concepts',
     Svg: require('@site/static/icons/trading.svg').default,
     description: (
       <>
@@ -24,17 +24,7 @@ const FeatureList = [
         of tokens and Automated Market Making for liquidity providers
       </>
     ),
-    link: './docs/overview#trading'
-  },
-  {
-    title: 'Lending',
-    Svg: require('@site/static/icons/lending.svg').default,
-    description: (
-      <>
-        A permissionless over-collateralized pairwise lending protocol
-      </>
-    ),
-    link: './docs/overview#lending'
+    link: './docs/category/core-concepts'
   },
   {
     title: 'Capital Efficiency',
@@ -46,20 +36,30 @@ const FeatureList = [
         invariant
       </>
     ),
-    link: './docs/overview#capital-efficiency'
+    link: './docs/core-concepts/capital-efficiency'
   },
   {
-    title: 'Utility',
+    title: 'Getting Started',
+    Svg: require('@site/static/icons/lending.svg').default,
+    description: (
+      <>
+        A permissionless over-collateralized pairwise lending protocol
+      </>
+    ),
+    link: './docs/getting-started'
+  },
+  {
+    title: 'Developer Guide',
     Svg: require('@site/static/icons/utility.svg').default,
     description: (
       <>
         Offering lending and trading functions in one contract gives 
       </>
     ),
-    link: './docs/overview#utility-δ-γ'
+    link: './docs/category/developer-guide'
   },
   {
-    title: 'Autonomy',
+    title: 'Updates',
     Svg: require('@site/static/icons/autonomy.svg').default,
     description: (
       <>
@@ -68,7 +68,7 @@ const FeatureList = [
         to market lending and trading venue for the next big airdrop
       </>
     ),
-    link: './docs/overview#autonomy'
+    link: './docs/category/updates'
   },
 ];
 
@@ -96,7 +96,6 @@ export default function HomepageFeatures() {
   return (
     <section className={styles.features}>
       <div className="container">
-        <h4 className={styles.heading}>OVERVIEW</h4>
         <div className={clsx(`row ${styles.rowGap}`)}>
           {FeatureList.map((props, idx) => (
             <Feature key={idx} {...props} />

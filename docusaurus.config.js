@@ -151,6 +151,10 @@ const config = {
         logo: ammalgamLogo,
         copyright: `Copyright © ${new Date().getFullYear()} Ammalgam DAO. Built with Docusaurus.`,
       },
+      colorMode: {
+        disableSwitch: true,
+        defaultMode: 'dark',
+      },
       prism: {
         theme: darkTheme,
       },
