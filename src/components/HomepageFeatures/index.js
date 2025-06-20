@@ -6,86 +6,80 @@ import styles from './styles.module.scss';
 const FeatureList = [
   {
     title: "Overview",
-    Svg: require('@site/static/icons/dlex.svg').default,
+    icon: require('@site/static/icons/overview.png').default,
     description: (
       <>
-        Combining lending and trading functions into one contract 
-        creating capital efficiency and enhanced utility for users
+        Birds eye view about Ammalgam
       </>
     ),
     link: './docs/overview'
   },
   {
     title: 'Core Concepts',
-    Svg: require('@site/static/icons/trading.svg').default,
+    icon: require('@site/static/icons/core_concepts.png').default,
     description: (
       <>
-        A Decentralized Exchange (DEX) that allows for the trading 
-        of tokens and Automated Market Making for liquidity providers
+        Understand the basics of Ammalgam
       </>
     ),
     link: './docs/category/core-concepts'
   },
   {
     title: 'Capital Efficiency',
-    Svg: require('@site/static/icons/capital.svg').default,
+    icon: require('@site/static/icons/capital_efficiency.png').default,
     description: (
       <>
-        Giving market makers better returns by lending out unused
-        assets that occur in automated market making using the X * Y = K 
-        invariant
+        Know more about increased gains
       </>
     ),
     link: './docs/core-concepts/capital-efficiency'
   },
   {
     title: 'Getting Started',
-    Svg: require('@site/static/icons/lending.svg').default,
+    icon: require('@site/static/icons/getting_started.png').default,
     description: (
       <>
-        A permissionless over-collateralized pairwise lending protocol
+        Learn how to use DLEX
       </>
     ),
     link: './docs/getting-started'
   },
   {
     title: 'Developer Guide',
-    Svg: require('@site/static/icons/utility.svg').default,
+    icon: require('@site/static/icons/developer_guide.png').default,
     description: (
       <>
-        Offering lending and trading functions in one contract gives 
+        Protocol smart contracts
       </>
     ),
     link: './docs/category/developer-guide'
   },
   {
     title: 'Updates',
-    Svg: require('@site/static/icons/autonomy.svg').default,
+    icon: require('@site/static/icons/updates.png').default,
     description: (
       <>
-        Built without any external dependencies on oracles or other protocols
-        allowing for permissionless lending allowing for a first
-        to market lending and trading venue for the next big airdrop
+        Monthly progress updates
       </>
     ),
     link: './docs/category/updates'
   },
 ];
 
-function Feature({Svg, title, description, link}) {
+function Feature({icon, title, description, link}) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx('col col--6 md:col--4')}>
       <Link className={styles.link} to={link}>
-        <div className="card padding--lg h-100">
-          <div className="card__header">
-            <div>
-              <Svg role="img" fill='var(--ifm-color-primary)' />
-            </div>
-            <h3>{title}</h3>
+        <div className={clsx('card', styles.homepageCard)}>
+          <div className="card__image">
+            <img src={icon} alt={title} width={100} height={100} />
           </div>
-          <p className={clsx(`card__body ${styles.description}`)}>
-            {description}
-          </p>
+          <div className="card__body">
+            <div className={styles.title}>{title}</div>
+            <p className={styles.description}>
+              {description}
+            </p>
+          </div>
         </div>
       </Link>
     </div>
