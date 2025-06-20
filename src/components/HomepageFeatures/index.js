@@ -5,86 +5,80 @@ import styles from './styles.module.scss';
 
 const FeatureList = [
   {
-    title: "DLEX",
-    Svg: require('@site/static/icons/dlex.svg').default,
+    title: "Overview",
+    icon: require('@site/static/icons/overview.png').default,
     description: (
       <>
-        Combining lending and trading functions into one contract 
-        creating capital efficiency and enhanced utility for users
+        Birds eye view about Ammalgam
       </>
     ),
-    link: './docs/overview#dlex'
+    link: './docs/overview'
   },
   {
-    title: 'Trading',
-    Svg: require('@site/static/icons/trading.svg').default,
+    title: 'Core Concepts',
+    icon: require('@site/static/icons/core_concepts.png').default,
     description: (
       <>
-        A Decentralized Exchange (DEX) that allows for the trading 
-        of tokens and Automated Market Making for liquidity providers
+        Understand the basics of Ammalgam
       </>
     ),
-    link: './docs/overview#trading'
-  },
-  {
-    title: 'Lending',
-    Svg: require('@site/static/icons/lending.svg').default,
-    description: (
-      <>
-        A permissionless over-collateralized pairwise lending protocol
-      </>
-    ),
-    link: './docs/overview#lending'
+    link: './docs/category/core-concepts'
   },
   {
     title: 'Capital Efficiency',
-    Svg: require('@site/static/icons/capital.svg').default,
+    icon: require('@site/static/icons/capital_efficiency.png').default,
     description: (
       <>
-        Giving market makers better returns by lending out unused
-        assets that occur in automated market making using the X * Y = K 
-        invariant
+        Know more about increased gains
       </>
     ),
-    link: './docs/overview#capital-efficiency'
+    link: './docs/core-concepts/capital-efficiency'
   },
   {
-    title: 'Utility',
-    Svg: require('@site/static/icons/utility.svg').default,
+    title: 'Getting Started',
+    icon: require('@site/static/icons/getting_started.png').default,
     description: (
       <>
-        Offering lending and trading functions in one contract gives 
+        Learn how to use DLEX
       </>
     ),
-    link: './docs/overview#utility-δ-γ'
+    link: './docs/getting-started'
   },
   {
-    title: 'Autonomy',
-    Svg: require('@site/static/icons/autonomy.svg').default,
+    title: 'Developer Guide',
+    icon: require('@site/static/icons/developer_guide.png').default,
     description: (
       <>
-        Built without any external dependencies on oracles or other protocols
-        allowing for permissionless lending allowing for a first
-        to market lending and trading venue for the next big airdrop
+        Protocol smart contracts
       </>
     ),
-    link: './docs/overview#autonomy'
+    link: './docs/category/developer-guide'
+  },
+  {
+    title: 'Updates',
+    icon: require('@site/static/icons/updates.png').default,
+    description: (
+      <>
+        Monthly progress updates
+      </>
+    ),
+    link: './docs/category/updates'
   },
 ];
 
-function Feature({Svg, title, description, link}) {
+function Feature({icon, title, description, link}) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx('col col--6 md:col--4')}>
       <Link className={styles.link} to={link}>
-        <div className="card padding--lg h-100">
-          <div className="card__header">
-            <div className={styles.featureIconContainer}>
-              <Svg role="img" fill='var(--ifm-color-primary)' />
-            </div>
-            <h3>{title}</h3>
+        <div className={clsx('card', styles.homepageCard)}>
+          <div className="card__image">
+            <img src={icon} alt={title} width={100} height={100} />
           </div>
-          <div className={clsx(`card__body ${styles.description}`)}>
-            {description}
+          <div className="card__body">
+            <div className={styles.title}>{title}</div>
+            <p className={styles.description}>
+              {description}
+            </p>
           </div>
         </div>
       </Link>
@@ -96,7 +90,6 @@ export default function HomepageFeatures() {
   return (
     <section className={styles.features}>
       <div className="container">
-        <h4 className={styles.heading}>OVERVIEW</h4>
         <div className={clsx(`row ${styles.rowGap}`)}>
           {FeatureList.map((props, idx) => (
             <Feature key={idx} {...props} />
