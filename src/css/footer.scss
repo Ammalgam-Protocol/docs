@@ -1,0 +1,130 @@
+.footer {
+  border-top: 1px solid var(--ifm-toc-border-color);
+  background-color: var(--ifm-background-color);
+}
+
+.footer-container {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 72rem;
+  padding: 4rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.footer-logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  grid-column: span 1 / span 1;
+}
+
+.footer-logo-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-social-link {
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: var(--ifm-toc-border-color);
+  padding: 0.5rem;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    opacity: 0.7;
+  }
+}
+
+.footer-copyright {
+  font-size: 0.875rem;
+  padding-top: 3rem;
+}
+
+.footer-links-section {
+  grid-column: span 1 / span 1;
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.footer-link-column {
+  text-align: center;
+}
+
+.footer-link-title {
+  margin-bottom: 1rem;
+  font-weight: 300;
+  color: var(--ifm-font-color-base);
+}
+
+.footer-link-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.footer-link-item {
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+  transition: color 0.3s;
+  font-size: 0.85rem;
+  opacity: 0.8;
+
+  &:hover {
+    color: var(--ifm-color-primary);
+  }
+}
+
+/* Media Queries */
+@media (min-width: 640px) {
+  .footer-links-section {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .footer-container {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .footer-logo-section {
+    align-items: flex-start;
+    grid-column: span 6 / span 6;
+  }
+
+  .footer-logo-items {
+    align-items: flex-start;
+  }
+
+  .footer-copyright {
+    text-align: left;
+  }
+
+  .footer-links-section {
+    grid-column: span 6 / span 6;
+    margin-top: 0;
+  }
+
+  .footer-link-column {
+    text-align: left;
+  }
+}

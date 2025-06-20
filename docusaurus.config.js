@@ -5,13 +5,11 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
 const { themes } = require("prism-react-renderer");
-const lightTheme = themes.github;
 const darkTheme = themes.dracula;
 
 const ammalgamLogo = {
   alt: "Ammalgam Logo",
-  src: "img/ammalgam-logo-light.svg",
-  srcDark: "img/ammalgam-logo-dark.svg",
+  src: "img/ammalgam-logo-dark.svg",
   height: 32,
 };
 
@@ -91,10 +89,22 @@ const config = {
         logo: ammalgamLogo,
         items: [
           {
-            type: "docSidebar",
-            sidebarId: "tutorialSidebar",
+            to: "/docs/overview",
+            label: "Overview",
             position: "left",
-            label: "Documentation",
+            activeBaseRegex: "/docs/overview",
+          },
+          {
+            to: "/docs/getting-started",
+            label: "Getting Started",
+            position: "left",
+            activeBaseRegex: "/docs/getting-started",
+          },
+          {
+            to: "/docs/category/core-concepts",
+            label: "Core Concepts",
+            position: "left",
+            activeBaseRegex: "/docs/core-concepts|/docs/category/core-concepts",
           },
           {
             href: "https://discord.gg/ammalgam",
@@ -113,43 +123,63 @@ const config = {
       footer: {
         links: [
           {
-            title: "Docs",
-            items: [
-              {
-                label: "Overview",
-                to: "/docs/overview",
-              },
-            ],
-          },
-          {
-            title: "Community",
+            title: "Socials",
             items: [
               {
                 label: "Twitter",
-                href: "https://twitter.com/ammalgam",
+                href: "https://x.com/ammalgam",
+                logo: "img/twitter.svg",
               },
               {
                 label: "Discord",
                 href: "https://discord.gg/ammalgam",
+                logo: "img/discord.svg",
+              },
+              {
+                label: "Mirror",
+                href: "https://mirror.xyz/0x127d2749824e8a064Fe49246eD8DbD30859d4bCf",
+                logo: "img/mirror.svg",
               },
             ],
           },
           {
-            title: "More",
+            title: "Product",
             items: [
               {
-                label: "Mirror",
-                href: "https://mirror.xyz/0x127d2749824e8a064Fe49246eD8DbD30859d4bCf",
+                label: "Launch App",
+                href: "https://beta.ammalgam.xyz",
               },
               {
-                label: "GitHub",
-                href: "https://github.com/ammalgam-protocol",
+                label: "Features",
+                href: "https://ammalgam.xyz/#features",
+              },
+            ],
+          },
+          {
+            title: "Resources",
+            items: [
+              {
+                label: "Brand Kit",
+                href: "https://duelinggalois.notion.site/Ammalgam-Brand-Kit-19e3195c2bf580788c37f51bc6f98fa3?pvs=74",
+              },
+            ],
+          },
+          {
+            title: "Company",
+            items: [
+              {
+                label: "Privacy Policy",
+                href: "https://ammalgam.xyz/privacy",
+              },
+              {
+                label: "Terms of Service",
+                href: "https://ammalgam.xyz/terms",
               },
             ],
           },
         ],
         logo: ammalgamLogo,
-        copyright: `Copyright © ${new Date().getFullYear()} Ammalgam DAO. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Ammalgam`,
       },
       colorMode: {
         disableSwitch: true,

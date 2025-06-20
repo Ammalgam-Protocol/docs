@@ -1,5 +1,6 @@
 ---
 sidebar_position: 4
+title: "Risk Engine"
 ---
 
 # Risk Engine: Cross-Margining, Liquidation Logic

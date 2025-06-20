@@ -1,10 +1,9 @@
 import React from 'react';
-import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import clsx from 'clsx';
+import styles from './index.module.scss';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
-
-import styles from './index.module.scss';
 
 export default function Home() {
   const {siteConfig} = useDocusaurusContext();

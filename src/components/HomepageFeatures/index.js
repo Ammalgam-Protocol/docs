@@ -78,14 +78,14 @@ function Feature({Svg, title, description, link}) {
       <Link className={styles.link} to={link}>
         <div className="card padding--lg h-100">
           <div className="card__header">
-            <div className={styles.featureIconContainer}>
+            <div>
               <Svg role="img" fill='var(--ifm-color-primary)' />
             </div>
             <h3>{title}</h3>
           </div>
-          <div className={clsx(`card__body ${styles.description}`)}>
+          <p className={clsx(`card__body ${styles.description}`)}>
             {description}
-          </div>
+          </p>
         </div>
       </Link>
     </div>

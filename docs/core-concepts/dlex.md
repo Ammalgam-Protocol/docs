@@ -1,10 +1,11 @@
 ---
 sidebar_position: 2
+title: "DLEX"
 ---
 
 # DLEX: Smart Order Routing & Execution
 
-The Decentralized Lending Exchange is at the core of Ammalgam's execution and settlement architecture. It integrates AMM trading mechanics and lending functions within a unified liquidity layer.
+The Decentralized Lending Exchange(DLEX) is at the core of Ammalgam's execution and settlement architecture. It integrates AMM trading mechanics and lending functions within a unified liquidity layer.
 
 DLEX governs the behavior of Dual Purpose Pools (DP Pools), coordinating swap execution, loan origination, and interest accrual without relying on external oracle feeds or fragmented liquidity sources. The Smart Order Routing engine inside DLEX automatically selects the most efficient execution path across DP Pools. By concentrating liquidity within multipurpose pools and minimizing fragmentation, DLEX significantly reduces routing overhead, increases capital inefficiency, and reduces price impact relative to traditional AMMs.
 

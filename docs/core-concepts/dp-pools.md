@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+title: "Dual Purpose Pools"
 ---
 
 # DP Pools (Lending + LPing in One)

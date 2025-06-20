@@ -1,5 +1,6 @@
 ---
 sidebar_position: 5
+title: "No-Oracle Design"
 ---
 
 import { Tweet } from 'react-tweet';

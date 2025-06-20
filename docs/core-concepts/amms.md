@@ -1,5 +1,6 @@
 ---
 sidebar_position: 3
+title: "AMMs"
 ---
 
 # AMMs, Orderbooks & Off-Chain Matching
