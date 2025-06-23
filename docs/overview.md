@@ -55,8 +55,7 @@ Ammalgam provides clear, intuitive visualization tools like payout charts and he
 - **Exchange**: Ammalgam is a fork of Uniswap V2 but is designed to allow LP positions with payouts similar to concentrated liquidity and thus has parity with any DEX. Ammalgam uses leverage when creating concentrated liquidity-like positions so users need to monitor for liquidations; however, they are compensated by earning fees far beyond the similar range created when using concentrated liquidity. In essence, instead of monitoring ranges, LPs now focus on liquidations but benefit from increased fees and, consequently, higher yields.
 - **Dual Purpose Pools (DP Pools)**: DP Pools are the foundation of Ammalgam's architecture, allowing liquidity to be used for both trading and lending within the same pool. Rather than split capital across protocols or choosing between yield types, LPs can deploy once and gain exposure to multiple sources of return. DP Pools also introduce a flexible structure that supports everything from passive liquidity provision to complex strategies like delta-neutral and leveraged positions—all within the Ammalgam protocol.
 
-<img src="/img/draw_1.png" alt="Ammalgam Protocol Diagram" />
-
+![Ammalgam Protocol Diagram](/img/draw_1.jpg)
 
 ## Recipes
 Ammalgam intends to democratize DeFi for retail investors. The UI is designed to show the impact of delta and gamma on any position simply and transparently. Ammalgam also provides a preset menu of strategies, called "recipes," for users:
@@ -74,4 +73,4 @@ Ammalgam intends to democratize DeFi for retail investors. The UI is designed to
 
 - **Heat Map**: Many correctly argue that passive LPs are adversely affected by V3, often due to the amplified effect of impermanent loss from the inherent leverage in concentrated liquidity. As payout charts remain static over time, these risks may not be immediately apparent to many retail traders. Ammalgam's UI introduces a novel visualization tool that displays the impact of price fluctuations and the fees earned or incurred by LPs throughout the anticipated duration of their position. This tool clearly delineates the expected positive (green) or negative (red) portfolio values in relation to price changes at a future point in time.
 
-![Ammalgam UI Visualization](/img/delta_neutral.png)
+![Delta Neutral](/img/delta_neutral.jpg)

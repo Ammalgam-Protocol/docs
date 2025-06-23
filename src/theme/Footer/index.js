@@ -5,15 +5,15 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 const socialIcons = {
   discord: {
-    src: '/img/discord.svg',
+    src: '/icons/discord.svg',
     alt: 'Discord',
   },
   twitter: {
-    src: '/img/x.svg',
+    src: '/icons/x.svg',
     alt: 'Twitter',
   },
   mirror: {
-    src: '/img/mirror.svg',
+    src: '/icons/mirror.svg',
     alt: 'Mirror',
   }
 }

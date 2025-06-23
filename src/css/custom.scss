@@ -168,7 +168,7 @@ p {
 }
 
 .header-github-link:before {
-  background-image: url('/img/github.svg');
+  background-image: url('/icons/github.svg');
 }
 
 .header-discord-link {
@@ -176,7 +176,7 @@ p {
 }
 
 .header-discord-link:before {
-  background-image: url('/img/discord.svg');
+  background-image: url('/icons/discord.svg');
 }
 
 /* Sidebar font size customization */
@@ -213,8 +213,10 @@ p {
   }
 }
 
-.navbar__toggle {
+.navbar__toggle, .clean-btn {
   display: none;
+  visibility: hidden;
+  opacity: 0;
 }
 
 [data-theme='dark'] .navbar {
