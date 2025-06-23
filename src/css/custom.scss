@@ -29,6 +29,7 @@
   --ifm-table-cell-background: #16161D;
   --ifm-table-stripe-background: #16161D !important;
   --ifm-table-background: #16161D;
+  --ifm-color-emphasis-300: rgba(255, 255, 255, 0.05) !important;
 
   /* Menu */
   --ifm-menu-link-padding-vertical: 0.5rem;
@@ -213,10 +214,14 @@ p {
   }
 }
 
-.navbar__toggle, .clean-btn {
-  display: none;
-  visibility: hidden;
-  opacity: 0;
+.navbar__toggle {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.clean-btn {
+  
 }
 
 [data-theme='dark'] .navbar {
