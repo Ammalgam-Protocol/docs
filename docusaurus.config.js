@@ -94,7 +94,7 @@ const config = {
         {name: 'og:title', content: 'Ammalgam Documentation'},
         {name: 'og:description', content: 'Explore our documentation and get started with Ammalgam'},
       ],
-      image: "img/favicon.svg",
+      image: "img/social_share.jpg",
       navbar: {
         logo: ammalgamLogo,
         items: [
