@@ -39,10 +39,30 @@ const FeatureList = [
     icon: require('@site/static/icons/getting_started.png').default,
     description: (
       <>
-        Learn how to use DLEX
+        Learn how to use our protocol
       </>
     ),
     link: './docs/getting-started'
+  },
+  {
+    title: 'Trading on the DLEX',
+    icon: require('@site/static/icons/trading_on_the_dlex.png').default,
+    description: (
+      <>
+        Get to know how our DLEX works
+      </>
+    ),
+    link: './docs/trading-on-the-dlex'
+  },
+  {
+    title: 'Dual Purpose Pools',
+    icon: require('@site/static/icons/dual_purpose_pools.png').default,
+    description: (
+      <>
+        Learn how we fuse lending and trading
+      </>
+    ),
+    link: './docs/category/dual-purpose-pools'
   },
   {
     title: 'Developer Guide',

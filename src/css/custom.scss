@@ -21,7 +21,7 @@
   --ifm-code-border-radius: 0.25rem;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
   --ifm-heading-vertical-rhythm-bottom: 1.5rem;
-  --ifm-list-item-margin: 1.5rem;
+  --ifm-list-item-margin: 0.5rem;
   --ifm-navbar-height: 5rem;
   --ifm-container-width-xl: 1152px;
   --ifm-table-border-color: rgba(255, 255, 255, 0.05);
@@ -110,11 +110,13 @@ p {
   h1 {
     font-size: 2.5rem;
   }
+  // --ifm-heading-vertical-rhythm-top: 1.5rem;
+  --ifm-heading-vertical-rhythm-bottom: 1;
   --ifm-h1-vertical-rhythm-top: 2.5;
   --ifm-h1-vertical-rhythm-bottom: 1.5;
   --ifm-h2-vertical-rhythm-top: 2;
   --ifm-h2-vertical-rhythm-bottom: 1.5;
-  --ifm-h3-vertical-rhythm-top: 1.5;
+  --ifm-h3-vertical-rhythm-top: 2.5;
   --ifm-h3-vertical-rhythm-bottom: 1.5;
   --ifm-h4-vertical-rhythm-top: 1.2;
   --ifm-h4-vertical-rhythm-bottom: 1.5;
