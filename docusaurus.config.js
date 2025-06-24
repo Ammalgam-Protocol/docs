@@ -84,6 +84,16 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      metadata: [
+        {name: 'keywords', content: 'ammalgam, protocol, dlex, documentation, docs, dual purpose pools, decentralized lending exchange, developer guide'},
+        {name: 'twitter:card', content: 'summary_large_image'},
+        {name: 'twitter:image', content: 'img/social_share.jpg'},
+        {name: 'twitter:title', content: 'Ammalgam Documentation'},
+        {name: 'twitter:description', content: 'Explore our documentation and get started with Ammalgam'},
+        {name: 'og:image', content: 'img/social_share.jpg'},
+        {name: 'og:title', content: 'Ammalgam Documentation'},
+        {name: 'og:description', content: 'Explore our documentation and get started with Ammalgam'},
+      ],
       image: "img/favicon.svg",
       navbar: {
         logo: ammalgamLogo,
