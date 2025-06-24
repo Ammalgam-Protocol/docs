@@ -62,7 +62,7 @@ const FeatureList = [
         Learn how we fuse lending and trading
       </>
     ),
-    link: './docs/category/dual-purpose-pools'
+    link: './docs/dual-purpose-pools'
   },
   {
     title: 'Developer Guide',
