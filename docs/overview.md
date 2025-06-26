@@ -69,8 +69,10 @@ Ammalgam intends to democratize DeFi for retail investors. The UI is designed to
 - **Calls or Puts**
 - **Perpetuals**
 
-- **Payout Charts**: Traders have historically relied on payout charts to determine the value of a position in relation to price movement. Ammalgam offers users instant access to assess the potential payout of a position as it relates to price fluctuations.
+## Payout Charts
+Traders have historically relied on payout charts to determine the value of a position in relation to price movement. Ammalgam offers users instant access to assess the potential payout of a position as it relates to price fluctuations.
 
-- **Heat Map**: Many correctly argue that passive LPs are adversely affected by V3, often due to the amplified effect of impermanent loss from the inherent leverage in concentrated liquidity. As payout charts remain static over time, these risks may not be immediately apparent to many retail traders. Ammalgam's UI introduces a novel visualization tool that displays the impact of price fluctuations and the fees earned or incurred by LPs throughout the anticipated duration of their position. This tool clearly delineates the expected positive (green) or negative (red) portfolio values in relation to price changes at a future point in time.
+## Heat Map
+Many correctly argue that passive LPs are adversely affected by V3, often due to the amplified effect of impermanent loss from the inherent leverage in concentrated liquidity. As payout charts remain static over time, these risks may not be immediately apparent to many retail traders. Ammalgam's UI introduces a novel visualization tool that displays the impact of price fluctuations and the fees earned or incurred by LPs throughout the anticipated duration of their position. This tool clearly delineates the expected positive (green) or negative (red) portfolio values in relation to price changes at a future point in time.
 
 ![Delta Neutral](/img/delta_neutral.jpg)
