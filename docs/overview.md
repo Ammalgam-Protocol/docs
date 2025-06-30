@@ -38,7 +38,7 @@ Protocols rely on external price feeds, leaving them vulnerable to oracle manipu
 Ammalgam's Decentralized Lending Exchange (DLEX) merges trading and lending into a single, seamless system. By consolidating core DeFi functions, Ammalgam removes the need for separate platforms, simplifying liquidity flows and making capital more efficient.
 
 ### Enhanced Capital Efficiency
-Liquidity providers (LPs) earn from both swap fees and lending interest through a single position. The dual-earning model can drive up to a 20% increase in returns compared to traditional DeFi approaches, with assets working continuously across multiple revenue streams.
+Liquidity providers (LPs) earn from both swap fees and lending interest through a single position. The dual-earning model can drive up 20% - 60% increase in returns compared to traditional DeFi approaches, with assets working continuously across multiple revenue streams.
 
 ### Permissionless and Oracle-Free Design
 Ammalgam operates without external price oracles or permissioned systems. By removing reliance on external inputs, the protocol reduces risks linked to oracle failures and centralized control points, creating a more autonomous, resilient financial layer.
