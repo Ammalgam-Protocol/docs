@@ -24,9 +24,7 @@ Each variable $X$, $Y$, $L_X$, & $L_Y$ can be negative or positive depending if 
 ### Slippage added to LTV
 To deter large unsustainable loans, we consider slippage when calculating the LTV. To consider the slippage created when needing to liquidate collateral to repay the debt, we consider the amount of collateral needed to buy the requested debt using the current reserves. The needed collateral is then compared to the total collateral provided to ensure it fits within the allowed LTV. This will have a negligible impact on small loans concerning available liquidity and more restrictive for large loans. Flash loan manipulation attacks like C.R.E.A.M Finance and Mango become impossible when the slippage would require all the liquidity in the protocol pushing the LTV price from its high manipulated price back down to zero (the price required to buy all of the debt from the AMM to fund liquidation when the debt is the size of all of that asset in the AMM). Similar to Tranche Limitations, these limits could be expanded by the same configuration for more liquid trading pairs in which arbitrageurs can be assumed.
 
-### NatSpec and Implementation
-
-[NatSpec](https://docs.ammalgam.xyz/docs/contracts/libraries/Validation.sol/library.Validation#increaseforslippage)
+### [NatSpec and Implementation ↗ ](../developer-guide/contracts/libraries/Validation.sol/library.Validation#increaseforslippage)
 
 ### Cost to liquidate X or Y
 <iframe src="https://www.desmos.com/calculator/v08sn8yn6r?embed"

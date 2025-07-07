@@ -10,7 +10,7 @@ The system will allow anyone to pay down a debt and receive the collateral plus 
 
 By allowing liquidations to occur before the allowed LTV, we ensure that a manipulation of a price will still lead liquidations to occur near the actual market and leave little to no benefit to an attacker. A counter example to demonstrate this point this, if we started the auction at some price and even included some discount, an attacker with sufficient capital could move the market to push a large position to be eligible for liquidation. If we include a discount on the premium to give the owner of the debt a chance to close their position, that discount could still be insufficient if the actual market price was less than the liquidation price including the discount. By making all positions eligible for liquidation with an increasing discount the further the price is away from the LTV threshold, we guarantee these liquidations will never occur at a manipulated inflated price giving an attacker an advantage.
 
-There may be a way of not allowing liquidations unless a debt is beyond say 2/3 LTV and then letting the discount cross to premium for liquidators after crossing 3/4 LTV. It might be nice to give some guarantees to risk adverse borrowers that they can not be prematurely liquidated even if it would be to their benefit. The discount could start at 100% then move to say 10% at 75% LTV for example. I think the key here is to ensure the auction is both smooth block to block and effectively reaches a reasonable premium that results in a liquidation.
+Liquidations start at 60% LTV, but the discount starts at 0, meaning liquidators get nothing for what they repay. It breaks even at 75% and then becomes a premium after that.
 
 ### Debt Cap Liquidations
 
