@@ -6,11 +6,11 @@ sidebar_position: 9
 
 Once 90% of reserves have been lent out, Dynamic Swap Pricing will kick in to start to add a premium to trades taking the scarce liquidity and a discount for those bringing it. This essentially puts a throttle on swap transactions depleting the threatened assets. These adjustments start small and gradually increase as the health of the liquidity deteriorates. You can think of the adjustment to the invariant curves behavior similar to how Curve handles the depletion of assets as the stable invariant ($x+y = k$) as the pool becomes unbalanced.
 
-During Dynamic Swap Pricing, instead of quoting trades using the invariant $K$ (calculated with the primary reserves in the contract and the lent out $X$ and $Y$) the calculation of the invariant would be adjusted to add a premium or discount to swaps. This premium would increase as the health of the reserves deplete. This can be achieved by modifying the inputs, $X$ and $Y$, prior to calculating $K$.
+During Dynamic Swap Pricing, instead of quoting trades using the invariant $K$ (calculated with the primary reserves in the contract ignoring the lent out $X$ and $Y$) the calculation of the invariant would be adjusted to add a premium or discount to swaps. This premium would increase as the health of the reserves deplete. This can be achieved by modifying the inputs, $X$ and $Y$, prior to calculating $K$.
 
-In the typical invariant $X \cdot Y = K$, As $X$ or $Y$ approaches zero, the cost to buy it goes up. In our case, we accelerate the rate at which $X$ or $Y$ approaches zero once only some some buffer (10%) of what should be there remains.
+In the typical invariant $X \cdot Y = K$, As $X$ or $Y$ approaches zero, the cost to buy the other asset goes up. In our case, we accelerate the rate at which $X$ or $Y$ approaches zero once only some buffer (5%) of what should be there remains.
 
-In the case that asset $X$ is depleting we modify the value being used in $X\cdot Y=K$. Let $X$ be the virtual reserves, the quantity that would be in the pool if there was nothing being lent. Let $X_M$ be the quality of the asset that is missing due to lending. Let B be the buffer (90%) of assets remaining of $X$, and $X_A$ be the adjusted value of $X$ passed to our invariant function $X \cdot Y=K$ .
+In the case that asset $X$ is depleting we modify the value being used in $X\cdot Y=K$. Let $X$ be the virtual reserves, the quantity that would be in the pool if there was nothing being lent. Let $X_M$ be the quality of the asset that is missing due to lending. Let B be the buffer (95%) of assets remaining of $X$, and $X_A$ be the adjusted value of $X$ passed to our invariant function $X \cdot Y=K$ .
 
 $$
 \begin{equation*}

@@ -26,7 +26,7 @@ To deter large unsustainable loans, we consider slippage when calculating the LT
 
 ### NatSpec and Implementation
 
-https://docs.ammalgam.xyz/docs/contracts/libraries/Validation.sol/library.Validation#increaseforslippage
+[NatSpec](https://docs.ammalgam.xyz/docs/contracts/libraries/Validation.sol/library.Validation#increaseforslippage)
 
 ### Cost to liquidate X or Y
 <iframe src="https://www.desmos.com/calculator/v08sn8yn6r?embed"

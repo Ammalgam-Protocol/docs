@@ -26,10 +26,7 @@ The duration of this long-term period is flexible and can be configured to span 
 
 The minimum of all three prices is used to evaluate collateral value when a new position is opened. By taking the minimum and maximum values of these three prices, we establish the price range used within the protocol. The last block and mid term price would be used for the purpose of liquidations where the better price for the borrower would be used.
 
-**Question:** Is a default of 1 week configuration for long term moving average long enough? Could it be shorter?
 
-### Tranche Tracking
-This work is still in progress. I began creating a detailed plan for its implementation when the idea of eliminating price-dependent liquidations diverted my focus.
 
 ### Depleted Asset Protection
 
