@@ -5,13 +5,11 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
 const { themes } = require("prism-react-renderer");
-const lightTheme = themes.github;
 const darkTheme = themes.dracula;
 
 const ammalgamLogo = {
   alt: "Ammalgam Logo",
-  src: "img/ammalgam-logo-light.svg",
-  srcDark: "img/ammalgam-logo-dark.svg",
+  src: "img/ammalgam-logo-dark.svg",
   height: 32,
 };
 
@@ -86,15 +84,37 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: "img/favicon.svg",
+      metadata: [
+        {name: 'keywords', content: 'ammalgam, protocol, dlex, documentation, docs, dual purpose pools, decentralized lending exchange, developer guide'},
+        {name: 'twitter:card', content: 'summary_large_image'},
+        {name: 'twitter:image', content: 'img/social_share.jpg'},
+        {name: 'twitter:title', content: 'Ammalgam Documentation'},
+        {name: 'twitter:description', content: 'Explore our documentation and get started with Ammalgam'},
+        {name: 'og:image', content: 'img/social_share.jpg'},
+        {name: 'og:title', content: 'Ammalgam Documentation'},
+        {name: 'og:description', content: 'Explore our documentation and get started with Ammalgam'},
+      ],
+      image: "/img/social_share.jpg",
       navbar: {
         logo: ammalgamLogo,
         items: [
           {
-            type: "docSidebar",
-            sidebarId: "tutorialSidebar",
+            to: "/docs/overview",
+            label: "Overview",
             position: "left",
-            label: "Documentation",
+            activeBaseRegex: "/docs/overview",
+          },
+          {
+            to: "/docs/getting-started",
+            label: "Getting Started",
+            position: "left",
+            activeBaseRegex: "/docs/getting-started",
+          },
+          {
+            to: "/docs/category/core-concepts",
+            label: "Core Concepts",
+            position: "left",
+            activeBaseRegex: "/docs/core-concepts|/docs/category/core-concepts",
           },
           {
             href: "https://discord.gg/ammalgam",
@@ -113,51 +133,70 @@ const config = {
       footer: {
         links: [
           {
-            title: "Docs",
-            items: [
-              {
-                label: "Overview",
-                to: "/docs/overview",
-              },
-              {
-                label: "Litepaper",
-                to: "/docs/litepaper",
-              },
-            ],
-          },
-          {
-            title: "Community",
+            title: "Socials",
             items: [
               {
                 label: "Twitter",
-                href: "https://twitter.com/ammalgam",
+                href: "https://x.com/ammalgam",
+                logo: "img/twitter.svg",
               },
               {
                 label: "Discord",
                 href: "https://discord.gg/ammalgam",
+                logo: "img/discord.svg",
+              },
+              {
+                label: "Mirror",
+                href: "https://mirror.xyz/0x127d2749824e8a064Fe49246eD8DbD30859d4bCf",
+                logo: "img/mirror.svg",
               },
             ],
           },
           {
-            title: "More",
+            title: "Product",
             items: [
               {
-                label: "Mirror",
-                href: "https://mirror.xyz/0x127d2749824e8a064Fe49246eD8DbD30859d4bCf",
+                label: "Launch App",
+                href: "https://beta.ammalgam.xyz",
               },
               {
-                label: "GitHub",
-                href: "https://github.com/ammalgam-protocol",
+                label: "Features",
+                href: "https://ammalgam.xyz/#features",
+              },
+            ],
+          },
+          {
+            title: "Resources",
+            items: [
+              {
+                label: "Brand Kit",
+                href: "https://duelinggalois.notion.site/Ammalgam-Brand-Kit-19e3195c2bf580788c37f51bc6f98fa3?pvs=74",
+              },
+            ],
+          },
+          {
+            title: "Company",
+            items: [
+              {
+                label: "Privacy Policy",
+                href: "https://ammalgam.xyz/privacy",
+              },
+              {
+                label: "Terms of Service",
+                href: "https://ammalgam.xyz/terms",
               },
             ],
           },
         ],
         logo: ammalgamLogo,
-        copyright: `Copyright © ${new Date().getFullYear()} Ammalgam DAO. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Ammalgam`,
+      },
+      colorMode: {
+        disableSwitch: true,
+        defaultMode: 'dark',
       },
       prism: {
-        theme: lightTheme,
-        darkTheme,
+        theme: darkTheme,
       },
     }),
   plugins: ["docusaurus-plugin-sass"],

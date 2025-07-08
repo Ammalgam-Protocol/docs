@@ -3,10 +3,23 @@
   font-weight: 500;
 }
 
+.homepageCard {
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.title {
+  font-size: 1.25rem;
+  padding-bottom: 0.35rem;
+  font-weight: 400;
+}
+
 .features {
   display: flex;
   align-items: center;
-  padding: 2rem 0;
+  padding: 0 0 9rem 0;
   width: 100%;
 
   svg {
@@ -18,7 +31,7 @@
 }
 
 .rowGap {
-  row-gap: 2rem;
+  row-gap: 1.5rem;
 }
 
 .link {
