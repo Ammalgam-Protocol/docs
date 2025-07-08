@@ -1,38 +1,11 @@
 # IAmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/interfaces/factories/IAmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bbf468c990ab84694ca54d6197acec418d42c187/contracts/interfaces/factories/IAmmalgamFactory.sol)
+
+**Inherits:**
+[IFactoryCallback](/docs/developer-guide/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
 
 
 ## Functions
-### feeTo
-
-Returns the fee recipient address.
-
-
-```solidity
-function feeTo() external view returns (address);
-```
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`<none>`|`address`|The address of the fee recipient.|
-
-
-### feeToSetter
-
-Returns the address that can change the fee recipient.
-
-
-```solidity
-function feeToSetter() external view returns (address);
-```
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`<none>`|`address`|The address of the fee setter.|
-
-
 ### getPair
 
 Returns the pair address for two tokens.
@@ -166,4 +139,32 @@ event PairCreated(address indexed tokenX, address indexed tokenY, address pair, 
 |`tokenY`|`address`|The second token in the pair.|
 |`pair`|`address`|The address of the new pair.|
 |`allPairsLength`|`uint256`|The current total number of token pairs.|
+
+### LendingTokensCreated
+Emitted when new lending tokens are created.
+
+
+```solidity
+event LendingTokensCreated(
+    address indexed pair,
+    address depositL,
+    address depositX,
+    address depositY,
+    address borrowL,
+    address borrowX,
+    address borrowY
+);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pair`|`address`|The address of the pair.|
+|`depositL`|`address`|The address of the `DEPOSIT_L` lending token.|
+|`depositX`|`address`|The address of the `DEPOSIT_X` lending token.|
+|`depositY`|`address`|The address of the `DEPOSIT_Y` lending token.|
+|`borrowL`|`address`|The address of the `BORROW_L` lending token.|
+|`borrowX`|`address`|The address of the `BORROW_X` lending token.|
+|`borrowY`|`address`|The address of the `BORROW_Y` lending token.|
 

@@ -1,5 +1,5 @@
 # ITokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/interfaces/tokens/ITokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bbf468c990ab84694ca54d6197acec418d42c187/contracts/interfaces/tokens/ITokenController.sol)
 
 The interface of a ERC20 facade for multiple token types with functionality similar to ERC1155.
 
@@ -29,7 +29,7 @@ Fetches the current reserves of asset X and asset Y, as well as the block of the
 
 
 ```solidity
-function getReserves() external view returns (uint112 reserveXAssets, uint112 reserveYAssets, uint256 blockLast);
+function getReserves() external view returns (uint112 reserveXAssets, uint112 reserveYAssets, uint32 lastTimestamp);
 ```
 **Returns**
 
@@ -37,23 +37,7 @@ function getReserves() external view returns (uint112 reserveXAssets, uint112 re
 |----|----|-----------|
 |`reserveXAssets`|`uint112`|The current reserve of asset X.|
 |`reserveYAssets`|`uint112`|The current reserve of asset Y.|
-|`blockLast`|`uint256`|The block number of the last operation.|
-
-
-### getTickRange
-
-returns the tick range used to represent the price range
-
-
-```solidity
-function getTickRange() external view returns (int16 minTick, int16 maxTick);
-```
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`minTick`|`int16`|the minimum tick representing the lowest estimated price|
-|`maxTick`|`int16`|the maximum tick representing the highest estimated price|
+|`lastTimestamp`|`uint32`|The timestamp of the last operation.|
 
 
 ### externalLiquidity
@@ -82,23 +66,22 @@ function updateExternalLiquidity(
 |`_externalLiquidity`|`uint112`|The new external liquidity value.|
 
 
-### configLongTermInterval
+### referenceReserves
 
-Resets the long-term interval configuration.
-
-*Allows the contract owner to reset the long-term interval configuration to the specified value.*
+Returns the reference reserves for the block, these represent a snapshot of the
+reserves at the start of the block weighted for mints, burns, borrow and repayment of
+liquidity. These amounts are critical to calculating the correct fees for any swap.
 
 
 ```solidity
-function configLongTermInterval(
-    uint24 _longTermIntervalConfigFactor
-) external;
+function referenceReserves() external view returns (uint112 referenceReserveX, uint112 referenceReserveY);
 ```
-**Parameters**
+**Returns**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`_longTermIntervalConfigFactor`|`uint24`|The new factor of mid-term interval configuration to be set for the long-term interval configuration.|
+|`referenceReserveX`|`uint112`|The reference reserve for asset X.|
+|`referenceReserveY`|`uint112`|The reference reserve for asset Y.|
 
 
 ### tokens
@@ -172,4 +155,47 @@ event UpdateExternalLiquidity(uint112 externalLiquidity);
 |Name|Type|Description|
 |----|----|-----------|
 |`externalLiquidity`|`uint112`|The updated value for external liquidity|
+
+### BurnBadDebt
+*Emitted when bad debt is burned*
+
+
+```solidity
+event BurnBadDebt(address indexed borrower, uint256 indexed tokenType, uint256 badDebtAssets, uint256 badDebtShares);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`borrower`|`address`|The address of the borrower|
+|`tokenType`|`uint256`|The type of token being burned|
+|`badDebtAssets`|`uint256`|The amount of bad debt assets being burned|
+|`badDebtShares`|`uint256`|The amount of bad debt shares being burned|
+
+### InterestAccrued
+*Emitted when Interest gets accrued*
+
+
+```solidity
+event InterestAccrued(
+    uint128 depositLAssets,
+    uint128 depositXAssets,
+    uint128 depositYAssets,
+    uint128 borrowLAssets,
+    uint128 borrowXAssets,
+    uint128 borrowYAssets
+);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`depositLAssets`|`uint128`|The amount of total `DEPOSIT_L` assets in the pool after interest accrual|
+|`depositXAssets`|`uint128`|The amount of total `DEPOSIT_X` assets in the pool after interest accrual|
+|`depositYAssets`|`uint128`|The amount of total `DEPOSIT_Y` assets in the pool after interest accrual|
+|`borrowLAssets`|`uint128`|The amount of total `BORROW_L` assets in the pool after interest accrual|
+|`borrowXAssets`|`uint128`|The amount of total `BORROW_X` assets in the pool after interest accrual|
+|`borrowYAssets`|`uint128`|The amount of total `BORROW_Y` assets in the pool after interest accrual|
 

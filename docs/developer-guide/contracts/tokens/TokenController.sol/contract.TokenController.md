@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bbf468c990ab84694ca54d6197acec418d42c187/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md)
@@ -74,84 +74,49 @@ uint112[6] private allShares;
 ### allAssets
 
 ```solidity
-uint128[6] private allAssets;
-```
-
-
-### totalDepositLAssets
-
-```solidity
-uint128 internal totalDepositLAssets;
-```
-
-
-### totalDepositXAssets
-
-```solidity
-uint128 internal totalDepositXAssets;
-```
-
-
-### totalDepositYAssets
-
-```solidity
-uint128 internal totalDepositYAssets;
-```
-
-
-### totalBorrowLAssets
-
-```solidity
-uint128 internal totalBorrowLAssets;
-```
-
-
-### totalBorrowXAssets
-
-```solidity
-uint128 internal totalBorrowXAssets;
-```
-
-
-### totalBorrowYAssets
-
-```solidity
-uint128 internal totalBorrowYAssets;
-```
-
-
-### externalLiquidity
-
-```solidity
-uint112 public override externalLiquidity = 0;
+uint128[6] internal allAssets;
 ```
 
 
 ### reserveXAssets
 
 ```solidity
-uint112 internal reserveXAssets;
+uint112 private reserveXAssets;
 ```
 
 
 ### reserveYAssets
 
 ```solidity
-uint112 internal reserveYAssets;
+uint112 private reserveYAssets;
 ```
 
 
-### lastReserveLiquidity
+### lastUpdateTimestamp
 
 ```solidity
-uint128 internal lastReserveLiquidity;
+uint32 internal lastUpdateTimestamp;
 ```
 
 
-### lastActiveLiquidityAssets
+### referenceReserveX
 
 ```solidity
-uint128 internal lastActiveLiquidityAssets;
+uint112 internal referenceReserveX;
+```
+
+
+### referenceReserveY
+
+```solidity
+uint112 internal referenceReserveY;
+```
+
+
+### lastLendingTimestamp
+
+```solidity
+uint32 internal lastLendingTimestamp;
 ```
 
 
@@ -169,17 +134,87 @@ uint112 internal missingYAssets;
 ```
 
 
-### factory
+### lastPenaltyTimestamp
 
 ```solidity
-IAmmalgamFactory internal immutable factory;
+uint32 internal lastPenaltyTimestamp;
 ```
 
 
-### observations
+### lastReserveLiquidity
 
 ```solidity
-GeometricTWAP.Observations internal observations;
+uint128 internal lastReserveLiquidity;
+```
+
+
+### lastActiveLiquidityAssets
+
+```solidity
+uint128 internal lastActiveLiquidityAssets;
+```
+
+
+### totalDepositLAssets
+
+```solidity
+uint256 internal totalDepositLAssets;
+```
+
+
+### totalDepositXAssets
+
+```solidity
+uint256 internal totalDepositXAssets;
+```
+
+
+### totalDepositYAssets
+
+```solidity
+uint256 internal totalDepositYAssets;
+```
+
+
+### totalBorrowLAssets
+
+```solidity
+uint256 internal totalBorrowLAssets;
+```
+
+
+### totalBorrowXAssets
+
+```solidity
+uint256 internal totalBorrowXAssets;
+```
+
+
+### totalBorrowYAssets
+
+```solidity
+uint256 internal totalBorrowYAssets;
+```
+
+
+### externalLiquidity
+
+```solidity
+uint112 public override externalLiquidity = 0;
+```
+
+
+### factory
+
+```solidity
+IFactoryCallback internal immutable factory;
+```
+
+
+### saturationAndGeometricTWAPState
+
+```solidity
+ISaturationAndGeometricTWAPState internal immutable saturationAndGeometricTWAPState;
 ```
 
 
@@ -212,11 +247,11 @@ function _onlyFeeToSetter() private view;
 function underlyingTokens() public view override returns (IERC20, IERC20);
 ```
 
-### updateTransientAssets
+### updateAssets
 
 
 ```solidity
-function updateTransientAssets(uint256 tokenType, uint128 assets) internal;
+function updateAssets(uint256 tokenType, uint128 assets) private;
 ```
 
 ### updateExternalLiquidity
@@ -225,15 +260,6 @@ function updateTransientAssets(uint256 tokenType, uint128 assets) internal;
 ```solidity
 function updateExternalLiquidity(
     uint112 _externalLiquidity
-) external onlyFeeToSetter;
-```
-
-### configLongTermInterval
-
-
-```solidity
-function configLongTermInterval(
-    uint24 longTermIntervalConfigFactor
 ) external onlyFeeToSetter;
 ```
 
@@ -289,7 +315,7 @@ function rawTotalAssets(
 
 
 ```solidity
-function getReserves() public view returns (uint112 _reserveXAssets, uint112 _reserveYAssets, uint256 _lastTimestamp);
+function getReserves() public view returns (uint112 _reserveXAssets, uint112 _reserveYAssets, uint32 _lastTimestamp);
 ```
 
 ### getTickRange
@@ -297,6 +323,13 @@ function getReserves() public view returns (uint112 _reserveXAssets, uint112 _re
 
 ```solidity
 function getTickRange() public view returns (int16 minTick, int16 maxTick);
+```
+
+### referenceReserves
+
+
+```solidity
+function referenceReserves() public view returns (uint112, uint112);
 ```
 
 ### totalAssets
@@ -318,13 +351,20 @@ function totalAssets() public view returns (uint128[6] memory);
 |`<none>`|`uint128[6]`|totalAssets An array of six `uint128` values representing the total assets for each of the 6 amalgam token types. These values may be adjusted based on the time elapsed since the last update. If the timestamp is up-to-date, the previously calculated total assets are returned without recalculation.|
 
 
+### mintPenalties
+
+
+```solidity
+function mintPenalties(address account, uint32 deltaPenaltyTimestamp) internal;
+```
+
 ### getAssets
 
 
 ```solidity
 function getAssets(
-    address toCheck,
-    uint128[6] memory currentAssets
+    uint128[6] memory currentAssets,
+    address toCheck
 ) internal view returns (uint256[6] memory userAssets);
 ```
 
@@ -333,11 +373,21 @@ function getAssets(
 
 ```solidity
 function updateTokenController(
-    Saturation.SaturationStruct storage satStruct,
-    uint256 duration,
+    uint32 currentTimestamp,
+    uint32 deltaUpdateTimestamp,
+    uint32 deltaLendingTimestamp,
     uint256 _reserveXAssets,
     uint256 _reserveYAssets
 ) internal returns (uint112 updatedReservesX, uint112 updatedReservesY);
+```
+
+### updateReferenceReserve
+
+
+```solidity
+function updateReferenceReserve(
+    int256 newTick
+) internal;
 ```
 
 ### mintProtocolFees
@@ -347,23 +397,30 @@ function updateTokenController(
 function mintProtocolFees(uint256 tokenType, address feeTo, uint256 protocolFee) private;
 ```
 
-### _updateBasedOnSaturationPenalty
-
-
-```solidity
-function _updateBasedOnSaturationPenalty(
-    Saturation.SaturationStruct storage satStruct,
-    uint256 duration,
-    uint256 _reserveXAssets,
-    uint256 _reserveYAssets
-) private;
-```
-
 ### updateReserves
 
 
 ```solidity
-function updateReserves(uint256 _reserveXAssets, uint256 _reserveYAssets) internal;
+function updateReserves(uint256 newReserveXAssets, uint256 newReserveYAssets) internal;
+```
+
+### updateReservesAndReference
+
+
+```solidity
+function updateReservesAndReference(
+    uint256 _reserveXAssets,
+    uint256 _reserveYAssets,
+    uint256 newReserveXAssets,
+    uint256 newReserveYAssets
+) internal;
+```
+
+### _castReserves
+
+
+```solidity
+function _castReserves(uint256 _reserveXAssets, uint256 _reserveYAssets) internal pure returns (uint112, uint112);
 ```
 
 ### getNetBalances
@@ -472,6 +529,13 @@ function getCurrentAndAdjustedActiveLiquidity(
 
 ```solidity
 function getCurrentReserveLiquidity(uint256 _reserveXAssets, uint256 _reserveYAssets) private pure returns (uint256);
+```
+
+### burnBadDebt
+
+
+```solidity
+function burnBadDebt(address borrower, uint256 tokenType, uint256 reserve) internal;
 ```
 
 ## Errors
