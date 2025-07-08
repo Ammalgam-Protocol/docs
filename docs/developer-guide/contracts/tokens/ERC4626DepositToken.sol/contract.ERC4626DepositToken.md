@@ -2,7 +2,7 @@
 [Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
-ERC4626, [ERC20Base](/docs/developer-guide/tokens/ERC20Base.sol/abstract.ERC20Base.md)
+ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
 
 
 ## Functions

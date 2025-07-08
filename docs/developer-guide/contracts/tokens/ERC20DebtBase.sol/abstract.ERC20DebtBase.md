@@ -2,7 +2,7 @@
 [Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/ERC20DebtBase.sol)
 
 **Inherits:**
-[ERC20Base](/docs/developer-guide/tokens/ERC20Base.sol/abstract.ERC20Base.md), [IERC20DebtToken](/docs/developer-guide/contracts/interfaces/tokens/IERC20DebtToken.sol/interface.IERC20DebtToken.md)
+[ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md), [IERC20DebtToken](/docs/developer-guide/contracts/interfaces/tokens/IERC20DebtToken.sol/interface.IERC20DebtToken.md)
 
 
 ## Functions
