@@ -1,8 +1,8 @@
 # AmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/factories/AmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/factories/AmmalgamFactory.sol)
 
 **Inherits:**
-[IAmmalgamFactory](/docs/developer-guide/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md), [IFactoryCallback](/docs/developer-guide/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
+[IAmmalgamFactory](/docs/developer-guide/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md)
 
 
 ## State Variables
@@ -41,6 +41,13 @@ address public feeToSetter;
 ```
 
 
+### saturationAndGeometricTWAPState
+
+```solidity
+ISaturationAndGeometricTWAPState public immutable saturationAndGeometricTWAPState;
+```
+
+
 ### config
 
 ```solidity
@@ -74,7 +81,13 @@ modifier onlyFeeToSetter();
 
 
 ```solidity
-constructor(address _feeToSetter, address _tokenFactory, address _pairFactory, address _pluginRegistry);
+constructor(
+    address _feeToSetter,
+    address _tokenFactory,
+    address _pairFactory,
+    address _pluginRegistry,
+    address _saturationAndGeometricTWAPState
+);
 ```
 
 ### allPairsLength

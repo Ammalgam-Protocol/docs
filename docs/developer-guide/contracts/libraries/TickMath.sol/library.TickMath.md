@@ -1,18 +1,11 @@
 # TickMath
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/libraries/TickMath.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/libraries/TickMath.sol)
 
-Computes sqrt price for ticks of size B=(1-2^-9)^-1 as fixed point Q128 numbers. Supports
+Computes sqrt price for ticks of size B=(1-2^-9)^-1 as fixed point Q72 numbers. Supports
 prices between 2**-112 and 2**112-1
 
 
 ## State Variables
-### B_IN_Q128
-
-```solidity
-uint256 internal constant B_IN_Q128 = 0x100804020100804020100804020100805;
-```
-
-
 ### BASE_CHANGE_CONSTANT_IN_Q128
 
 ```solidity
@@ -48,20 +41,6 @@ uint256 internal constant MAX_PRICE_IN_Q128 = 0xffffffffffffffffffffffffffff0000
 ```
 
 
-### MIN_SQRT_PRICE_IN_Q128
-
-```solidity
-uint256 constant MIN_SQRT_PRICE_IN_Q128 = 0xffc029ab6df090b37e;
-```
-
-
-### MAX_SQRT_PRICE_IN_Q128
-
-```solidity
-uint256 constant MAX_SQRT_PRICE_IN_Q128 = 0xffbfc6509a7540f2db82e1f475e2c218a22bd92d7c18c3;
-```
-
-
 ### MIN_TICK
 
 ```solidity
@@ -72,7 +51,21 @@ int16 internal constant MIN_TICK = -0x4d8f;
 ### MAX_TICK
 
 ```solidity
-int16 internal constant MAX_TICK = -MIN_TICK - 1;
+int16 internal constant MAX_TICK = 0x4d8e;
+```
+
+
+### MIN_SQRT_PRICE_IN_Q72
+
+```solidity
+uint256 internal constant MIN_SQRT_PRICE_IN_Q72 = 0xffc0;
+```
+
+
+### MAX_SQRT_PRICE_IN_Q72
+
+```solidity
+uint256 internal constant MAX_SQRT_PRICE_IN_Q72 = 0xffc00ffc00ffc00ffc00ffc00ffc00ff;
 ```
 
 
@@ -83,7 +76,7 @@ int16 internal constant MAX_TICK = -MIN_TICK - 1;
 ```solidity
 function getSqrtPriceAtTick(
     int16 tick
-) internal pure returns (uint256 sqrtPriceInQ128);
+) internal pure returns (uint256 sqrtPriceInQ72);
 ```
 
 ### getTickAtPrice

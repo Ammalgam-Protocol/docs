@@ -1,5 +1,5 @@
 # ERC4626DepositTokenFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/factories/ERC4626DepositTokenFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/factories/ERC4626DepositTokenFactory.sol)
 
 **Inherits:**
 [ITokenFactory](/docs/developer-guide/contracts/interfaces/factories/ITokenFactory.sol/interface.ITokenFactory.md)

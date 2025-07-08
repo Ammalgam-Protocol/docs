@@ -1,5 +1,5 @@
 # Convert
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/libraries/Convert.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/libraries/Convert.sol)
 
 
 ## State Variables
@@ -17,7 +17,7 @@ uint256 private constant BUFFER = 95;
 ```solidity
 function toLiquidityAssets(
     uint256 liquidityShares,
-    uint256 reserves,
+    uint256 reservesAssets,
     uint256 activeLiquidityAssets,
     uint256 depositLiquidityAssets,
     uint256 depositLiquidityShares
@@ -52,7 +52,7 @@ function toShares(
 
 
 ```solidity
-function mulDiv(uint256 x, uint256 y, uint256 z, bool roundingUp) internal pure returns (uint256);
+function mulDiv(uint256 x, uint256 y, uint256 z, bool roundingUp) internal pure returns (uint256 result);
 ```
 
 ### calcLiquidityConsideringDepletion

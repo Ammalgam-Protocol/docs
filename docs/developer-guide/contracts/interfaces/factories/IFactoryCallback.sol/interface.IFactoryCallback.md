@@ -1,5 +1,5 @@
 # IFactoryCallback
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/interfaces/factories/IFactoryCallback.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/interfaces/factories/IFactoryCallback.sol)
 
 This interface provides methods for getting the token factory configuration.
 
@@ -21,6 +21,45 @@ function generateTokensWithinFactory() external returns (IERC20, IERC20, IAmmalg
 |`<none>`|`IERC20`||
 |`<none>`|`IAmmalgamERC20[6]`||
 
+
+### feeTo
+
+Returns the fee recipient address.
+
+
+```solidity
+function feeTo() external view returns (address);
+```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`address`|The address of the fee recipient.|
+
+
+### feeToSetter
+
+Returns the address that can change the fee recipient.
+
+
+```solidity
+function feeToSetter() external view returns (address);
+```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`address`|The address of the fee setter.|
+
+
+### saturationAndGeometricTWAPState
+
+Returns the address of the saturation state contract
+
+
+```solidity
+function saturationAndGeometricTWAPState() external view returns (ISaturationAndGeometricTWAPState);
+```
 
 ## Structs
 ### TokenFactoryConfig

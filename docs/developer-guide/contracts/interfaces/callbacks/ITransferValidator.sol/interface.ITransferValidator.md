@@ -1,5 +1,5 @@
 # ITransferValidator
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/interfaces/callbacks/ITransferValidator.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/interfaces/callbacks/ITransferValidator.sol)
 
 This interface is intended for validating the solvency of an account when transfers occur.
 
@@ -14,7 +14,7 @@ of existing debt or collateral that would leave any individual address with insu
 
 
 ```solidity
-function validateOnUpdate(address validate, address update) external;
+function validateOnUpdate(address validate, address update, bool isBorrow) external;
 ```
 **Parameters**
 
@@ -22,5 +22,6 @@ function validateOnUpdate(address validate, address update) external;
 |----|----|-----------|
 |`validate`|`address`|The address of the account being checked for solvency and having its saturation updated|
 |`update`|`address`|The address of the account having its saturation updated|
+|`isBorrow`|`bool`||
 
 

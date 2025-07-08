@@ -1,66 +1,88 @@
 # GeometricTWAP
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/libraries/GeometricTWAP.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/libraries/GeometricTWAP.sol)
 
 
 ## State Variables
 ### MID_TERM_ARRAY_LENGTH
 
 ```solidity
-uint256 public constant MID_TERM_ARRAY_LENGTH = 51;
+uint256 internal constant MID_TERM_ARRAY_LENGTH = 51;
 ```
 
 
 ### LONG_TERM_ARRAY_LENGTH
 
 ```solidity
-uint256 public constant LONG_TERM_ARRAY_LENGTH = 9;
+uint256 internal constant LONG_TERM_ARRAY_LENGTH = 9;
 ```
 
 
-### LONG_TERM_BUFFER_FACTOR
-*`LONG_TERM_BUFFER_FACTOR` is a factor to ensure the size of the long-term buffer is at-least double
-the size of the mid-term buffer.
-ceil((MID_TERM_ARRAY_LENGTH - 1) / (LONG_TERM_ARRAY_LENGTH - 1)) * 2;
-ceil(50 / 8) * 2 = 14*
-
+### LOG_BASE_OF_ROOT_TWO
 
 ```solidity
-uint256 public constant LONG_TERM_BUFFER_FACTOR = 14;
+uint256 internal constant LOG_BASE_OF_ROOT_TWO = 178;
 ```
 
 
 ### MID_TERM_ARRAY_LAST_INDEX
 
 ```solidity
-uint256 private constant MID_TERM_ARRAY_LAST_INDEX = MID_TERM_ARRAY_LENGTH - 1;
+uint256 internal constant MID_TERM_ARRAY_LAST_INDEX = MID_TERM_ARRAY_LENGTH - 1;
 ```
 
 
 ### LONG_TERM_ARRAY_LAST_INDEX
 
 ```solidity
-uint256 private constant LONG_TERM_ARRAY_LAST_INDEX = LONG_TERM_ARRAY_LENGTH - 1;
+uint256 internal constant LONG_TERM_ARRAY_LAST_INDEX = LONG_TERM_ARRAY_LENGTH - 1;
 ```
 
 
-### TICK_NOT_AVAILABLE
+### MINIMUM_LONG_TERM_INTERVAL_FACTOR
+Minimum long-term interval factor is used to verify the long-term interval
+is at least 14 times the mid-term interval. This ensures that the long term
+interval is required to be at least 14 times the mid-term interval, this is
+```math
+\left \lceil \frac{2 * MID_TERM_ARRAY_LAST_INDEX}{LONG_TERM_ARRAY_LAST_INDEX} \right \rceil.
+```
+
 
 ```solidity
-int56 public constant TICK_NOT_AVAILABLE = type(int56).min;
+uint256 internal constant MINIMUM_LONG_TERM_INTERVAL_FACTOR = 14;
 ```
 
 
 ## Functions
 ### initializeObservationStruct
 
+Initializes the observation struct with the specified interval configurations.
+
+*This function sets the initial values for the mid-term and long-term interval configurations.
+This forces the time to to go through the long term is twice as long as it takes to go
+through the mid-term interval.*
+
 
 ```solidity
 function initializeObservationStruct(
     Observations storage self,
-    uint24 midTermIntervalConfig,
-    uint24 longTermIntervalConfigFactor,
-    int16 firstTick
-) external;
+    uint24 midTermTimePerUpdate,
+    uint24 longTermTimePerUpdate
+) internal;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`self`|`Observations`|The storage reference to the Observations struct.|
+|`midTermTimePerUpdate`|`uint24`|The time required to pass before the mid-term twap is updated.|
+|`longTermTimePerUpdate`|`uint24`|The time required to pass before the long-term twap is updated.|
+
+
+### addObservationAndSetLendingState
+
+
+```solidity
+function addObservationAndSetLendingState(Observations storage self, int16 firstTick) internal;
 ```
 
 ### configLongTermInterval
@@ -71,14 +93,14 @@ Configures the interval of long-term observations.
 
 
 ```solidity
-function configLongTermInterval(Observations storage self, uint24 longTermIntervalConfigFactor) external;
+function configLongTermInterval(Observations storage self, uint24 longTermTimePerUpdate) internal;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`self`|`Observations`|The storage reference to the Observations struct.|
-|`longTermIntervalConfigFactor`|`uint24`|The desired duration for each long-term period. The size is set as a factor of the mid-term interval to ensure a sufficient buffer, requiring at least 16 * 12 = 192 seconds per period, resulting in a total of ~25 minutes (192 * 8 = 1536 seconds) for the long-term buffer.|
+|`longTermTimePerUpdate`|`uint24`|the time required to pass before the long term twap is update.|
 
 
 ### recordObservation
@@ -94,7 +116,11 @@ provided block timestamp is less than or equal to the last recorded timestamp.*
 
 
 ```solidity
-function recordObservation(Observations storage self, int16 newTick, uint32 currentTimestamp) external;
+function recordObservation(
+    Observations storage self,
+    int16 newTick,
+    uint32 timeElapsed
+) internal returns (bool updated);
 ```
 **Parameters**
 
@@ -102,7 +128,13 @@ function recordObservation(Observations storage self, int16 newTick, uint32 curr
 |----|----|-----------|
 |`self`|`Observations`|The storage structure containing observation data.|
 |`newTick`|`int16`|The new tick value to be recorded, representing the most recent update of reserveXAssets and reserveYAssets.|
-|`currentTimestamp`|`uint32`|The current block timestamp.|
+|`timeElapsed`|`uint32`|The time elapsed since the last observation.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`updated`|`bool`|A boolean indicating whether the observation was updated.|
 
 
 ### getTickRange
@@ -114,9 +146,34 @@ long-term tick, mid-term tick, and current tick.*
 
 
 ```solidity
-function getTickRange(
+function getTickRange(Observations storage self, int16 currentTick) internal view returns (int16, int16);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`self`|`Observations`|The observation struct where stored oracle array containing the tick observations.|
+|`currentTick`|`int16`|The current (most recent) tick based on the current reserves.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`int16`|minTick The minimum tick value among the three observed ticks.|
+|`<none>`|`int16`|maxTick The maximum tick value among the three observed ticks.|
+
+
+### getTickRangeWithoutLongTerm
+
+Gets the min and max range of tick values from the stored oracle observations.
+
+*This function calculates the minimum and maximum tick values among the mid-term tick and current tick.*
+
+
+```solidity
+function getTickRangeWithoutLongTerm(
     Observations storage self
-) external view returns (int16, int16);
+) internal view returns (int16 minTick, int16 maxTick);
 ```
 **Parameters**
 
@@ -128,8 +185,8 @@ function getTickRange(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`int16`|minTick The minimum tick value among the three observed ticks.|
-|`<none>`|`int16`|maxTick The maximum tick value among the three observed ticks.|
+|`minTick`|`int16`|The minimum tick value.|
+|`maxTick`|`int16`|The maximum tick value.|
 
 
 ### getObservedTicks
@@ -161,6 +218,56 @@ function getObservedTicks(
 |`<none>`|`int16`||
 
 
+### getObservedMidTermTick
+
+*Retrieves the mid-term tick value based on the stored observations.*
+
+
+```solidity
+function getObservedMidTermTick(
+    Observations storage self,
+    bool isLongTermBufferInitialized
+) internal view returns (int16 midTermTick);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`self`|`Observations`|The observation struct.|
+|`isLongTermBufferInitialized`|`bool`|Boolean value which represents whether long-term buffer is filled or not.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`midTermTick`|`int16`|The mid-term tick value.|
+
+
+### getObservedLongTermTick
+
+*Retrieves the long-term tick value based on the stored observations.*
+
+
+```solidity
+function getObservedLongTermTick(
+    Observations storage self,
+    bool isLongTermBufferInitialized
+) private view returns (int16 longTermTick);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`self`|`Observations`|The observation struct.|
+|`isLongTermBufferInitialized`|`bool`|Boolean value which represents whether long-term buffer is filled or not.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`longTermTick`|`int16`|The long-term tick value.|
+
+
 ### getTickRangeInternal
 
 
@@ -168,16 +275,31 @@ function getObservedTicks(
 function getTickRangeInternal(
     int16 longTermTick,
     int16 midTermTick,
+    int16 blockTick,
     int16 currentTick,
     uint256 factor
 ) internal pure returns (int16 minTick, int16 maxTick);
+```
+
+### getMinAndMaxOfFour
+
+
+```solidity
+function getMinAndMaxOfFour(int16 a, int16 b, int16 c, int16 d) private pure returns (int16 min, int16 max);
+```
+
+### getMinAndMaxOfThree
+
+
+```solidity
+function getMinAndMaxOfThree(int16 a, int16 b, int16 c) private pure returns (int16 min, int16 max);
 ```
 
 ### getMidTermAtLastIndex
 
 
 ```solidity
-function getMidTermAtLastIndex(Observations storage self, uint8 index) private view returns (int56);
+function getMidTermAtLastIndex(Observations storage self, uint256 index) private view returns (int56);
 ```
 
 ### getLastIndex
@@ -191,17 +313,7 @@ function getLastIndex(uint256 index, uint256 lastIndex) private pure returns (ui
 
 
 ```solidity
-function getNextIndex(uint8 currentIndex, uint8 indexLength) private pure returns (uint8);
-```
-
-### calculateLongTermInterval
-
-
-```solidity
-function calculateLongTermInterval(
-    uint256 midTermIntervalConfig,
-    uint256 longTermIntervalConfigFactor
-) private pure returns (uint24);
+function getNextIndex(uint256 currentIndex, uint256 indexLength) private pure returns (uint8);
 ```
 
 ### getLendingStateTickAndCheckpoint
@@ -216,14 +328,18 @@ separated to allow view access without any state updates.*
 
 ```solidity
 function getLendingStateTickAndCheckpoint(
-    Observations storage self
-) external returns (int16);
+    Observations storage self,
+    uint32 timeElapsedSinceUpdate,
+    uint32 timeElapsedSinceLendingUpdate
+) internal returns (int16);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`self`|`Observations`|Observations storage struct|
+|`timeElapsedSinceUpdate`|`uint32`|The time elapsed since the last price update.|
+|`timeElapsedSinceLendingUpdate`|`uint32`|The time elapsed since the last lending update.|
 
 **Returns**
 
@@ -238,14 +354,23 @@ Gets the tick value representing the TWAP since the last lending update.
 
 
 ```solidity
-function getLendingStateTick(Observations storage self, int56 newTick) internal view returns (int16, int56, uint32);
+function getLendingStateTick(
+    Observations storage self,
+    int56 newTick,
+    uint32 timeElapsedSinceUpdate,
+    uint32 timeElapsedSinceLendingUpdate,
+    bool tickAvailable
+) internal view returns (int16, int56);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`self`|`Observations`|Observations storage struct|
-|`newTick`|`int56`||
+|`newTick`|`int56`|The current tick value.|
+|`timeElapsedSinceUpdate`|`uint32`|The time elapsed since the last price update.|
+|`timeElapsedSinceLendingUpdate`|`uint32`|The time elapsed since the last lending update.|
+|`tickAvailable`|`bool`||
 
 **Returns**
 
@@ -253,7 +378,6 @@ function getLendingStateTick(Observations storage self, int56 newTick) internal 
 |----|----|-----------|
 |`<none>`|`int16`|lendingStateTick The tick value representing the TWAP since the last lending update.|
 |`<none>`|`int56`|currentCumulativeSum The current cumulative sum for the last updated timestamp.|
-|`<none>`|`uint32`|currentTimestamp The current block timestamp to save on gas costs for the caller.|
 
 
 ### calculateLendingStateTick
@@ -267,8 +391,7 @@ Computes the lending state tick based on the cumulative sum and duration.
 function calculateLendingStateTick(
     int56 cumulativeSum,
     int56 previousCumulativeSum,
-    uint32 lastLendingTimestamp,
-    uint32 currentTimestamp
+    uint32 timeElapsedSinceLendingUpdate
 ) private pure returns (int16);
 ```
 **Parameters**
@@ -277,8 +400,7 @@ function calculateLendingStateTick(
 |----|----|-----------|
 |`cumulativeSum`|`int56`|The current cumulative sum of mid-term values.|
 |`previousCumulativeSum`|`int56`|The previous cumulative sum recorded for lending.|
-|`lastLendingTimestamp`|`uint32`|The timestamp when the last lending state was updated.|
-|`currentTimestamp`|`uint32`|The current block timestamp.|
+|`timeElapsedSinceLendingUpdate`|`uint32`|time elapsed since the last lending state update.|
 
 **Returns**
 
@@ -291,12 +413,7 @@ function calculateLendingStateTick(
 
 
 ```solidity
-function setLendingState(
-    Observations storage self,
-    int16 lendingStateTick,
-    int56 currentCumulativeSum,
-    uint32 currentTimestamp
-) private;
+function setLendingState(Observations storage self, int16 lendingStateTick, int56 currentCumulativeSum) private;
 ```
 
 ### setObservationData
@@ -312,8 +429,8 @@ function setObservationData(
     Observations storage self,
     int16 newTick,
     int56 currentCumulativeTick,
-    uint32 currentTimestamp,
-    uint8 currentMidTermIndex
+    uint256 currentMidTermIndex,
+    bool firstUpdate
 ) private;
 ```
 **Parameters**
@@ -323,8 +440,8 @@ function setObservationData(
 |`self`|`Observations`|The storage reference to the Observations struct.|
 |`newTick`|`int16`|The new tick value to be recorded.|
 |`currentCumulativeTick`|`int56`|The current cumulative tick sum.|
-|`currentTimestamp`|`uint32`|The current block timestamp.|
-|`currentMidTermIndex`|`uint8`||
+|`currentMidTermIndex`|`uint256`||
+|`firstUpdate`|`bool`||
 
 
 ### calculateTickAverage
@@ -381,8 +498,8 @@ function getLongTermBufferFactor(
 
 ### boundTick
 
-Factor, `F` is the amount of information we have in the long-term array.
-It's represented by the last filled index count in the long-term array.
+Adjusts the new tick value to ensure it stays within valid bounds. When we have less data, the outlier
+factor is greater to allow for more flexibility to find the true price.
 
 *The function ensures that `newTick` stays within the bounds
 determined by `lastTick` and a dynamically calculated factor.*
@@ -405,6 +522,36 @@ function boundTick(Observations storage self, int16 newTick) internal view retur
 |`<none>`|`int16`|The adjusted tick value constrained within the allowable range.|
 
 
+### getCurrentTimestamp
+
+*Returns the current block timestamp casted to uint32.*
+
+
+```solidity
+function getCurrentTimestamp() internal view returns (uint32);
+```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`uint32`|The current block timestamp as a uint32 value.|
+
+
+## Events
+### UpdateLendingTick
+*Emitted when `lendingStateTick` is updated*
+
+
+```solidity
+event UpdateLendingTick(int16 lendingStateTick);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`lendingStateTick`|`int16`|The updated value for lending state tick|
+
 ## Errors
 ### InvalidIntervalConfig
 
@@ -422,16 +569,15 @@ calculation.*
 
 ```solidity
 struct Observations {
+    bool isMidTermBufferInitialized;
+    bool isLongTermBufferInitialized;
     uint8 midTermIndex;
     uint8 longTermIndex;
     int16 lastTick;
     int16 lastLendingStateTick;
     uint24 midTermIntervalConfig;
     uint24 longTermIntervalConfig;
-    uint24 longTermTimeElapsedCounter;
     int56 lendingCumulativeSum;
-    uint32 lastTimestamp;
-    uint32 lastLendingTimestamp;
     int56[MID_TERM_ARRAY_LENGTH] midTermCumulativeSum;
     int56[LONG_TERM_ARRAY_LENGTH] longTermCumulativeSum;
     uint32[MID_TERM_ARRAY_LENGTH] midTermTimeInterval;

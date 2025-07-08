@@ -1,5 +1,5 @@
 # ERC20Base
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/ERC20Base.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/tokens/ERC20Base.sol)
 
 **Inherits:**
 ERC20Plugins, Ownable, ERC20Permit, [IAmmalgamERC20](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
@@ -24,6 +24,13 @@ IPluginRegistry private immutable pluginRegistry;
 
 ```solidity
 uint256 public immutable tokenType;
+```
+
+
+### transferPenaltyFromPairToBorrower
+
+```solidity
+bool transient transferPenaltyFromPairToBorrower;
 ```
 
 
@@ -53,11 +60,11 @@ function nonces(
 function ownerMint(address sender, address to, uint256 assets, uint256 shares) public virtual onlyOwner;
 ```
 
-### ownerBurn
+### ownerTransfer
 
 
 ```solidity
-function ownerBurn(address sender, address onBehalfOf, uint256 shares) public virtual onlyOwner returns (uint256);
+function ownerTransfer(address from, address to, uint256 amount) public virtual onlyOwner;
 ```
 
 ### balanceOf

@@ -1,5 +1,5 @@
 # ERC4626DepositToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/ERC4626DepositToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
@@ -15,7 +15,7 @@ constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset
 
 ### ownerMint
 
-*override [AmmalgamERC20Base-ownerMint](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownermint).*
+*override [AmmalgamERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md#ownermint).*
 
 
 ```solidity
@@ -33,7 +33,7 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override [AmmalgamERC20Base-ownerBurn](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownerburn).*
+*override [AmmalgamERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC4626DebtToken.sol/contract.ERC4626DebtToken.md#ownerburn).*
 
 
 ```solidity
@@ -47,6 +47,23 @@ function ownerBurn(address sender, address to, uint256 assets, uint256 shares) p
 |`to`|`address`|The address that will receive the underlying assets.|
 |`assets`|`uint256`|The amount of underlying assets that will be received.|
 |`shares`|`uint256`|The amount of shares that will be burned.|
+
+
+### ownerTransfer
+
+Transfers `amount` tokens from the `from` address to the `to` address.
+
+
+```solidity
+function ownerTransfer(address from, address to, uint256 amount) public virtual override onlyOwner;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`from`|`address`|The account to deduct the tokens from.|
+|`to`|`address`|The account to deliver the tokens to.|
+|`amount`|`uint256`|The amount of tokens to be transferred.|
 
 
 ### _deposit

@@ -1,12 +1,12 @@
 # ICallback
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
 
 *This interface should be implemented by anyone wishing to use callbacks in the
 `swap`, `borrow`, and `borrowLiquidity` functions in the  IAmmalgamPair interface.*
 
 
 ## Functions
-### swapCall
+### ammalgamSwapCallV1
 
 Handles a swap call in the Ammalgam protocol.
 
@@ -14,7 +14,12 @@ Handles a swap call in the Ammalgam protocol.
 
 
 ```solidity
-function swapCall(address sender, uint256 amountXAssets, uint256 amountYAssets, bytes calldata data) external;
+function ammalgamSwapCallV1(
+    address sender,
+    uint256 amountXAssets,
+    uint256 amountYAssets,
+    bytes calldata data
+) external;
 ```
 **Parameters**
 
@@ -26,19 +31,16 @@ function swapCall(address sender, uint256 amountXAssets, uint256 amountYAssets, 
 |`data`|`bytes`|The calldata provided to the swap function.|
 
 
-### borrowCall
-
-Handles a borrow call in the Ammalgam protocol.
-
-*Callback passed as calldata to `borrow` and `borrowLiquidity` functions in `IAmmalgamPair`.*
+### ammalgamBorrowCallV1
 
 
 ```solidity
-function borrowCall(
+function ammalgamBorrowCallV1(
     address sender,
     uint256 amountXAssets,
     uint256 amountYAssets,
-    uint256 amountLAssets,
+    uint256 amountXShares,
+    uint256 amountYShares,
     bytes calldata data
 ) external;
 ```
@@ -46,10 +48,50 @@ function borrowCall(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`sender`|`address`|The address of the sender initiating the borrow call.|
+|`sender`|`address`||
 |`amountXAssets`|`uint256`|The amount of token X involved in the borrow.|
 |`amountYAssets`|`uint256`|The amount of token Y involved in the borrow.|
-|`amountLAssets`|`uint256`|The amount of liquidity involved in the borrow.|
+|`amountXShares`|`uint256`|The shares of token X involved in the borrow.|
+|`amountYShares`|`uint256`|The shares of token Y involved in the borrow.|
 |`data`|`bytes`|The calldata provided to the borrow function.|
+
+
+### ammalgamBorrowLiquidityCallV1
+
+
+```solidity
+function ammalgamBorrowLiquidityCallV1(
+    address sender,
+    uint256 amountXAssets,
+    uint256 amountYAssets,
+    uint256 amountLShares,
+    bytes calldata data
+) external;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`sender`|`address`||
+|`amountXAssets`|`uint256`|The amount of token X involved in the borrow.|
+|`amountYAssets`|`uint256`|The amount of token Y involved in the borrow.|
+|`amountLShares`|`uint256`|The shares of liquidity involved in the borrow.|
+|`data`|`bytes`|The calldata provided to the borrow function.|
+
+
+### ammalgamLiquidateCallV1
+
+Handles a liquidate call in the Ammalgam protocol. The callback is expected to transfer repayXInXAssets and repayYInYAssets from the liquidator to the pair.
+
+
+```solidity
+function ammalgamLiquidateCallV1(uint256 repayXInXAssets, uint256 repayYInYAssets) external;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`repayXInXAssets`|`uint256`|The amount of token X the liquidator should transfer to the pair.|
+|`repayYInYAssets`|`uint256`|The amount of token Y the liquidator should transfer to the pair.|
 
 

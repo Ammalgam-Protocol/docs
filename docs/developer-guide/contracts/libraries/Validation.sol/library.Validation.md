@@ -1,5 +1,5 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/libraries/Validation.sol)
 
 SPDX-License-Identifier: GPL-3.0-only
 
@@ -12,7 +12,78 @@ uint256 private constant MAX_BORROW_PERCENTAGE = 90;
 ```
 
 
+### ONE_HUNDRED_TIMES_N
+
+```solidity
+uint256 private constant ONE_HUNDRED_TIMES_N = 2000;
+```
+
+
+### TWO_Q64
+
+```solidity
+uint256 private constant TWO_Q64 = 0x20000000000000000;
+```
+
+
+### FIVE_Q64
+
+```solidity
+uint256 private constant FIVE_Q64 = 0x50000000000000000;
+```
+
+
+### NINE_Q64
+
+```solidity
+uint256 private constant NINE_Q64 = 0x90000000000000000;
+```
+
+
+### FIFTY_Q64
+
+```solidity
+uint256 private constant FIFTY_Q64 = 0x320000000000000000;
+```
+
+
+### TWO_TIMES_N_Q64
+
+```solidity
+uint256 private constant TWO_TIMES_N_Q64 = 0x280000000000000000;
+```
+
+
+### TWO_Q128
+
+```solidity
+uint256 private constant TWO_Q128 = 0x200000000000000000000000000000000;
+```
+
+
+### TWO_THOUSAND_FIVE_HUNDRED_Q128
+
+```solidity
+uint256 private constant TWO_THOUSAND_FIVE_HUNDRED_Q128 = 0x9c400000000000000000000000000000000;
+```
+
+
 ## Functions
+### getInputParams
+
+
+```solidity
+function getInputParams(
+    uint128[6] memory currentAssets,
+    uint256[6] memory userAssets,
+    uint256 reserveXAssets,
+    uint256 reserveYAssets,
+    uint256 externalLiquidity,
+    int16 minTick,
+    int16 maxTick
+) internal pure returns (Validation.InputParams memory inputParams);
+```
+
 ### getCheckLtvParams
 
 
@@ -35,7 +106,7 @@ function validateBalanceAndLiqAndNotSameAssetsSuppliedAndBorrowed(
 
 
 ```solidity
-function validateLTVAndLeverage(InputParams memory inputParams, CheckLtvParams memory checkLtvParams) internal pure;
+function validateLTVAndLeverage(CheckLtvParams memory checkLtvParams, uint256 activeLiquidityAssets) internal pure;
 ```
 
 ### validateSolvency
@@ -102,49 +173,73 @@ function getBorrowedInL(
 ### convertXToL
 
 The original math:
-L * activeLiquidityScalerInQ128 = x / (2 * sqrt(p))
+L * activeLiquidityScalerInQ72 = x / (2 * sqrt(p))
 previous equation:
-amountLAssets = Math.mulDiv(amount, Q128, 2 * sqrtPriceInQ128Range, rounding);
-adding activeLiquidityScalerInQ128:
-amountLAssets = (amount * Q128 / (2 * sqrtPriceInQ128Range)) / (activeLiquidityScalerInQ128 / Q128);
+amountLAssets = mulDiv(amount, Q72, 2 * sqrtPriceInXInQ72, rounding);
+adding activeLiquidityScalerInQ72:
+amountLAssets = (amount * Q72 / (2 * sqrtPriceInXInQ72)) / (activeLiquidityScalerInQ72 / Q72);
 simplify to:
-(amount * Q128 * Q128) / (2 * sqrtPriceInQ128Range * activeLiquidityScalerInQ128)
+(amount * Q72 * Q72) / (2 * sqrtPriceInXInQ72 * activeLiquidityScalerInQ72)
 final equation:
-amountLAssets = Math.mulDiv(Math.mulDiv(amount, Q128, sqrtPriceInQ128Range, rounding), Q128, 2 * activeLiquidityScalerInQ128, rounding);
+amountLAssets = mulDiv(mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding), Q72, 2 * activeLiquidityScalerInQ72, rounding);
 or more simplified (failed for some tests)
-amountLAssets = Math.mulDiv(amount, Q128 * Q128, 2 * sqrtPriceInQ128Range * activeLiquidityScalerInQ128);
+amountLAssets = mulDiv(amount, Q72 * Q72, 2 * sqrtPriceInQ72 * activeLiquidityScalerInQ72);
 
 
 ```solidity
 function convertXToL(
+    uint256 amountInXAssets,
+    uint256 sqrtPriceInXInQ72,
+    uint256 activeLiquidityScalerInQ72,
+    bool roundUp
+) internal pure returns (uint256 amountLAssets);
+```
+
+### convertLToX
+
+
+```solidity
+function convertLToX(
     uint256 amount,
-    uint256 sqrtPriceInQ128Range,
-    uint256 activeLiquidityScalerInQ128,
-    Math.Rounding rounding
-) private pure returns (uint256 amountLAssets);
+    uint256 sqrtPriceQ72,
+    uint256 activeLiquidityScalerInQ72,
+    bool roundUp
+) internal pure returns (uint256 amountXAssets);
 ```
 
 ### convertYToL
 
 The simplified math: L = y * sqrt(p) / 2
-Math.mulDiv(amount, sqrtPriceInQ128Range, 2 * Q128, rounding);
-amountLAssets = amount * sqrtPriceInQ128RangeScaled / 2 * Q128
-sqrtPriceInQ128RangeScaled = sqrtPriceInQ128Range / activeLiquidityScalerInQ128 / Q128;
+mulDiv(amount, sqrtPriceInXInQ72, 2 * Q72, rounding);
+amountLAssets = amount * sqrtPriceInXInQ72Scaled / (2 * Q72)
+sqrtPriceInXInQ72Scaled = sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72;
 simplify to:
-amount * sqrtPriceInQ128Range / activeLiquidityScalerInQ128 / Q128 / 2 * Q128
+amount * sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72 / (2 * Q72)
 simplify to:
-(amount * sqrtPriceInQ128Range) / (activeLiquidityScalerInQ128 * 2)
+(amount * sqrtPriceInXInQ72 * Q56) / (activeLiquidityScalerInQ72 * 2)
 final equation:
-amountLAssets = Math.mulDiv(amount, sqrtPriceInQ128Range, 2 * activeLiquidityScalerInQ128, rounding);
+amountLAssets = mulDiv(amount, sqrtPriceInXInQ72 * Q56, 2 * activeLiquidityScalerInQ72, rounding);
 
 
 ```solidity
 function convertYToL(
+    uint256 amountInYAssets,
+    uint256 sqrtPriceInXInQ72,
+    uint256 activeLiquidityScalerInQ72,
+    bool roundUp
+) internal pure returns (uint256 amountInLAssets);
+```
+
+### convertLToY
+
+
+```solidity
+function convertLToY(
     uint256 amount,
-    uint256 sqrtPriceInQ128Range,
-    uint256 activeLiquidityScalerInQ128,
-    Math.Rounding rounding
-) private pure returns (uint256 amountLAssets);
+    uint256 sqrtPriceQ72,
+    uint256 activeLiquidityScalerInQ72,
+    bool roundUp
+) internal pure returns (uint256 amountYAssets);
 ```
 
 ### calcDebtAndCollateral
@@ -152,9 +247,8 @@ function convertYToL(
 
 ```solidity
 function calcDebtAndCollateral(
-    CheckLtvParams memory checkLtvParams,
-    InputParams memory inputParams
-) internal pure returns (uint256 debtLiquidityAssets, uint256 collateralLiquidityAssets);
+    CheckLtvParams memory checkLtvParams
+) internal pure returns (uint256 debtLiquidityAssets, uint256 collateralLiquidityAssets, bool netDebtX);
 ```
 
 ### checkLtv
@@ -163,7 +257,7 @@ function calcDebtAndCollateral(
 ```solidity
 function checkLtv(
     CheckLtvParams memory checkLtvParams,
-    InputParams memory inputParams
+    uint256 activeLiquidityAssets
 ) private pure returns (uint256 debtLiquidityAssets, uint256 collateralLiquidityAssets);
 ```
 
@@ -172,10 +266,6 @@ function checkLtv(
 Calculates the impact slippage of buying the debt in the dex using the currently
 available liquidity $L = \sqrt{x \cdot y}$. Uses a few formulas to simplify to not need
 reserves to calculate the required collateral to buy the debt.
-Let the fee be represented as
-```math
-\phi = 1 - fee
-```
 The reserves available in and out for swapping can be defined in terms of $L$, and price $p$
 ```math
 \begin{align*}
@@ -187,32 +277,32 @@ The swap amount $in$ and $out$ can also be defined in terms of $L_{in}$ and
 $L_{out}$
 ```math
 \begin{align*}
-in &= L_{in} \cdot 2 \cdot \sqrt{p}
+in &= L_{in} \cdot 2 \cdot \sqrt{p} \\
 out &= \frac{  2 \cdot L_{out} }{ \sqrt{p} }
 \end{align*}
 ```
 Starting with our swap equation we solve for $in$
 ```math
 \begin{align*}
-(in \cdot \phi + reserveIn)(reserveOut - out) &= reserveOut \cdot reserveIn \\
-in \cdot \phi &= \frac{reserveOut \cdot reserveIn} {reserveOut - out} - reserveIn \\
-in \cdot \phi &= reserveIn \cdot \left(\frac{reserveOut } {reserveOut - out} - 1 \right) \\
-in \cdot \phi &= reserveIn \cdot \frac{ reserveOut - (reserveOut - out) } { reserveOut - out } \\
-in \cdot \phi &= \frac{ reserveIn \cdot out } { reserveOut - out } \\
+(in + reserveIn)(reserveOut - out) &= reserveOut \cdot reserveIn \\
+in &= \frac{reserveOut \cdot reserveIn} {reserveOut - out} - reserveIn \\
+in &= reserveIn \cdot \left(\frac{reserveOut } {reserveOut - out} - 1 \right) \\
+in &= reserveIn \cdot \frac{ reserveOut - (reserveOut - out) } { reserveOut - out } \\
+in &= \frac{ reserveIn \cdot out } { reserveOut - out } \\
 \end{align*}
 ```
 We now plug in liquidity values in place of $reserveIn$, $reserveOut$, $in$, and $out$.
 ```math
 \begin{align*}
-L_{in} \cdot 2 \cdot \sqrt{p} \cdot \phi
+L_{in} \cdot 2 \cdot \sqrt{p}
 &=  \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
 { \frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} } } \\
-L_{in} \cdot \phi
+L_{in}
 &= \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
 { 2 \cdot \sqrt{p} \cdot  \left(\frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} }\right)} \\
 L_{in}
 &=  \frac { L \cdot  L_{out} }
-{ \phi  \cdot (L - 2 \cdot L_{out}) } \\
+{ (L - 2 \cdot L_{out}) } \\
 \end{align*}
 ```
 Using $L_{out}$ described in our method as `debtLiquidityAssets`, $L$ or `activeLiquidityAssets`,
@@ -224,7 +314,7 @@ must come in to buy the debt.
 function increaseForSlippage(
     uint256 debtLiquidityAssets,
     uint256 activeLiquidityAssets
-) private pure returns (uint256);
+) internal pure returns (uint256);
 ```
 **Parameters**
 
@@ -298,10 +388,12 @@ error AmmalgamTransferAmtExceedsBalance();
 ```solidity
 struct InputParams {
     uint256[6] userAssets;
-    uint256 sqrtPriceMinInQ128;
-    uint256 sqrtPriceMaxInQ128;
-    uint256 activeLiquidityScalerInQ128;
+    uint256 sqrtPriceMinInQ72;
+    uint256 sqrtPriceMaxInQ72;
+    uint256 activeLiquidityScalerInQ72;
     uint256 activeLiquidityAssets;
+    uint256 reservesXAssets;
+    uint256 reservesYAssets;
 }
 ```
 

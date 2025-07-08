@@ -1,5 +1,5 @@
 # ERC4626DebtToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/6e61b51e90091137f7e2abb147c11731a6d4681e/contracts/tokens/ERC4626DebtToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1df5df9e4b968d0d06a1d2d00a0120c1be82e15/contracts/tokens/ERC4626DebtToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)
@@ -37,27 +37,35 @@ function ownerBurn(
 ) public virtual override(IAmmalgamERC20) onlyOwner;
 ```
 
-### borrowCall
+### ammalgamBorrowCallV1
 
 We use the callback to transfer debt to the caller and transfer borrowed assets to the receiver.
 This contract never has assets or shares unless they were sent to it by the pair within
 the context of this function getting called. Calling this function directly will not do
 anything because there are no assets or shares to transfer.
 
-*TODO(#547): Shares and assets need testing.*
+*Shares and assets need testing.*
 
 
 ```solidity
-function borrowCall(address sender, uint256 assetsX, uint256 assetsY, uint256, bytes calldata data) public virtual;
+function ammalgamBorrowCallV1(
+    address sender,
+    uint256 assetsX,
+    uint256 assetsY,
+    uint256 sharesX,
+    uint256 sharesY,
+    bytes calldata data
+) public virtual;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`sender`|`address`||
-|`assetsX`|`uint256`|amount of tokenX sent to this contract|
-|`assetsY`|`uint256`|amount of tokenY sent to this contract|
-|`<none>`|`uint256`||
+|`assetsX`|`uint256`|assets amount of tokenX sent to this contract|
+|`assetsY`|`uint256`|assets amount of tokenY sent to this contract|
+|`sharesX`|`uint256`|shares amount of tokenX sent to this contract|
+|`sharesY`|`uint256`|shares amount of tokenY sent to this contract|
 |`data`|`bytes`|encoded data containing the caller and receiver addresses|
 
 
