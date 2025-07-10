@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bbf468c990ab84694ca54d6197acec418d42c187/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/975f0ea3593c2ebbbad06ad90ec03f0a7b68c3e0/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -202,12 +202,12 @@ function calcHardPremiumInBips(
 Calculate the maximum premium the liquidator should receive based on the LTV of the borrower.
 maxPremiumInBips is linear in between the following points
 ```math
-\begin{equation*}
-0 <= LTV < START_NEGATIVE_PREMIUM_LTV_BIPS => maxPremiumInBips = 0 \\
-START_NEGATIVE_PREMIUM_LTV_BIPS = LTV => maxPremiumInBips == 0 (negative premium) \\
-START_PREMIUM_LTV_BIPS = LTV => maxPremiumInBips == 1 (no premium) \\
-0.9 = LTV => maxPremiumInBips == 1/0.9 (full premium)
-\end{equation*}
+\begin{gather*}
+0 <= LTV < START\_NEGATIVE\_PREMIUM\_LTV\_BIPS => maxPremiumInBips = 0 \\
+START\_NEGATIVE\_PREMIUM\_LTV\_BIPS = LTV => maxPremiumInBips == 0 \quad (negative premium) \\
+START\_PREMIUM\_LTV\_BIPS = LTV => maxPremiumInBips == 1 \quad (no premium) \\
+0.9 = LTV => maxPremiumInBips == 1/0.9 \quad (full premium)
+\end{gather*}
 ```
 
 *internal for testing only*
