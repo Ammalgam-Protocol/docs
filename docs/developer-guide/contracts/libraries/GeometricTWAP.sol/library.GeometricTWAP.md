@@ -1,5 +1,5 @@
 # GeometricTWAP
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bbf468c990ab84694ca54d6197acec418d42c187/contracts/libraries/GeometricTWAP.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/85df9cff0e774de8aef6efe8ec7df8cd94f03568/contracts/libraries/GeometricTWAP.sol)
 
 
 ## State Variables
@@ -43,7 +43,7 @@ Minimum long-term interval factor is used to verify the long-term interval
 is at least 14 times the mid-term interval. This ensures that the long term
 interval is required to be at least 14 times the mid-term interval, this is
 ```math
-\left \lceil \frac{2 * MID_TERM_ARRAY_LAST_INDEX}{LONG_TERM_ARRAY_LAST_INDEX} \right \rceil.
+\left \lceil \frac{2 * MID\_TERM\_ARRAY\_LAST\_INDEX}{LONG\_TERM\_ARRAY\_LAST\_INDEX} \right \rceil.
 ```
 
 

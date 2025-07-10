@@ -1,5 +1,5 @@
 # TickMath
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bbf468c990ab84694ca54d6197acec418d42c187/contracts/libraries/TickMath.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/85df9cff0e774de8aef6efe8ec7df8cd94f03568/contracts/libraries/TickMath.sol)
 
 Computes sqrt price for ticks of size B=(1-2^-9)^-1 as fixed point Q72 numbers. Supports
 prices between 2**-112 and 2**112-1

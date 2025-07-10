@@ -1,5 +1,5 @@
 # QuadraticSwapFees
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bbf468c990ab84694ca54d6197acec418d42c187/contracts/libraries/QuadraticSwapFees.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/85df9cff0e774de8aef6efe8ec7df8cd94f03568/contracts/libraries/QuadraticSwapFees.sol)
 
 **Author:**
 Will
@@ -53,7 +53,7 @@ uint256 internal constant N = 20;
 ### LINEAR_START_REFERENCE_SCALER
 the $$\sqrt{price}$$ at which we switch from quadratic fee to a more linear fee.
 ```math
-(MAX_QUADRATIC_FEE_PERCENT + N) / N
+(MAX\_QUADRATIC\_FEE\_PERCENT + N) / N
 ```
 
 
