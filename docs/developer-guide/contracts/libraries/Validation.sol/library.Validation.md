@@ -1,5 +1,5 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a26749d2952fb563364ca2f24c7ddd488be0359f/contracts/libraries/Validation.sol)
 
 SPDX-License-Identifier: GPL-3.0-only
 
@@ -173,17 +173,17 @@ function getBorrowedInL(
 ### convertXToL
 
 The original math:
-L * activeLiquidityScalerInQ72 = x / (2 * sqrt(p))
+L * activeLiquidityScalerInQ72 = x / sqrt(p)
 previous equation:
-amountLAssets = mulDiv(amount, Q72, 2 * sqrtPriceInXInQ72, rounding);
+amountLAssets = mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding);
 adding activeLiquidityScalerInQ72:
-amountLAssets = (amount * Q72 / (2 * sqrtPriceInXInQ72)) / (activeLiquidityScalerInQ72 / Q72);
+amountLAssets = (amount * Q72 / sqrtPriceInXInQ72) / (activeLiquidityScalerInQ72 / Q72);
 simplify to:
-(amount * Q72 * Q72) / (2 * sqrtPriceInXInQ72 * activeLiquidityScalerInQ72)
+(amount * Q72 * Q72) / (sqrtPriceInXInQ72 * activeLiquidityScalerInQ72)
 final equation:
-amountLAssets = mulDiv(mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding), Q72, 2 * activeLiquidityScalerInQ72, rounding);
+amountLAssets = mulDiv(mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding), Q72, activeLiquidityScalerInQ72, rounding);
 or more simplified (failed for some tests)
-amountLAssets = mulDiv(amount, Q72 * Q72, 2 * sqrtPriceInQ72 * activeLiquidityScalerInQ72);
+amountLAssets = mulDiv(amount, Q72 * Q72, sqrtPriceInQ72 * activeLiquidityScalerInQ72);
 
 
 ```solidity
@@ -209,16 +209,14 @@ function convertLToX(
 
 ### convertYToL
 
-The simplified math: L = y * sqrt(p) / 2
-mulDiv(amount, sqrtPriceInXInQ72, 2 * Q72, rounding);
-amountLAssets = amount * sqrtPriceInXInQ72Scaled / (2 * Q72)
+The simplified math: L = y * sqrt(p)
+mulDiv(amount, sqrtPriceInXInQ72, rounding);
+amountLAssets = amount * sqrtPriceInXInQ72Scaled / Q72;
 sqrtPriceInXInQ72Scaled = sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72;
 simplify to:
-amount * sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72 / (2 * Q72)
-simplify to:
-(amount * sqrtPriceInXInQ72 * Q56) / (activeLiquidityScalerInQ72 * 2)
+amount * sqrtPriceInXInQ72 / activeLiquidityScalerInQ72
 final equation:
-amountLAssets = mulDiv(amount, sqrtPriceInXInQ72 * Q56, 2 * activeLiquidityScalerInQ72, rounding);
+amountLAssets = mulDiv(amount, sqrtPriceInXInQ72, activeLiquidityScalerInQ72, rounding);
 
 
 ```solidity

@@ -1,5 +1,5 @@
 # Saturation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Saturation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a26749d2952fb563364ca2f24c7ddd488be0359f/contracts/libraries/Saturation.sol)
 
 **Authors:**
 imi@1m1.io, Will duelingGalois@protonmail.com
@@ -38,7 +38,7 @@ Leafs (uint16) split the sat, which is uint112, into intervals. From left to rig
 of the tree cover the sat space in increasing order. Each account with a position has a price
 at which its LTV would reach LTVMAX, which is its liquidation (=liq) price.
 To place a debt into the appropriate tranche, we think of each debt and its respective
-collateral as a serries of sums, where each item in the series fits in one tranche. Using
+collateral as a series of sums, where each item in the series fits in one tranche. Using
 formulas above, we determine the number of ticks a debt would cross if liquidated. This is
 considered the span of the liquidation. Using this value we then determine the start and end
 points of the liquidation, where the start would be closer to the prices, on the right of the

@@ -1,5 +1,5 @@
 # ERC4626DebtToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC4626DebtToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a26749d2952fb563364ca2f24c7ddd488be0359f/contracts/tokens/ERC4626DebtToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)
@@ -71,7 +71,7 @@ function ammalgamBorrowCallV1(
 
 ### _deposit
 
-*ERC4626 facade for [IAmmalgamPair-borrow](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#borrow).
+*ERC4626 facade for [IAmmalgamPair-borrow](/lib/morpho-blue/src/Morpho.sol/contract.Morpho.md#borrow).
 both deposit and mint calls _deposit
 This is called when the user is borrowing*
 
@@ -82,7 +82,7 @@ function _deposit(address caller, address receiver, uint256 assets, uint256) int
 
 ### _withdraw
 
-*ERC4626 facade for [IAmmalgamPair-repay](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#repay).
+*ERC4626 facade for [IAmmalgamPair-repay](/lib/morpho-blue/src/Morpho.sol/contract.Morpho.md#repay).
 both withdraw and redeem calls _withdraw
 This is called when the user is repaying their debt*
 
