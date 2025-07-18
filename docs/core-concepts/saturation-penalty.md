@@ -2,21 +2,21 @@
 sidebar_position: 10
 ---
 
-# Penalization of over-saturated positions
+# Over-Saturation Penalty
 
-The penalty system in the saturation library is designed to incentivize proper risk management. It aims to fairly compensate LPs during various states of borrow and saturation utilization. Therefore, a dynamic risk pricing system is required to create a self-balancing mechanism that maintains the protocol health.
+The penalty system in the saturation library is designed to incentivize proper risk management. It not only aims to fairly compensate LPs during various states of borrow and saturation utilization, but also prevents cascading liquidations. Therefore, a dynamic risk pricing system is required to create a self-balancing mechanism that maintains the protocol health.
 
 ## Time-based penalty accrual
 
-The protocal calculates penalty accrual using a time based system. `accruePenalties` function in Saturation.sol take a a `duration` parameter that is defined as the `delta` between the current time and the last time penalty was accrued. See the call stack in `AmmalgamPair.sol`: `accrueSaturationPenaltiesAndInterest -> mintPenalties -> accruePenalties`.
+The protocal calculates penalty accrual using a time based system. `accruePenalties` function in Saturation.sol takes a `duration` parameter that is defined as the `delta` between the current time and the last time penalty was accrued. See the call stack in `AmmalgamPair.sol`: `accrueSaturationPenaltiesAndInterest -> mintPenalties -> accruePenalties`.
 
 ## Penalty threshold
 
-Penalties only starts accruing when a position saturation exceeds 85% (START_SATURATION_PENALTY_RATIO_IN_MAG2 = 85). When calculating the total saturation in penalty, see `calcTotalSatAfterLeafInclusive` in Saturation.sol, the threshold leaf is checked against the maxLeaf.
+Penalties only starts accruing when a position saturation exceeds 85% (`START_SATURATION_PENALTY_RATIO_IN_MAG2 = 85`). When calculating the total saturation in penalty, see `calcTotalSatAfterLeafInclusive` in Saturation.sol, the threshold leaf is checked against the maxLeaf.
 
 When `threasholdLeaf > maxLeaf` it means that the leaf that corresponds to a penalty threshold of 85% saturation is higher than any leaf containing a position. Since `maxLeaf` is defined as `tree.highestSetLeaf`, this means that no position has been set to a leaf that is higher than the threshold leaf. In other words, no position has reached the 85% saturation threshold.
 
-On the other hand, if the a position has reached/surpasses the 85% saturation threshold, (`maxLeaf > thresholdLeaf`), then we loop through the leaves between `thresholdLeaf` and `maxLeaf` and add up all of the saturation (`satInLAssets`). The sum of all the saturation is then returned as the `satInLAssetsInPenalty`, which will be used to calculate the penalty rate.
+On the other hand, if the a position has reached/surpassed the 85% saturation threshold, `maxLeaf > thresholdLeaf`, then the system loops through the leaves between `thresholdLeaf` and `maxLeaf` and add up all of the saturation (`satInLAssets`). The sum of all the saturation is then returned as the `satInLAssetsInPenalty`, which will be used to calculate the penalty rate.
 
 ## Penalty rate calculation
 
@@ -38,12 +38,14 @@ The formula above defines this relationship by using (1 - u₀), where `u₀ = c
 1. u₀ = 10% -> (1 - 10%) = 90% scaling factor
 2. u₀ = 90% -> (1 - 90%) = 10% scaling factor
 
-**Economic incentive**
+**Economic incentives**
 
-The inverse relationship of borrow utilization with penalty rate is due to the motivation of ensuring that LPs are property compensated from an opportunity cost perspective and also maintaining protocal health. It essentially needs to balance between two objectives:
+The inverse relationship of borrow utilization with penalty rate is essentially because the protocal needs to balance between two objectives:
 
-1. Discourage over-saturated positions (high penalty rate)
-2. Maintain system stability by preventing cascading liquidation. (low penalty rate)
+1. Discourage over-saturated positions.
+  - `Low` borrow utilization and `high` saturation utilizaiton = high penalty rate
+2. Maintain system stability by preventing cascading liquidation.
+  - `High` borrow utilization and `high` saturation utiliztion = low penalty rate
 
 *Lower borrow utilizaiton*
 
