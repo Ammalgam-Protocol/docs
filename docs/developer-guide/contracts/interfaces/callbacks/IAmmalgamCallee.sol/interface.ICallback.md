@@ -1,5 +1,5 @@
 # ICallback
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/b02f234f650997c7e7f19495c04e5606555377fd/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
 
 *This interface should be implemented by anyone wishing to use callbacks in the
 `swap`, `borrow`, and `borrowLiquidity` functions in the  IAmmalgamPair interface.*

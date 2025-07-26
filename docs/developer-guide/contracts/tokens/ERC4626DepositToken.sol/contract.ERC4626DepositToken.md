@@ -1,5 +1,5 @@
 # ERC4626DepositToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC4626DepositToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/b02f234f650997c7e7f19495c04e5606555377fd/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
@@ -15,7 +15,7 @@ constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset
 
 ### ownerMint
 
-*override [AmmalgamERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md#ownermint).*
+*override {ERC20Base-ownerMint}.*
 
 
 ```solidity
@@ -33,7 +33,7 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override [AmmalgamERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC4626DebtToken.sol/contract.ERC4626DebtToken.md#ownerburn).*
+*override {ERC20Base-ownerBurn}.*
 
 
 ```solidity
@@ -68,7 +68,7 @@ function ownerTransfer(address from, address to, uint256 amount) public virtual 
 
 ### _deposit
 
-*ERC4626 facade for [IAmmalgamPair-deposit](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#deposit).
+*ERC4626 facade for [IAmmalgamPair-deposit](/lib/openzeppelin-contracts/lib/erc4626-tests/ERC4626.prop.sol/interface.IERC4626.md#deposit).
 both deposit and mint calls _deposit*
 
 
@@ -78,7 +78,7 @@ function _deposit(address caller, address receiver, uint256 assets, uint256) int
 
 ### _withdraw
 
-*ERC4626 facade for [IAmmalgamPair-withdraw](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#withdraw).
+*ERC4626 facade for [IAmmalgamPair-withdraw](/lib/openzeppelin-contracts/lib/erc4626-tests/ERC4626.prop.sol/interface.IERC4626.md#withdraw).
 both withdraw and redeem calls _withdraw*
 
 
