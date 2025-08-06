@@ -35,7 +35,7 @@ const FeatureList = [
     link: './docs/core-concepts/capital-efficiency'
   },
   {
-    title: 'No-Oracle Design',
+    title: 'No-Oracle Lending Design',
     icon: require('@site/static/icons/no_oracles.png').default,
     description: (
       <>
