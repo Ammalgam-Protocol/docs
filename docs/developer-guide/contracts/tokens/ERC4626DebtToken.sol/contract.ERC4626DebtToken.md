@@ -1,8 +1,8 @@
 # ERC4626DebtToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC4626DebtToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/tokens/ERC4626DebtToken.sol)
 
 **Inherits:**
-ERC4626, [ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)
+ERC4626, [ERC20DebtBase](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)
 
 
 ## Functions
@@ -10,7 +10,10 @@ ERC4626, [ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.so
 
 
 ```solidity
-constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset)) ERC20DebtBase(config);
+constructor(
+    ERC20BaseConfig memory config,
+    address _asset
+) ERC4626(IERC20(_asset)) ERC20DebtBase(config);
 ```
 
 ### ownerMint
@@ -44,7 +47,7 @@ This contract never has assets or shares unless they were sent to it by the pair
 the context of this function getting called. Calling this function directly will not do
 anything because there are no assets or shares to transfer.
 
-*Shares and assets need testing.*
+Shares and assets need testing.
 
 
 ```solidity
@@ -71,31 +74,45 @@ function ammalgamBorrowCallV1(
 
 ### _deposit
 
-*ERC4626 facade for [IAmmalgamPair-borrow](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#borrow).
+ERC4626 facade for [IAmmalgamPair-borrow](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#borrow).
 both deposit and mint calls _deposit
-This is called when the user is borrowing*
+This is called when the user is borrowing
 
 
 ```solidity
-function _deposit(address caller, address receiver, uint256 assets, uint256) internal virtual override;
+function _deposit(
+    address caller,
+    address receiver,
+    uint256 assets,
+    uint256 /*shares*/
+) internal virtual override;
 ```
 
 ### _withdraw
 
-*ERC4626 facade for [IAmmalgamPair-repay](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#repay).
+ERC4626 facade for [IAmmalgamPair-repay](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#repay).
 both withdraw and redeem calls _withdraw
-This is called when the user is repaying their debt*
+This is called when the user is repaying their debt
 
 
 ```solidity
-function _withdraw(address caller, address receiver, address, uint256 assets, uint256) internal virtual override;
+function _withdraw(
+    address caller,
+    address receiver,
+    address, /*owner*/
+    uint256 assets,
+    uint256 /*shares*/
+) internal virtual override;
 ```
 
 ### approve
 
 
 ```solidity
-function approve(address account, uint256 balance) public pure override(ERC20, ERC20DebtBase, IERC20) returns (bool);
+function approve(
+    address account,
+    uint256 balance
+) public pure override(ERC20, ERC20DebtBase, IERC20) returns (bool);
 ```
 
 ### allowance
@@ -126,7 +143,10 @@ function totalAssets() public view override returns (uint256);
 
 
 ```solidity
-function transfer(address recipient, uint256 amount) public override(ERC20, IERC20, ERC20DebtBase) returns (bool);
+function transfer(
+    address recipient,
+    uint256 amount
+) public override(ERC20, IERC20, ERC20DebtBase) returns (bool);
 ```
 
 ### transferFrom
@@ -144,7 +164,11 @@ function transferFrom(
 
 
 ```solidity
-function _update(address from, address to, uint256 amount) internal virtual override(ERC20, ERC20Base);
+function _update(
+    address from,
+    address to,
+    uint256 amount
+) internal virtual override(ERC20, ERC20Base);
 ```
 
 ### _spendAllowance
@@ -171,13 +195,19 @@ function balanceOf(
 
 
 ```solidity
-function _convertToShares(uint256 assets, Math.Rounding rounding) internal view override returns (uint256);
+function _convertToShares(
+    uint256 assets,
+    Math.Rounding rounding
+) internal view override returns (uint256);
 ```
 
 ### _convertToAssets
 
 
 ```solidity
-function _convertToAssets(uint256 shares, Math.Rounding rounding) internal view override returns (uint256);
+function _convertToAssets(
+    uint256 shares,
+    Math.Rounding rounding
+) internal view override returns (uint256);
 ```
 

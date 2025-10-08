@@ -1,8 +1,8 @@
 # IERC20DebtToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/tokens/IERC20DebtToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/tokens/IERC20DebtToken.sol)
 
 **Inherits:**
-[IAmmalgamERC20](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
+[IAmmalgamERC20](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
 
 This interface extends the IAmmalgamERC20 with additional methods.
 for handling debt allowances and claims in the Ammalgam protocol.
@@ -15,7 +15,10 @@ Returns the current debt allowance of `spender` from `receiver`.
 
 
 ```solidity
-function debtAllowance(address receiver, address spender) external view returns (uint256);
+function debtAllowance(
+    address receiver,
+    address spender
+) external view returns (uint256);
 ```
 **Parameters**
 
@@ -35,12 +38,15 @@ function debtAllowance(address receiver, address spender) external view returns 
 
 Sets `amount` of debt tokens that can be accepted by the `caller` from the `spender`.
 
-*The approveDebt implementation in ERC4626DebtToken calls _approve from ERC20, by passing in
-the receiver as owner.*
+The approveDebt implementation in ERC4626DebtToken calls _approve from ERC20, by passing in
+the receiver as owner.
 
 
 ```solidity
-function approveDebt(address spender, uint256 amount) external returns (bool);
+function approveDebt(
+    address spender,
+    uint256 amount
+) external returns (bool);
 ```
 **Parameters**
 
@@ -60,11 +66,14 @@ function approveDebt(address spender, uint256 amount) external returns (bool);
 
 Allows caller to claim `amount` of debt from `owner`.
 
-*The caller must have sufficient collateral in order to secure the debt being claimed.*
+The caller must have sufficient collateral in order to secure the debt being claimed.
 
 
 ```solidity
-function claimDebt(address owner, uint256 amount) external;
+function claimDebt(
+    address owner,
+    uint256 amount
+) external;
 ```
 **Parameters**
 

@@ -1,50 +1,50 @@
 # SaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/SaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/SaturationAndGeometricTWAPState.sol)
 
 **Inherits:**
-[ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.sol/interface.ISaturationAndGeometricTWAPState.md), Ownable
+[ISaturationAndGeometricTWAPState](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/ISaturationAndGeometricTWAPState.sol/interface.ISaturationAndGeometricTWAPState.md), Ownable
 
 
 ## State Variables
 ### midTermIntervalConfig
 
 ```solidity
-uint24 public immutable midTermIntervalConfig;
+uint24 public immutable midTermIntervalConfig
 ```
 
 
 ### longTermIntervalConfig
 
 ```solidity
-uint24 public immutable longTermIntervalConfig;
+uint24 public immutable longTermIntervalConfig
 ```
 
 
 ### satDataGivenPair
 
 ```solidity
-mapping(address => Saturation.SaturationStruct) internal satDataGivenPair;
+mapping(address => Saturation.SaturationStruct) internal satDataGivenPair
 ```
 
 
 ### TWAPDataGivenPair
 
 ```solidity
-mapping(address => GeometricTWAP.Observations) internal TWAPDataGivenPair;
+mapping(address => GeometricTWAP.Observations) internal TWAPDataGivenPair
 ```
 
 
 ### maxNewPositionSaturationInMAG2
 
 ```solidity
-mapping(address => mapping(address => uint256)) maxNewPositionSaturationInMAG2;
+mapping(address => mapping(address => uint256)) maxNewPositionSaturationInMAG2
 ```
 
 
 ### isPairInitialized
 
 ```solidity
-mapping(address => bool) internal isPairInitialized;
+mapping(address => bool) internal isPairInitialized
 ```
 
 
@@ -53,14 +53,17 @@ mapping(address => bool) internal isPairInitialized;
 
 
 ```solidity
-constructor(uint24 _midTermIntervalConfig, uint24 _longTermIntervalConfig) Ownable(msg.sender);
+constructor(
+    uint24 _midTermIntervalConfig,
+    uint24 _longTermIntervalConfig
+) Ownable(msg.sender);
 ```
 
 ### isInitialized
 
 
 ```solidity
-modifier isInitialized();
+modifier isInitialized() ;
 ```
 
 ### _isInitialized
@@ -74,7 +77,7 @@ function _isInitialized() internal view;
 
 initializes the sat and TWAP struct
 
-*initCheck can be removed once the tree structure is fixed*
+initCheck can be removed once the tree structure is fixed
 
 
 ```solidity
@@ -87,7 +90,10 @@ function init(
 
 
 ```solidity
-function setNewPositionSaturation(address pair, uint256 maxDesiredSaturationMag2) external;
+function setNewPositionSaturation(
+    address pair,
+    uint256 maxDesiredSaturationMag2
+) external;
 ```
 
 ### getNewPositionSaturation
@@ -104,7 +110,10 @@ function getNewPositionSaturation(
 
 
 ```solidity
-function getTree(address pairAddress, bool netDebtX) private view returns (Saturation.Tree storage);
+function getTree(
+    address pairAddress,
+    bool netDebtX
+) private view returns (Saturation.Tree storage);
 ```
 
 ### getLeafDetails
@@ -129,7 +138,10 @@ function getLeafDetails(
 
 
 ```solidity
-function getTreeDetails(address pairAddress, bool netDebtX) external view returns (uint16, uint128);
+function getTreeDetails(
+    address pairAddress,
+    bool netDebtX
+) external view returns (uint16, uint128);
 ```
 
 ### getTrancheDetails
@@ -158,11 +170,14 @@ function getAccount(
 
 update the borrow position of an account and potentially check (and revert) if the resulting sat is too high
 
-*run accruePenalties before running this function*
+run accruePenalties before running this function
 
 
 ```solidity
-function update(Validation.InputParams memory inputParams, address account) external virtual;
+function update(
+    Validation.InputParams memory inputParams,
+    address account
+) external virtual;
 ```
 **Parameters**
 
@@ -176,7 +191,10 @@ function update(Validation.InputParams memory inputParams, address account) exte
 
 
 ```solidity
-function _update(Validation.InputParams memory inputParams, address account) internal isInitialized;
+function _update(
+    Validation.InputParams memory inputParams,
+    address account
+) internal isInitialized;
 ```
 
 ### accruePenalties
@@ -251,11 +269,14 @@ function getObservations(
 
 Configures the interval of long-term observations.
 
-*This function is used to set the long-term interval between observations for the long-term buffer.*
+This function is used to set the long-term interval between observations for the long-term buffer.
 
 
 ```solidity
-function configLongTermInterval(address pairAddress, uint24 _longTermIntervalConfig) external onlyOwner;
+function configLongTermInterval(
+    address pairAddress,
+    uint24 _longTermIntervalConfig
+) external onlyOwner;
 ```
 **Parameters**
 
@@ -269,16 +290,19 @@ function configLongTermInterval(address pairAddress, uint24 _longTermIntervalCon
 
 Records a new observation tick value and updates the observation data.
 
-*This function is used to record new observation data for the contract. It ensures that
+This function is used to record new observation data for the contract. It ensures that
 the provided tick value is stored appropriately in both mid-term and long-term
 observations, updates interval counters, and handles tick cumulative values based
 on the current interval configuration. Ensures that this function is called in
 chronological order, with increasing timestamps. Returns in case the
-provided block timestamp is less than or equal to the last recorded timestamp.*
+provided block timestamp is less than or equal to the last recorded timestamp.
 
 
 ```solidity
-function recordObservation(int16 newTick, uint32 timeElapsed) external isInitialized returns (bool);
+function recordObservation(
+    int16 newTick,
+    uint32 timeElapsed
+) external isInitialized returns (bool);
 ```
 **Parameters**
 
@@ -298,8 +322,8 @@ function recordObservation(int16 newTick, uint32 timeElapsed) external isInitial
 
 Gets the min and max range of tick values from the stored oracle observations.
 
-*This function calculates the minimum and maximum tick values among three observed ticks:
-long-term tick, mid-term tick, and current tick.*
+This function calculates the minimum and maximum tick values among three observed ticks:
+long-term tick, mid-term tick, and current tick.
 
 
 ```solidity
@@ -342,8 +366,8 @@ Gets the tick value representing the TWAP since the last
 lending update and checkpoints the current lending cumulative sum
 as `self.lendingCumulativeSum` and the current block timestamp as `self.lastLendingTimestamp`.
 
-*See `getLendingStateTick` for implementation details which was
-separated to allow view access without any state updates.*
+See `getLendingStateTick` for implementation details which was
+separated to allow view access without any state updates.
 
 
 ```solidity
@@ -369,7 +393,7 @@ function getLendingStateTickAndCheckpoint(
 
 ### getObservedMidTermTick
 
-*Retrieves the mid-term tick value based on the stored observations.*
+Retrieves the mid-term tick value based on the stored observations.
 
 
 ```solidity
@@ -392,8 +416,8 @@ function getObservedMidTermTick(
 
 ### boundTick
 
-*The function ensures that `newTick` stays within the bounds
-determined by `lastTick` and a dynamically calculated factor.*
+The function ensures that `newTick` stays within the bounds
+determined by `lastTick` and a dynamically calculated factor.
 
 
 ```solidity

@@ -1,8 +1,8 @@
 # ERC4626DepositToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC4626DepositToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
-ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
+ERC4626, [ERC20Base](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
 
 
 ## Functions
@@ -10,16 +10,24 @@ ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstra
 
 
 ```solidity
-constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset)) ERC20Base(config);
+constructor(
+    ERC20BaseConfig memory config,
+    address _asset
+) ERC4626(IERC20(_asset)) ERC20Base(config);
 ```
 
 ### ownerMint
 
-*override [AmmalgamERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md#ownermint).*
+override [AmmalgamERC20Base-ownerMint](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownermint).
 
 
 ```solidity
-function ownerMint(address sender, address to, uint256 assets, uint256 shares) public virtual override onlyOwner;
+function ownerMint(
+    address sender,
+    address to,
+    uint256 assets,
+    uint256 shares
+) public virtual override onlyOwner;
 ```
 **Parameters**
 
@@ -33,11 +41,16 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override [AmmalgamERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC4626DebtToken.sol/contract.ERC4626DebtToken.md#ownerburn).*
+override [AmmalgamERC20Base-ownerBurn](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownerburn).
 
 
 ```solidity
-function ownerBurn(address sender, address to, uint256 assets, uint256 shares) public virtual override onlyOwner;
+function ownerBurn(
+    address sender,
+    address to,
+    uint256 assets,
+    uint256 shares
+) public virtual override onlyOwner;
 ```
 **Parameters**
 
@@ -55,7 +68,11 @@ Transfers `amount` tokens from the `from` address to the `to` address.
 
 
 ```solidity
-function ownerTransfer(address from, address to, uint256 amount) public virtual override onlyOwner;
+function ownerTransfer(
+    address from,
+    address to,
+    uint256 amount
+) public virtual override onlyOwner;
 ```
 **Parameters**
 
@@ -68,29 +85,44 @@ function ownerTransfer(address from, address to, uint256 amount) public virtual 
 
 ### _deposit
 
-*ERC4626 facade for [IAmmalgamPair-deposit](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#deposit).
-both deposit and mint calls _deposit*
+ERC4626 facade for [IAmmalgamPair-deposit](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#deposit).
+both deposit and mint calls _deposit
 
 
 ```solidity
-function _deposit(address caller, address receiver, uint256 assets, uint256) internal virtual override;
+function _deposit(
+    address caller,
+    address receiver,
+    uint256 assets,
+    uint256 /*shares*/
+) internal virtual override;
 ```
 
 ### _withdraw
 
-*ERC4626 facade for [IAmmalgamPair-withdraw](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#withdraw).
-both withdraw and redeem calls _withdraw*
+ERC4626 facade for [IAmmalgamPair-withdraw](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#withdraw).
+both withdraw and redeem calls _withdraw
 
 
 ```solidity
-function _withdraw(address caller, address receiver, address, uint256, uint256 shares) internal virtual override;
+function _withdraw(
+    address caller,
+    address receiver,
+    address, /*owner*/
+    uint256, /*assets*/
+    uint256 shares
+) internal virtual override;
 ```
 
 ### _update
 
 
 ```solidity
-function _update(address from, address to, uint256 amount) internal virtual override(ERC20Base, ERC20);
+function _update(
+    address from,
+    address to,
+    uint256 amount
+) internal virtual override(ERC20Base, ERC20);
 ```
 
 ### balanceOf
@@ -120,13 +152,19 @@ function totalAssets() public view override returns (uint256);
 
 
 ```solidity
-function _convertToShares(uint256 assets, Math.Rounding rounding) internal view override returns (uint256);
+function _convertToShares(
+    uint256 assets,
+    Math.Rounding rounding
+) internal view override returns (uint256);
 ```
 
 ### _convertToAssets
 
 
 ```solidity
-function _convertToAssets(uint256 shares, Math.Rounding rounding) internal view override returns (uint256);
+function _convertToAssets(
+    uint256 shares,
+    Math.Rounding rounding
+) internal view override returns (uint256);
 ```
 

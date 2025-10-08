@@ -1,8 +1,8 @@
 # IAmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/IAmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/IAmmalgamPair.sol)
 
 **Inherits:**
-[ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md), [ITransferValidator](/docs/developer-guide/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
+[ITokenController](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md), [ITransferValidator](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
 
 
 ## Functions
@@ -10,8 +10,8 @@
 
 Mints tokens and assigns them to `to` address.
 
-*Calculates the amount of tokens to mint based on reserves and balances. Requires liquidity > 0.
-Emits a #Mint event.*
+Calculates the amount of tokens to mint based on reserves and balances. Requires liquidity > 0.
+Emits a #Mint event.
 
 
 ```solidity
@@ -36,9 +36,9 @@ function mint(
 
 Burns liquidity tokens from the contract and sends the underlying assets to `to` address.
 
-*Calculates the amounts of assets to be returned based on liquidity.
+Calculates the amounts of assets to be returned based on liquidity.
 Requires amountXAssets and amountYAssets to be greater than 0.
-Emits a #Burn event and performs a safe transfer of assets.*
+Emits a #Burn event and performs a safe transfer of assets.
 
 
 ```solidity
@@ -64,15 +64,20 @@ function burn(
 
 Executes a swap of tokens.
 
-*Requires at least one of `amountXOut` and `amountYOut` to be greater than 0,
+Requires at least one of `amountXOut` and `amountYOut` to be greater than 0,
 and that the amount out does not exceed the reserves.
 An optimistically transfer of tokens is performed.
 A callback is executed if `data` is not empty.
-Emits a #Swap event.*
+Emits a #Swap event.
 
 
 ```solidity
-function swap(uint256 amountXOut, uint256 amountYOut, address to, bytes calldata data) external;
+function swap(
+    uint256 amountXOut,
+    uint256 amountYOut,
+    address to,
+    bytes calldata data
+) external;
 ```
 **Parameters**
 
@@ -88,7 +93,7 @@ function swap(uint256 amountXOut, uint256 amountYOut, address to, bytes calldata
 
 Handles deposits into the contract.
 
-*Verifies deposit amounts and types, adjusts reserves if necessary, mints corresponding tokens, and updates missing assets.*
+Verifies deposit amounts and types, adjusts reserves if necessary, mints corresponding tokens, and updates missing assets.
 
 
 ```solidity
@@ -107,7 +112,7 @@ function deposit(
 
 Handles withdrawals from the contract.
 
-*Verifies withdrawal amounts, burns corresponding tokens, transfers the assets, and updates missing assets.*
+Verifies withdrawal amounts, burns corresponding tokens, transfers the assets, and updates missing assets.
 
 
 ```solidity
@@ -126,11 +131,16 @@ function withdraw(
 
 Handles borrowing from the contract.
 
-*Verifies the borrowing amounts, mints corresponding debt tokens, transfers the assets, and updates missing assets. Also supports flash loan interactions.*
+Verifies the borrowing amounts, mints corresponding debt tokens, transfers the assets, and updates missing assets. Also supports flash loan interactions.
 
 
 ```solidity
-function borrow(address to, uint256 amountXAssets, uint256 amountYAssets, bytes calldata data) external;
+function borrow(
+    address to,
+    uint256 amountXAssets,
+    uint256 amountYAssets,
+    bytes calldata data
+) external;
 ```
 **Parameters**
 
@@ -146,13 +156,13 @@ function borrow(address to, uint256 amountXAssets, uint256 amountYAssets, bytes 
 
 Handles liquidity borrowing from the contract.
 
-*Verifies the borrowing amount, mints corresponding tokens, transfers the assets, and updates reserves. Also supports flash loan interactions.*
+Verifies the borrowing amount, mints corresponding tokens, transfers the assets, and updates reserves. Also supports flash loan interactions.
 
 
 ```solidity
 function borrowLiquidity(
     address to,
-    uint256 borrowAmountLShares,
+    uint256 borrowAmountLAssets,
     bytes calldata data
 ) external returns (uint256, uint256);
 ```
@@ -161,7 +171,7 @@ function borrowLiquidity(
 |Name|Type|Description|
 |----|----|-----------|
 |`to`|`address`||
-|`borrowAmountLShares`|`uint256`|Amount of liquidity to borrow.|
+|`borrowAmountLAssets`|`uint256`|Amount of liquidity to borrow.|
 |`data`|`bytes`|Call data to be sent to external contract if flash loan is desired.|
 
 **Returns**
@@ -176,7 +186,7 @@ function borrowLiquidity(
 
 Handles repayment of borrowed assets.
 
-*Burns corresponding borrowed tokens, adjusts the reserves, and updates missing assets.*
+Burns corresponding borrowed tokens, adjusts the reserves, and updates missing assets.
 
 
 ```solidity
@@ -202,7 +212,7 @@ function repay(
 
 Handles repayment of borrowed liquidity.
 
-*Calculates repayable liquidity, burns corresponding tokens, adjusts reserves, and updates active liquidity.*
+Calculates repayable liquidity, burns corresponding tokens, adjusts reserves, and updates active liquidity.
 
 
 ```solidity
@@ -229,7 +239,7 @@ function repayLiquidity(
 
 Transfers excess tokens to a specified address.
 
-*Calculates the excess of tokenX and tokenY balances and transfers them to the specified address.*
+Calculates the excess of tokenX and tokenY balances and transfers them to the specified address.
 
 
 ```solidity
@@ -248,7 +258,7 @@ function skim(
 
 Updates the reserves to match the current token balances.
 
-*Reads the current balance of tokenX and tokenY in the contract, and updates the reserves to match these balances.*
+Reads the current balance of tokenX and tokenY in the contract, and updates the reserves to match these balances.
 
 
 ```solidity
@@ -292,7 +302,7 @@ function liquidate(
 
 ## Events
 ### Swap
-*Emitted on a token swap*
+Emitted on a token swap
 
 
 ```solidity
@@ -303,7 +313,7 @@ event Swap(
     uint256 amountXOut,
     uint256 amountYOut,
     address indexed to
-);
+)
 ```
 
 **Parameters**
@@ -318,7 +328,7 @@ event Swap(
 |`to`|`address`|Address where the swapped tokens are sent|
 
 ### Liquidate
-*Emitted on liquidation*
+Emitted on liquidation
 
 
 ```solidity
@@ -333,7 +343,7 @@ event Liquidate(
     uint256 repayX,
     uint256 repayY,
     uint256 liquidationType
-);
+)
 ```
 
 **Parameters**

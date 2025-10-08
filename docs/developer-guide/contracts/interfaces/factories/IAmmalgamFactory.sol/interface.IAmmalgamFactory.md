@@ -1,8 +1,8 @@
 # IAmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/factories/IAmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/factories/IAmmalgamFactory.sol)
 
 **Inherits:**
-[IFactoryCallback](/docs/developer-guide/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
+[IFactoryCallback](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
 
 
 ## Functions
@@ -12,7 +12,10 @@ Returns the pair address for two tokens.
 
 
 ```solidity
-function getPair(address tokenA, address tokenB) external view returns (address pair);
+function getPair(
+    address tokenA,
+    address tokenB
+) external view returns (address pair);
 ```
 **Parameters**
 
@@ -72,7 +75,10 @@ Creates a new pair for two tokens.
 
 
 ```solidity
-function createPair(address tokenA, address tokenB) external returns (address pair);
+function createPair(
+    address tokenA,
+    address tokenB
+) external returns (address pair);
 ```
 **Parameters**
 
@@ -122,13 +128,28 @@ function setFeeToSetter(
 |`newFeeToSetter`|`address`|The new fee setter address.|
 
 
+### hookRegistry
+
+Returns the public immutable address of the hook registry contract.
+
+
+```solidity
+function hookRegistry() external view returns (address);
+```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`address`|The address of the hook registry.|
+
+
 ## Events
 ### PairCreated
 Emitted when a new pair is created.
 
 
 ```solidity
-event PairCreated(address indexed tokenX, address indexed tokenY, address pair, uint256 allPairsLength);
+event PairCreated(address indexed tokenX, address indexed tokenY, address pair, uint256 allPairsLength)
 ```
 
 **Parameters**
@@ -153,7 +174,7 @@ event LendingTokensCreated(
     address borrowL,
     address borrowX,
     address borrowY
-);
+)
 ```
 
 **Parameters**

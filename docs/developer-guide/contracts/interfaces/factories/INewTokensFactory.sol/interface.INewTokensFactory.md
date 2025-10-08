@@ -1,5 +1,5 @@
 # INewTokensFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/factories/INewTokensFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/factories/INewTokensFactory.sol)
 
 Interface for the NewTokensFactory contract, which is responsible for creating new instances of AmmalgamERC20 tokens.
 
@@ -13,7 +13,7 @@ Creates new instances of AmmalgamERC20 tokens for the given token addresses.
 ```solidity
 function createAllTokens(
     address pair,
-    address pluginRegistry,
+    address hookRegistry,
     address tokenX,
     address tokenY
 ) external returns (IAmmalgamERC20[6] memory);
@@ -23,7 +23,7 @@ function createAllTokens(
 |Name|Type|Description|
 |----|----|-----------|
 |`pair`|`address`||
-|`pluginRegistry`|`address`||
+|`hookRegistry`|`address`||
 |`tokenX`|`address`|The address of tokenX.|
 |`tokenY`|`address`|The address of tokenY.|
 

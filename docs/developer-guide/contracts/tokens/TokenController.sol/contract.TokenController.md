@@ -1,220 +1,206 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/tokens/TokenController.sol)
 
 **Inherits:**
-[ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md)
+[ITokenController](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md)
 
-*Wrapper of the ERC20 tokens that has some functionality similar to the ERC1155.*
+Wrapper of the ERC20 tokens that has some functionality similar to the ERC1155.
 
 
 ## State Variables
 ### tokenX
 
 ```solidity
-IERC20 private immutable tokenX;
+IERC20 private immutable tokenX
 ```
 
 
 ### tokenY
 
 ```solidity
-IERC20 private immutable tokenY;
+IERC20 private immutable tokenY
 ```
 
 
 ### _tokenDepositL
 
 ```solidity
-IAmmalgamERC20 private immutable _tokenDepositL;
+IAmmalgamERC20 private immutable _tokenDepositL
 ```
 
 
 ### _tokenDepositX
 
 ```solidity
-IAmmalgamERC20 private immutable _tokenDepositX;
+IAmmalgamERC20 private immutable _tokenDepositX
 ```
 
 
 ### _tokenDepositY
 
 ```solidity
-IAmmalgamERC20 private immutable _tokenDepositY;
+IAmmalgamERC20 private immutable _tokenDepositY
 ```
 
 
 ### _tokenBorrowL
 
 ```solidity
-IAmmalgamERC20 private immutable _tokenBorrowL;
+IAmmalgamERC20 private immutable _tokenBorrowL
 ```
 
 
 ### _tokenBorrowX
 
 ```solidity
-IAmmalgamERC20 private immutable _tokenBorrowX;
+IAmmalgamERC20 private immutable _tokenBorrowX
 ```
 
 
 ### _tokenBorrowY
 
 ```solidity
-IAmmalgamERC20 private immutable _tokenBorrowY;
+IAmmalgamERC20 private immutable _tokenBorrowY
 ```
 
 
 ### allShares
 
 ```solidity
-uint112[6] private allShares;
+uint112[6] private allShares
 ```
 
 
 ### allAssets
 
 ```solidity
-uint128[6] internal allAssets;
+uint128[6] internal allAssets
 ```
 
 
 ### reserveXAssets
 
 ```solidity
-uint112 private reserveXAssets;
+uint112 private reserveXAssets
 ```
 
 
 ### reserveYAssets
 
 ```solidity
-uint112 private reserveYAssets;
+uint112 private reserveYAssets
 ```
 
 
 ### lastUpdateTimestamp
 
 ```solidity
-uint32 internal lastUpdateTimestamp;
+uint32 internal lastUpdateTimestamp
 ```
 
 
 ### referenceReserveX
 
 ```solidity
-uint112 internal referenceReserveX;
+uint112 internal referenceReserveX
 ```
 
 
 ### referenceReserveY
 
 ```solidity
-uint112 internal referenceReserveY;
+uint112 internal referenceReserveY
 ```
 
 
 ### lastLendingTimestamp
 
 ```solidity
-uint32 internal lastLendingTimestamp;
-```
-
-
-### missingXAssets
-
-```solidity
-uint112 internal missingXAssets;
-```
-
-
-### missingYAssets
-
-```solidity
-uint112 internal missingYAssets;
+uint32 internal lastLendingTimestamp
 ```
 
 
 ### lastPenaltyTimestamp
 
 ```solidity
-uint32 internal lastPenaltyTimestamp;
+uint32 internal lastPenaltyTimestamp
 ```
 
 
 ### lastReserveLiquidity
 
 ```solidity
-uint128 internal lastReserveLiquidity;
+uint128 internal lastReserveLiquidity
 ```
 
 
 ### lastActiveLiquidityAssets
 
 ```solidity
-uint128 internal lastActiveLiquidityAssets;
+uint128 internal lastActiveLiquidityAssets
 ```
 
 
 ### totalDepositLAssets
 
 ```solidity
-uint256 internal totalDepositLAssets;
+uint256 internal totalDepositLAssets
 ```
 
 
 ### totalDepositXAssets
 
 ```solidity
-uint256 internal totalDepositXAssets;
+uint256 internal totalDepositXAssets
 ```
 
 
 ### totalDepositYAssets
 
 ```solidity
-uint256 internal totalDepositYAssets;
+uint256 internal totalDepositYAssets
 ```
 
 
 ### totalBorrowLAssets
 
 ```solidity
-uint256 internal totalBorrowLAssets;
+uint256 internal totalBorrowLAssets
 ```
 
 
 ### totalBorrowXAssets
 
 ```solidity
-uint256 internal totalBorrowXAssets;
+uint256 internal totalBorrowXAssets
 ```
 
 
 ### totalBorrowYAssets
 
 ```solidity
-uint256 internal totalBorrowYAssets;
+uint256 internal totalBorrowYAssets
 ```
 
 
 ### externalLiquidity
 
 ```solidity
-uint112 public override externalLiquidity = 0;
+uint112 public override externalLiquidity = 0
 ```
 
 
 ### factory
 
 ```solidity
-IFactoryCallback internal immutable factory;
+IFactoryCallback internal immutable factory
 ```
 
 
 ### saturationAndGeometricTWAPState
 
 ```solidity
-ISaturationAndGeometricTWAPState internal immutable saturationAndGeometricTWAPState;
+ISaturationAndGeometricTWAPState internal immutable saturationAndGeometricTWAPState
 ```
 
 
@@ -223,14 +209,14 @@ ISaturationAndGeometricTWAPState internal immutable saturationAndGeometricTWAPSt
 
 
 ```solidity
-constructor();
+constructor() ;
 ```
 
 ### onlyFeeToSetter
 
 
 ```solidity
-modifier onlyFeeToSetter();
+modifier onlyFeeToSetter() ;
 ```
 
 ### _onlyFeeToSetter
@@ -251,7 +237,10 @@ function underlyingTokens() public view override returns (IERC20, IERC20);
 
 
 ```solidity
-function updateAssets(uint256 tokenType, uint128 assets) private;
+function updateAssets(
+    uint256 tokenType,
+    uint128 assets
+) private;
 ```
 
 ### updateExternalLiquidity
@@ -267,14 +256,26 @@ function updateExternalLiquidity(
 
 
 ```solidity
-function mintId(uint256 tokenType, address sender, address to, uint256 assets, uint256 shares_) internal;
+function mintId(
+    uint256 tokenType,
+    address sender,
+    address to,
+    uint256 assets,
+    uint256 shares_
+) internal;
 ```
 
 ### burnId
 
 
 ```solidity
-function burnId(uint256 tokenType, address sender, address from, uint256 assets, uint256 shares_) internal;
+function burnId(
+    uint256 tokenType,
+    address sender,
+    address from,
+    uint256 assets,
+    uint256 shares_
+) internal;
 ```
 
 ### tokens
@@ -290,7 +291,10 @@ function tokens(
 
 
 ```solidity
-function balanceOf(address account, uint256 tokenType) internal view returns (uint256);
+function balanceOf(
+    address account,
+    uint256 tokenType
+) internal view returns (uint256);
 ```
 
 ### totalShares
@@ -315,7 +319,10 @@ function rawTotalAssets(
 
 
 ```solidity
-function getReserves() public view returns (uint112 _reserveXAssets, uint112 _reserveYAssets, uint32 _lastTimestamp);
+function getReserves()
+    public
+    view
+    returns (uint112 _reserveXAssets, uint112 _reserveYAssets, uint32 _lastTimestamp);
 ```
 
 ### getTickRange
@@ -336,9 +343,9 @@ function referenceReserves() public view returns (uint112, uint112);
 
 Computes the current total Assets.
 
-*If the last lending state update is outdated (i.e., not matching the current block timestamp),
+If the last lending state update is outdated (i.e., not matching the current block timestamp),
 the function recalculates the assets based on the duration since the last update, the lending state,
-and reserve balances. If the timestamp is current, the previous asset (without recalculation) is returned.*
+and reserve balances. If the timestamp is current, the previous asset (without recalculation) is returned.
 
 
 ```solidity
@@ -355,7 +362,10 @@ function totalAssets() public view returns (uint128[6] memory);
 
 
 ```solidity
-function mintPenalties(address account, uint32 deltaPenaltyTimestamp) internal;
+function mintPenalties(
+    address account,
+    uint32 deltaPenaltyTimestamp
+) internal;
 ```
 
 ### getAssets
@@ -394,14 +404,21 @@ function updateReferenceReserve(
 
 
 ```solidity
-function mintProtocolFees(uint256 tokenType, address feeTo, uint256 protocolFee) private;
+function mintProtocolFees(
+    uint256 tokenType,
+    address feeTo,
+    uint256 protocolFee
+) private;
 ```
 
 ### updateReserves
 
 
 ```solidity
-function updateReserves(uint256 newReserveXAssets, uint256 newReserveYAssets) internal;
+function updateReserves(
+    uint256 newReserveXAssets,
+    uint256 newReserveYAssets
+) internal;
 ```
 
 ### updateReservesAndReference
@@ -420,35 +437,34 @@ function updateReservesAndReference(
 
 
 ```solidity
-function _castReserves(uint256 _reserveXAssets, uint256 _reserveYAssets) internal pure returns (uint112, uint112);
+function _castReserves(
+    uint256 _reserveXAssets,
+    uint256 _reserveYAssets
+) internal pure returns (uint112, uint112);
 ```
 
 ### getNetBalances
 
 
 ```solidity
-function getNetBalances(uint256 _reserveXAssets, uint256 _reserveYAssets) internal view returns (uint256, uint256);
+function getNetBalances(
+    uint256 _reserveXAssets,
+    uint256 _reserveYAssets
+) internal view returns (uint256, uint256);
 ```
 
 ### missingAssets
 
 
 ```solidity
-function missingAssets() internal view returns (uint112, uint112);
-```
-
-### updateMissingAssets
-
-
-```solidity
-function updateMissingAssets() internal;
+function missingAssets() internal view returns (uint112 missingXAssets, uint112 missingYAssets);
 ```
 
 ### getDepositAndBorrowAndActiveLiquidityAssets
 
 Get the deposit, borrow, and active liquidity assets.
 
-*This function is used to get the deposit liquidity assets, borrow liquidity assets (BLA), last active liquidity assets (ALA_0), and current active liquidity assets (ALA_1).*
+This function is used to get the deposit liquidity assets, borrow liquidity assets (BLA), last active liquidity assets (ALA_0), and current active liquidity assets (ALA_1).
 
 
 ```solidity
@@ -466,82 +482,21 @@ function getDepositAndBorrowAndActiveLiquidityAssets()
 |`currentActiveLiquidityAssets`|`uint256`|The current active liquidity assets.|
 
 
-### updateReservesAndActiveLiquidity
-
-Update the reserves and active liquidity.
-
-*This function is used to update the last reserves liquidity (RL_0) and last active liquidity assets (ALA_0).*
-
-
-```solidity
-function updateReservesAndActiveLiquidity(
-    uint256 _reserveXAssets,
-    uint256 _reserveYAssets
-) internal returns (uint256 adjustedActiveLiquidity);
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`_reserveXAssets`|`uint256`|The reserve X assets.|
-|`_reserveYAssets`|`uint256`|The reserve Y assets.|
-
-
-### getAdjustedActiveLiquidity
-
-Get the adjusted active liquidity which is the active liquidity without the swap fees.
-
-*This function is used to get the adjusted active liquidity.*
-
-
-```solidity
-function getAdjustedActiveLiquidity(
-    uint256 _reserveXAssets,
-    uint256 _reserveYAssets
-) internal view returns (uint256 adjustedActiveLiquidity);
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`_reserveXAssets`|`uint256`|The reserve X assets.|
-|`_reserveYAssets`|`uint256`|The reserve Y assets.|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`adjustedActiveLiquidity`|`uint256`|The adjusted active liquidity.|
-
-
-### getCurrentAndAdjustedActiveLiquidity
-
-
-```solidity
-function getCurrentAndAdjustedActiveLiquidity(
-    uint256 _reserveXAssets,
-    uint256 _reserveYAssets
-) internal view returns (uint256 currentReserveLiquidity, uint256 adjustedActiveLiquidity);
-```
-
-### getCurrentReserveLiquidity
-
-
-```solidity
-function getCurrentReserveLiquidity(uint256 _reserveXAssets, uint256 _reserveYAssets) private pure returns (uint256);
-```
-
 ### burnBadDebt
 
 
 ```solidity
-function burnBadDebt(address borrower, uint256 tokenType, uint256 reserve) internal;
+function burnBadDebt(
+    address borrower,
+    uint256 tokenType,
+    uint256 reserve
+) internal;
 ```
 
 ## Errors
 ### Forbidden
 
 ```solidity
-error Forbidden();
+error Forbidden()
 ```
 

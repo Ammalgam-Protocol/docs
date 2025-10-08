@@ -1,82 +1,82 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
 ### START_NEGATIVE_PREMIUM_LTV_BIPS
 
 ```solidity
-uint256 internal constant START_NEGATIVE_PREMIUM_LTV_BIPS = 6000;
+uint256 internal constant START_NEGATIVE_PREMIUM_LTV_BIPS = 6000
 ```
 
 
 ### START_PREMIUM_LTV_BIPS
 
 ```solidity
-uint256 private constant START_PREMIUM_LTV_BIPS = 7500;
+uint256 private constant START_PREMIUM_LTV_BIPS = 7500
 ```
 
 
 ### NEGATIVE_PREMIUM_SLOPE_IN_BIPS
 
 ```solidity
-uint256 private constant NEGATIVE_PREMIUM_SLOPE_IN_BIPS = 66_667;
+uint256 private constant NEGATIVE_PREMIUM_SLOPE_IN_BIPS = 66_667
 ```
 
 
 ### NEGATIVE_PREMIUM_INTERCEPT_IN_BIPS
 
 ```solidity
-uint256 private constant NEGATIVE_PREMIUM_INTERCEPT_IN_BIPS = 40_000;
+uint256 private constant NEGATIVE_PREMIUM_INTERCEPT_IN_BIPS = 40_000
 ```
 
 
 ### POSITIVE_PREMIUM_SLOPE_IN_BIPS
 
 ```solidity
-uint256 private constant POSITIVE_PREMIUM_SLOPE_IN_BIPS = 7408;
+uint256 private constant POSITIVE_PREMIUM_SLOPE_IN_BIPS = 7408
 ```
 
 
 ### POSITIVE_PREMIUM_INTERCEPT_IN_BIPS
 
 ```solidity
-uint256 private constant POSITIVE_PREMIUM_INTERCEPT_IN_BIPS = 4444;
+uint256 private constant POSITIVE_PREMIUM_INTERCEPT_IN_BIPS = 4444
 ```
 
 
 ### LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR
 
 ```solidity
-uint256 private constant LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR = 5;
+uint256 private constant LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR = 5
 ```
 
 
 ### MAX_PREMIUM_IN_BIPS
 
 ```solidity
-uint256 private constant MAX_PREMIUM_IN_BIPS = 11_111;
+uint256 private constant MAX_PREMIUM_IN_BIPS = 11_111
 ```
 
 
 ### HARD
 
 ```solidity
-uint256 internal constant HARD = 0;
+uint256 internal constant HARD = 0
 ```
 
 
 ### SOFT
 
 ```solidity
-uint256 internal constant SOFT = 1;
+uint256 internal constant SOFT = 1
 ```
 
 
 ### LEVERAGE
 
 ```solidity
-uint256 internal constant LEVERAGE = 2;
+uint256 internal constant LEVERAGE = 2
 ```
 
 
@@ -149,7 +149,7 @@ function liquidateLeverageCalcDeltaAndPremium(
 
 Calculate the maximum premium the liquidator may receive given the LTV of the borrower.
 
-*We min the result to favor the borrower.*
+We min the result to favor the borrower.
 
 
 ```solidity
@@ -174,7 +174,7 @@ function calcHardMaxPremiumInBips(
 
 Calculate the premium being afforded to the liquidator given the repay and depositToTransfer amounts.
 
-*We use prices to maximize the `premiumInBips` to favor the borrower*
+We use prices to maximize the `premiumInBips` to favor the borrower
 
 
 ```solidity
@@ -210,7 +210,7 @@ START\_PREMIUM\_LTV\_BIPS = LTV => maxPremiumInBips == 1 \quad (no premium) \\
 \end{gather*}
 ```
 
-*internal for testing only*
+internal for testing only
 
 
 ```solidity
@@ -302,19 +302,19 @@ function calcSoftMaxPremiumInBips(
 ### LiquidationPremiumTooHigh
 
 ```solidity
-error LiquidationPremiumTooHigh();
+error LiquidationPremiumTooHigh()
 ```
 
 ### NotEnoughRepaidForLiquidation
 
 ```solidity
-error NotEnoughRepaidForLiquidation();
+error NotEnoughRepaidForLiquidation()
 ```
 
 ### TooMuchDepositToTransferForLeverageLiquidation
 
 ```solidity
-error TooMuchDepositToTransferForLeverageLiquidation();
+error TooMuchDepositToTransferForLeverageLiquidation()
 ```
 
 ## Structs

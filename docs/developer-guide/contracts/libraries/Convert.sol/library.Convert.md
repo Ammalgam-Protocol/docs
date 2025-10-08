@@ -1,12 +1,12 @@
 # Convert
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Convert.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/libraries/Convert.sol)
 
 
 ## State Variables
 ### BUFFER
 
 ```solidity
-uint256 private constant BUFFER = 95;
+uint256 private constant BUFFER = 95
 ```
 
 
@@ -52,7 +52,12 @@ function toShares(
 
 
 ```solidity
-function mulDiv(uint256 x, uint256 y, uint256 z, bool roundingUp) internal pure returns (uint256 result);
+function mulDiv(
+    uint256 x,
+    uint256 y,
+    uint256 z,
+    bool roundingUp
+) internal pure returns (uint256 result);
 ```
 
 ### calcLiquidityConsideringDepletion
@@ -60,19 +65,17 @@ function mulDiv(uint256 x, uint256 y, uint256 z, bool roundingUp) internal pure 
 
 ```solidity
 function calcLiquidityConsideringDepletion(
-    uint256 amountOfAssets,
-    uint256 reserveAssets,
-    uint256 _missingAssets,
-    uint256 activeLiquidityAssets,
-    uint256 depositedLiquidityAssets,
-    uint256 depositedLiquidityShares,
+    uint256 amount,
+    uint256 reserve,
+    uint256 liquidityAssetsNumerator,
+    uint256 missing,
     bool isRoundingUp
-) internal pure returns (uint256 liquidityAssets, uint256 liquidityShares);
+) internal pure returns (uint256);
 ```
 
 ### depletionReserveAdjustmentWhenLiquidityIsAdded
 
-*Minting when assets depleted requires less of the depleted asset as we
+Minting when assets depleted requires less of the depleted asset as we
 give extra credit to minter for bringing the scarce asset. We account
 for liquidity as if moving from the unmodified invariant prior to mint
 to the where it would move after the mint including the extra credited
@@ -81,7 +84,7 @@ I continue to update the Desmos to help create test cases with easier
 numbers to reason about, The current version of desmos is linked below.
 The chart could use some clean up and reorganization to be clearer, will
 do in the future.
-https://www.desmos.com/calculator/etzuxkjeig*
+https://www.desmos.com/calculator/etzuxkjeig
 
 
 ```solidity
@@ -90,9 +93,7 @@ function depletionReserveAdjustmentWhenLiquidityIsAdded(
     uint256 reserveAssets,
     uint256 _missingAssets,
     uint256 activeLiquidityAssets,
-    uint256 depositedLAssets,
-    uint256 depositedLShares,
     bool roundingUp
-) private pure returns (uint256 liquidityAssets, uint256 liquidityShares);
+) private pure returns (uint256 liquidityAssets);
 ```
 

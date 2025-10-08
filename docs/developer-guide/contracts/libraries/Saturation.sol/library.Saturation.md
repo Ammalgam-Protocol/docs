@@ -1,5 +1,5 @@
 # Saturation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Saturation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/libraries/Saturation.sol)
 
 **Authors:**
 imi@1m1.io, Will duelingGalois@protonmail.com
@@ -38,7 +38,7 @@ Leafs (uint16) split the sat, which is uint112, into intervals. From left to rig
 of the tree cover the sat space in increasing order. Each account with a position has a price
 at which its LTV would reach LTVMAX, which is its liquidation (=liq) price.
 To place a debt into the appropriate tranche, we think of each debt and its respective
-collateral as a serries of sums, where each item in the series fits in one tranche. Using
+collateral as a series of sums, where each item in the series fits in one tranche. Using
 formulas above, we determine the number of ticks a debt would cross if liquidated. This is
 considered the span of the liquidation. Using this value we then determine the start and end
 points of the liquidation, where the start would be closer to the prices, on the right of the
@@ -65,245 +65,245 @@ its level
 ### SATURATION_TIME_BUFFER_IN_MAG2
 
 ```solidity
-uint256 internal constant SATURATION_TIME_BUFFER_IN_MAG2 = 101;
+uint256 internal constant SATURATION_TIME_BUFFER_IN_MAG2 = 101
 ```
 
 
 ### MAX_SATURATION_RATIO_IN_MAG2
 
 ```solidity
-uint256 internal constant MAX_SATURATION_RATIO_IN_MAG2 = 95;
+uint256 internal constant MAX_SATURATION_RATIO_IN_MAG2 = 95
 ```
 
 
 ### START_SATURATION_PENALTY_RATIO_IN_MAG2
 
 ```solidity
-uint256 internal constant START_SATURATION_PENALTY_RATIO_IN_MAG2 = 85;
+uint256 internal constant START_SATURATION_PENALTY_RATIO_IN_MAG2 = 85
 ```
 
 
 ### MAX_INITIAL_SATURATION_MAG2
 
 ```solidity
-uint256 internal constant MAX_INITIAL_SATURATION_MAG2 = 90;
+uint256 internal constant MAX_INITIAL_SATURATION_MAG2 = 90
 ```
 
 
 ### EXPECTED_SATURATION_LTV_MAG2
 
 ```solidity
-uint256 internal constant EXPECTED_SATURATION_LTV_MAG2 = 85;
+uint256 internal constant EXPECTED_SATURATION_LTV_MAG2 = 85
 ```
 
 
 ### EXPECTED_SATURATION_LTV_MAG2_TIMES_SAT_BUFFER_SQUARED
 
 ```solidity
-uint256 internal constant EXPECTED_SATURATION_LTV_MAG2_TIMES_SAT_BUFFER_SQUARED = 867_085;
+uint256 internal constant EXPECTED_SATURATION_LTV_MAG2_TIMES_SAT_BUFFER_SQUARED = 867_085
 ```
 
 
 ### EXPECTED_SATURATION_LTV_PLUS_ONE_MAG2
 
 ```solidity
-uint256 internal constant EXPECTED_SATURATION_LTV_PLUS_ONE_MAG2 = 185;
+uint256 internal constant EXPECTED_SATURATION_LTV_PLUS_ONE_MAG2 = 185
 ```
 
 
 ### PENALTY_FACTOR_IN_MAG2
 
 ```solidity
-uint256 private constant PENALTY_FACTOR_IN_MAG2 = 10;
+uint256 private constant PENALTY_FACTOR_IN_MAG2 = 10
 ```
 
 
 ### SAT_CHANGE_OF_BASE_Q128
 
 ```solidity
-uint256 private constant SAT_CHANGE_OF_BASE_Q128 = 0xa39713406ef781154a9e682c2331a7c03;
+uint256 private constant SAT_CHANGE_OF_BASE_Q128 = 0xa39713406ef781154a9e682c2331a7c03
 ```
 
 
 ### SAT_CHANGE_OF_BASE_TIMES_SHIFT
 
 ```solidity
-uint256 private constant SAT_CHANGE_OF_BASE_TIMES_SHIFT = 0xb3f2fb93ad437464387b0c308d1d05537;
+uint256 private constant SAT_CHANGE_OF_BASE_TIMES_SHIFT = 0xb3f2fb93ad437464387b0c308d1d05537
 ```
 
 
 ### TICK_OFFSET
 
 ```solidity
-int16 private constant TICK_OFFSET = 1112;
+int16 private constant TICK_OFFSET = 1112
 ```
 
 
 ### LOWEST_POSSIBLE_IN_PENALTY
 
 ```solidity
-uint256 internal constant LOWEST_POSSIBLE_IN_PENALTY = 0xd9999999999999999999999999999999;
+uint256 internal constant LOWEST_POSSIBLE_IN_PENALTY = 0xd9999999999999999999999999999999
 ```
 
 
 ### MIN_LIQ_TO_REACH_PENALTY
 
 ```solidity
-uint256 private constant MIN_LIQ_TO_REACH_PENALTY = 850;
+uint256 private constant MIN_LIQ_TO_REACH_PENALTY = 850
 ```
 
 
 ### INT_ONE
 
 ```solidity
-int256 private constant INT_ONE = 1;
+int256 private constant INT_ONE = 1
 ```
 
 
 ### INT_NEGATIVE_ONE
 
 ```solidity
-int256 private constant INT_NEGATIVE_ONE = -1;
+int256 private constant INT_NEGATIVE_ONE = -1
 ```
 
 
 ### INT_ZERO
 
 ```solidity
-int256 private constant INT_ZERO = 0;
+int256 private constant INT_ZERO = 0
 ```
 
 
 ### LEVELS_WITHOUT_LEAFS
 
 ```solidity
-uint256 internal constant LEVELS_WITHOUT_LEAFS = 3;
+uint256 internal constant LEVELS_WITHOUT_LEAFS = 3
 ```
 
 
 ### LOWEST_LEVEL_INDEX
 
 ```solidity
-uint256 internal constant LOWEST_LEVEL_INDEX = 2;
+uint256 internal constant LOWEST_LEVEL_INDEX = 2
 ```
 
 
 ### LEAFS
 
 ```solidity
-uint256 internal constant LEAFS = 4096;
+uint256 internal constant LEAFS = 4096
 ```
 
 
 ### CHILDREN_PER_NODE
 
 ```solidity
-uint256 internal constant CHILDREN_PER_NODE = 16;
+uint256 internal constant CHILDREN_PER_NODE = 16
 ```
 
 
 ### CHILDREN_AT_THIRD_LEVEL
 
 ```solidity
-uint256 private constant CHILDREN_AT_THIRD_LEVEL = 256;
+uint256 private constant CHILDREN_AT_THIRD_LEVEL = 256
 ```
 
 
 ### TICKS_PER_TRANCHE
 
 ```solidity
-int256 private constant TICKS_PER_TRANCHE = 100;
+int256 private constant TICKS_PER_TRANCHE = 100
 ```
 
 
 ### TRANCHE_BASE_OVER_BASE_MINUS_ONE_Q72
 
 ```solidity
-uint256 constant TRANCHE_BASE_OVER_BASE_MINUS_ONE_Q72 = 0x5a19b9039a07efd7b39;
+uint256 constant TRANCHE_BASE_OVER_BASE_MINUS_ONE_Q72 = 0x5a19b9039a07efd7b39
 ```
 
 
 ### MIN_TRANCHE
 
 ```solidity
-int256 internal constant MIN_TRANCHE = -199;
+int256 internal constant MIN_TRANCHE = -199
 ```
 
 
 ### MAX_TRANCHE
 
 ```solidity
-int256 internal constant MAX_TRANCHE = 198;
+int256 internal constant MAX_TRANCHE = 198
 ```
 
 
 ### FIELD_NODE_MASK
 
 ```solidity
-uint256 private constant FIELD_NODE_MASK = 0xffff;
+uint256 private constant FIELD_NODE_MASK = 0xffff
 ```
 
 
 ### SATURATION_MAX_BUFFER_TRANCHES
 
 ```solidity
-uint8 internal constant SATURATION_MAX_BUFFER_TRANCHES = 3;
+uint8 internal constant SATURATION_MAX_BUFFER_TRANCHES = 3
 ```
 
 
 ### QUARTER_MINUS_ONE
 
 ```solidity
-uint256 private constant QUARTER_MINUS_ONE = 24;
+uint256 private constant QUARTER_MINUS_ONE = 24
 ```
 
 
 ### QUARTER_OF_MAG2
 
 ```solidity
-uint256 private constant QUARTER_OF_MAG2 = 25;
+uint256 private constant QUARTER_OF_MAG2 = 25
 ```
 
 
 ### NUMBER_OF_QUARTERS
 
 ```solidity
-uint256 private constant NUMBER_OF_QUARTERS = 4;
+uint256 private constant NUMBER_OF_QUARTERS = 4
 ```
 
 
 ### SOFT_LIQUIDATION_SCALER
 
 ```solidity
-uint256 private constant SOFT_LIQUIDATION_SCALER = 10_020;
+uint256 private constant SOFT_LIQUIDATION_SCALER = 10_020
 ```
 
 
 ### TWO_Q64
 
 ```solidity
-uint256 private constant TWO_Q64 = 0x20000000000000000;
+uint256 private constant TWO_Q64 = 0x20000000000000000
 ```
 
 
 ### FOUR_Q128
 
 ```solidity
-uint256 private constant FOUR_Q128 = 0x400000000000000000000000000000000;
+uint256 private constant FOUR_Q128 = 0x400000000000000000000000000000000
 ```
 
 
 ### MAG4_TIMES_Q64
 
 ```solidity
-uint256 private constant MAG4_TIMES_Q64 = 0x27100000000000000000;
+uint256 private constant MAG4_TIMES_Q64 = 0x27100000000000000000
 ```
 
 
 ### B_Q72_MINUS_ONE
 
 ```solidity
-uint256 private constant B_Q72_MINUS_ONE = 0x1008040201008040200;
+uint256 private constant B_Q72_MINUS_ONE = 0x1008040201008040200
 ```
 
 
@@ -312,7 +312,7 @@ uint256 private constant B_Q72_MINUS_ONE = 0x1008040201008040200;
 
 initializes the satStruct, allocating storage for all nodes
 
-*initCheck can be removed once the tree structure is fixed*
+initCheck can be removed once the tree structure is fixed
 
 
 ```solidity
@@ -348,7 +348,7 @@ function initTree(
 
 update the borrow position of an account and potentially check (and revert) if the resulting sat is too high
 
-*run accruePenalties before running this function*
+run accruePenalties before running this function
 
 
 ```solidity
@@ -454,14 +454,14 @@ function removeSatFromTrancheStateUpdates(
 
 add sat to tree, for each tranche in a loop as needed. we add to each tranche as much as it can bear.
 
-*Saturation Distribution Logic
+Saturation Distribution Logic
 This function distributes debt across multiple tranches, maintaining two types of saturation:
 1. satInLAssets: The absolute debt amount in L assets (should remain constant total)
 2. satRelativeToL: The relative saturation that depends on the tranche's price level
 As we move between tranches (different price levels), the same absolute debt
 translates to different relative saturations due to the price-dependent formula.
 conceptually satInLAssets should not be scaled as it represents actual debt that
-doesn't change with price.*
+doesn't change with price.
 
 
 ```solidity
@@ -627,7 +627,10 @@ recursively add sat up the tree
 
 
 ```solidity
-function addSatUpTheTree(Tree storage tree, int256 satInLAssets) internal;
+function addSatUpTheTree(
+    Tree storage tree,
+    int256 satInLAssets
+) internal;
 ```
 **Parameters**
 
@@ -689,7 +692,10 @@ calc penalty owed by account for repay, total over all the tranches that might c
 
 
 ```solidity
-function accrueAccountPenalty(Tree storage tree, address account) internal returns (uint256 penaltyInBorrowLShares);
+function accrueAccountPenalty(
+    Tree storage tree,
+    address account
+) internal returns (uint256 penaltyInBorrowLShares);
 ```
 **Parameters**
 
@@ -913,7 +919,7 @@ function accrueAndRemoveAccountPenalty(
 
 calculate the max liquidation premium in bips for a hard liquidation uses the tree *   to determine to allow for partial liquidations as they occur.
 
-*notice that input params are mutated but then returned to their original state.*
+notice that input params are mutated but then returned to their original state.
 
 
 ```solidity
@@ -975,7 +981,7 @@ function mutateInputParamsForPartialLiquidation(
 
 Calculate the percent of debt and collateral that is eligible for ltv calculation
 
-*note that we assume that the min and max sqrt price are switched prior to calling this.*
+note that we assume that the min and max sqrt price are switched prior to calling this.
 
 
 ```solidity
@@ -1043,7 +1049,7 @@ function findHighestSetLeafUpwards(
 
 recursive function to find the highest set leaf starting from a node, downwards
 
-*internal for testing only*
+internal for testing only
 
 
 ```solidity
@@ -1160,7 +1166,7 @@ function calcSatChangeRatioBips(
 
 calc total sat of all accounts/tranches/leafs higher (and same) as the threshold
 
-*iterate through leaves directly since penalty range is fixed (~8 leaves from 85% to 95% sat)*
+iterate through leaves directly since penalty range is fixed (~8 leaves from 85% to 95% sat)
 
 
 ```solidity
@@ -1268,7 +1274,7 @@ calc the tranche percent and the saturation of the tranche
 ```solidity
 function calcLastTrancheAndSaturation(
     Validation.InputParams memory inputParams,
-    uint256 liqSqrtPriceInXInQ72,
+    uint256 liqSqrtPriceInXInQ72, // what price is this, not clear name or in tests
     uint256 desiredThresholdMag2,
     bool netDebtX
 ) internal pure returns (int256 endOfLiquidationInTicks, SaturationPair memory saturation);
@@ -1323,7 +1329,7 @@ function calculateNetDebtAndSpan(
 
 calculate the relative saturation of the position at the end of liquidation.
 
-*Since we place saturation in tranches starting at the end and moving forward, this
+Since we place saturation in tranches starting at the end and moving forward, this
 calculates the entire saturation as if it would fit in the last tranche, we then need to
 adjust the saturation each time we move to the next tranche by dividing by a factor of
 $$B$$. The equation here is slightly different than the equation in our description since
@@ -1333,21 +1339,23 @@ thus here we use, where $$TCount$$ is the number of tranches we need to move bac
 \begin{equation}
 saturationRelativeToL =
 \begin{cases}
-\frac{debtX}{B^{T_{1}}}\left(\frac{B^{TCount}}{B-1}\right) \\
-debtY\cdot B^{T_{0}}\cdot\left(\frac{B^{TCount}}{B-1}\right)
+debtX \left(\frac{ B^{TCount - T_1} }{ B-1 }\right)
+\text{ when debt is in X asset }\\
+debtY \left(\frac{ B^{TCount + T_0} }{ B-1 }\right) \text{ otherwise }
 \end{cases}
 \end{equation}
 ```
 As we iterate through tranches, we divide by a factor of $$B$$ such that when we reach the
-final tranche, our equation from the start applies.*
+final tranche, our equation from the start applies.
 
 
 ```solidity
 function calculateSaturation(
     uint256 netDebtXOrYAssets,
-    uint256 startSqrtPriceQ72,
+    uint256 startSqrtPriceQ72, // We already are converting from tick to price, we should covert formulas and get rid of quarters here to simplify things.
     uint256 trancheSpanInTicks,
-    bool netDebtX
+    bool netDebtX,
+    int256 tickStartOfLiquidation
 ) internal pure returns (uint256 saturation);
 ```
 **Parameters**
@@ -1358,6 +1366,7 @@ function calculateSaturation(
 |`startSqrtPriceQ72`|`uint256`| the sqrt price at the start of liquidation|
 |`trancheSpanInTicks`|`uint256`| the span of the tranche in ticks.|
 |`netDebtX`|`bool`| whether the debt is in X or Y assets|
+|`tickStartOfLiquidation`|`int256`||
 
 **Returns**
 
@@ -1432,7 +1441,10 @@ read single bit value from the field of a node
 
 
 ```solidity
-function readFieldBitFromNode(uint256 node, uint256 bitPos) internal pure returns (uint256 bit);
+function readFieldBitFromNode(
+    uint256 node,
+    uint256 bitPos
+) internal pure returns (uint256 bit);
 ```
 **Parameters**
 
@@ -1454,7 +1466,10 @@ write to node
 
 
 ```solidity
-function writeFlippedFieldBitToNode(uint256 nodeIn, uint256 bitPos) internal pure returns (uint256 nodeOut);
+function writeFlippedFieldBitToNode(
+    uint256 nodeIn,
+    uint256 bitPos
+) internal pure returns (uint256 nodeOut);
 ```
 **Parameters**
 
@@ -1497,9 +1512,9 @@ function readFieldFromNode(
 
 Calculates the penalty scaling factor based on current borrow utilization and saturation
 
-*This implements the penalty rate function
+This implements the penalty rate function
 Formula: ((1 - u_0) * f_interestPerSecond(u_1) * allAssetsDepositL) / (WAD * satInLAssetsInPenalty)
-Where u_1 = (0.90 - (1 - u_0) * (0.95 - u_s) / 0.95)*
+Where u_1 = (0.90 - (1 - u_0) * (0.95 - u_s) / 0.95)
 
 
 ```solidity
@@ -1530,13 +1545,13 @@ function calcSaturationPenaltyRatePerSecondInWads(
 ### MaxTrancheOverSaturated
 
 ```solidity
-error MaxTrancheOverSaturated();
+error MaxTrancheOverSaturated()
 ```
 
 ### CannotUpdateZeroAddress
 
 ```solidity
-error CannotUpdateZeroAddress();
+error CannotUpdateZeroAddress()
 ```
 
 ## Structs
@@ -1544,7 +1559,9 @@ error CannotUpdateZeroAddress();
 
 ```solidity
 struct SaturationStruct {
+    // the tree containing sat and penalties for netX sat
     Tree netXTree;
+    // the tree containing sat and penalties for netY sat
     Tree netYTree;
     uint16 maxLeaf;
 }
@@ -1556,7 +1573,10 @@ a pair of saturation values used and stored throughout this library.
 
 ```solidity
 struct SaturationPair {
+    // the value of a debt in units of L assets at a given liquidation price.
     uint128 satInLAssets;
+    // the amount of active liquidity assets, L, that the swap required to liquidate the debt
+    // would consume.
     uint128 satRelativeToL;
 }
 ```
@@ -1565,14 +1585,21 @@ struct SaturationPair {
 
 ```solidity
 struct Tree {
+    // is this tree netX xor not
     bool netX;
+    // highest leaf that contains a tranche/account in the tree, useful to quickly decide whether the entire tree is over saturated
     uint16 highestSetLeaf;
+    // nodes per level, each node contains a bit field of size of the number of its children and a uint112 saturation
     uint128 totalSatInLAssets;
     uint256 tranchesWithSaturation;
     uint256[][LEVELS_WITHOUT_LEAFS] nodes;
+    // last level of nodes is kept as leafs
     Leaf[LEAFS] leafs;
+    // which leaf does a tranche belong to
     mapping(int16 => uint16) trancheToLeaf;
+    // sat per tranche
     mapping(int16 => SaturationPair) trancheToSaturation;
+    // data per account
     mapping(address => Account) accountData;
 }
 ```
@@ -1581,8 +1608,11 @@ struct Tree {
 
 ```solidity
 struct Leaf {
+    // set of tranches in a leaf
     Uint16Set.Set tranches;
+    // sum of sat of each tranche in this leaf
     SaturationPair leafSatPair;
+    // penalty for the leaf
     uint256 penaltyInBorrowLSharesPerSatInQ72;
 }
 ```
@@ -1591,10 +1621,19 @@ struct Leaf {
 
 ```solidity
 struct Account {
+    // does account exist, needed as accountToTranche has default value 0 and tranche 0 is ok
     bool exists;
+    // tranche that account belongs to
     int16 lastTranche;
+    // penalty of account
     uint112 penaltyInBorrowLShares;
+    // sat per tranche starting at `tranche` and running in the direction dictated by
+    // netX/netY; netX trees have us distributing sat over increasing tranches, netY over
+    // decreasing tranches, in both cases, towards the current price
     SaturationPair[] satPairPerTranche;
+    // penalty per sat per tranche starting at `tranche` and running in the direction dictated
+    // by netX/netY; netX trees have us distributing sat over increasing tranches, netY over
+    // decreasing tranches, in both cases, towards the current price
     uint256[] treePenaltyAtOnsetInBorrowLSharesPerSatInQ72PerTranche;
 }
 ```

@@ -1,8 +1,8 @@
 # ICallback
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
 
-*This interface should be implemented by anyone wishing to use callbacks in the
-`swap`, `borrow`, and `borrowLiquidity` functions in the  IAmmalgamPair interface.*
+This interface should be implemented by anyone wishing to use callbacks in the
+`swap`, `borrow`, and `borrowLiquidity` functions in the  IAmmalgamPair interface.
 
 
 ## Functions
@@ -10,7 +10,7 @@
 
 Handles a swap call in the Ammalgam protocol.
 
-*Callback passed as calldata to `swap` functions in `IAmmalgamPair`.*
+Callback passed as calldata to `swap` functions in `IAmmalgamPair`.
 
 
 ```solidity
@@ -85,7 +85,10 @@ Handles a liquidate call in the Ammalgam protocol. The callback is expected to t
 
 
 ```solidity
-function ammalgamLiquidateCallV1(uint256 repayXInXAssets, uint256 repayYInYAssets) external;
+function ammalgamLiquidateCallV1(
+    uint256 repayXInXAssets,
+    uint256 repayYInYAssets
+) external;
 ```
 **Parameters**
 

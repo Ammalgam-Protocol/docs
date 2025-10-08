@@ -1,8 +1,8 @@
 # ERC20DebtLiquidityToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC20DebtLiquidityToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/tokens/ERC20DebtLiquidityToken.sol)
 
 **Inherits:**
-[ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)
+[ERC20DebtBase](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)
 
 
 ## Functions
@@ -31,7 +31,12 @@ function ownerMint(
 
 
 ```solidity
-function ownerBurn(address sender, address onBehalfOf, uint256 assets, uint256 shares) public override onlyOwner;
+function ownerBurn(
+    address sender,
+    address onBehalfOf,
+    uint256 assets,
+    uint256 shares
+) public override onlyOwner;
 ```
 
 ### ownerTransfer
@@ -48,7 +53,11 @@ the Saturation State.
 
 
 ```solidity
-function ownerTransfer(address from, address to, uint256 amount) public override(ERC20Base, IAmmalgamERC20) onlyOwner;
+function ownerTransfer(
+    address from,
+    address to,
+    uint256 amount
+) public override(ERC20Base, IAmmalgamERC20) onlyOwner;
 ```
 **Parameters**
 
@@ -57,33 +66,5 @@ function ownerTransfer(address from, address to, uint256 amount) public override
 |`from`|`address`|address from which shares are transferred|
 |`to`|`address`|address to which shares are transferred|
 |`amount`|`uint256`|amount of shares to transfer|
-
-
-### borrowLiquidityCall
-
-We use the callback to transfer debt to the caller and transfer borrowed assets to the receiver.
-This contract never has assets or shares unless they were sent to it by the pair within
-the context of this function getting called. Calling this function directly will not do
-anything because there are no assets or shares to transfer.
-
-
-```solidity
-function borrowLiquidityCall(
-    address sender,
-    uint256 assetsX,
-    uint256 assetsY,
-    uint256 sharesL,
-    bytes calldata data
-) public;
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`sender`|`address`||
-|`assetsX`|`uint256`|amount of tokenX sent to this contract|
-|`assetsY`|`uint256`|amount of tokenY sent to this contract|
-|`sharesL`|`uint256`|amount of liquidity debt added to this contract|
-|`data`|`bytes`|encoded data containing the caller and receiver addresses|
 
 

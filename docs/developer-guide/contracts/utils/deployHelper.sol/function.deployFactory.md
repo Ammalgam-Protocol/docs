@@ -1,11 +1,11 @@
 # function deployFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/utils/deployHelper.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/utils/deployHelper.sol)
 
 ### deployFactory(address)
 
 ```solidity
 function deployFactory(
-    address deployer
+address deployer
 ) returns (AmmalgamFactory);
 ```
 
@@ -13,9 +13,9 @@ function deployFactory(
 
 ```solidity
 function deployFactory(
-    address deployer,
-    IPairFactory pairFactory,
-    address saturationAndGeometricTWAPState
+address deployer,
+IPairFactory pairFactory,
+address saturationAndGeometricTWAPState
 ) returns (AmmalgamFactory);
 ```
 

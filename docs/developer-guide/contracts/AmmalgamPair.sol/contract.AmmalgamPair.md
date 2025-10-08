@@ -1,43 +1,43 @@
 # AmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/AmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/AmmalgamPair.sol)
 
 **Inherits:**
-[IAmmalgamPair](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md), [TokenController](/docs/developer-guide/contracts/tokens/TokenController.sol/contract.TokenController.md)
+[IAmmalgamPair](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md), [TokenController](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/TokenController.sol/contract.TokenController.md)
 
 
 ## State Variables
 ### BUFFER
 
 ```solidity
-uint256 private constant BUFFER = 95;
+uint256 private constant BUFFER = 95
 ```
 
 
 ### INVERSE_BUFFER
 
 ```solidity
-uint256 private constant INVERSE_BUFFER = 5;
+uint256 private constant INVERSE_BUFFER = 5
 ```
 
 
 ### INVERSE_BUFFER_SQUARED
 
 ```solidity
-uint256 private constant INVERSE_BUFFER_SQUARED = 25;
+uint256 private constant INVERSE_BUFFER_SQUARED = 25
 ```
 
 
 ### BUFFER_NUMERATOR
 
 ```solidity
-uint256 private constant BUFFER_NUMERATOR = 100;
+uint256 private constant BUFFER_NUMERATOR = 100
 ```
 
 
 ### unlocked
 
 ```solidity
-uint256 private unlocked = 1;
+uint256 private unlocked = 1
 ```
 
 
@@ -53,7 +53,7 @@ function _lock() private view;
 
 
 ```solidity
-modifier lock();
+modifier lock() ;
 ```
 
 ### mint
@@ -78,14 +78,19 @@ function burn(
 
 
 ```solidity
-function swap(uint256 amountXOut, uint256 amountYOut, address to, bytes calldata data) external lock;
+function swap(
+    uint256 amountXOut,
+    uint256 amountYOut,
+    address to,
+    bytes calldata data
+) external lock;
 ```
 
 ### calculateAmountIn
 
 helper method to calculate amountIn for swap
 
-*Adds jump, saves on runtime size*
+Adds jump, saves on runtime size
 
 
 ```solidity
@@ -108,12 +113,12 @@ function calculateAmountIn(
 
 helper method to calculate balance after fees
 
-*Note that amountIn + reserve does not always equal balance if amountOut > 0.
+Note that amountIn + reserve does not always equal balance if amountOut > 0.
 When assets are depleted, we should multiply (balance - missing) * BUFFER_NUMERATOR /
 INVERSE_BUFFER, but instead of divide here, we multiply the other side of the K
 comparison, see `calculateReserveAdjustmentsForMissingAssets` where we multiply by
 INVERSE_BUFFER. When not depleted, we multiply by INVERSE_BUFFER instead of dividing on
-the other side.*
+the other side.
 
 
 ```solidity
@@ -140,10 +145,10 @@ function calculateBalanceAfterFees(
 
 helper method to calculate balance adjustment for missing assets
 
-*When assets are depleted, we should multiply (reserve - missing) by
+When assets are depleted, we should multiply (reserve - missing) by
 BUFFER_NUMERATOR / INVERSE_BUFFER, but instead of divide here, we multiply the other
 side of the K comparison, see `calculateBalanceAfterFees` where we multiply by
-INVERSE_BUFFER.*
+INVERSE_BUFFER.
 
 
 ```solidity
@@ -208,7 +213,12 @@ function updateWithdrawShares(
 
 
 ```solidity
-function borrow(address to, uint256 amountXAssets, uint256 amountYAssets, bytes calldata data) external lock;
+function borrow(
+    address to,
+    uint256 amountXAssets,
+    uint256 amountYAssets,
+    bytes calldata data
+) external lock;
 ```
 
 ### borrowHelper
@@ -361,14 +371,22 @@ function liquidateHard(
 
 
 ```solidity
-function repayCallback(uint256 repayXAssets, uint256 repayYAssets) private;
+function repayCallback(
+    uint256 repayXAssets,
+    uint256 repayYAssets
+) private;
 ```
 
 ### verifyRepay
 
 
 ```solidity
-function verifyRepay(uint256 actualX, uint256 expectedX, uint256 actualY, uint256 expectedY) private pure;
+function verifyRepay(
+    uint256 actualX,
+    uint256 expectedX,
+    uint256 actualY,
+    uint256 expectedY
+) private pure;
 ```
 
 ### liquidateSoft
@@ -486,8 +504,8 @@ function _sync() private;
 
 ### depletionReserveAdjustmentWhenAssetIsAdded
 
-*When assets are depleted, a user can deposit the depleted asset and earn additional deposit credit for moving
-the swap curve from the adjusted amount due to assets being depleted to the original curve.*
+When assets are depleted, a user can deposit the depleted asset and earn additional deposit credit for moving
+the swap curve from the adjusted amount due to assets being depleted to the original curve.
 
 
 ```solidity
@@ -504,14 +522,19 @@ function depletionReserveAdjustmentWhenAssetIsAdded(
 ```solidity
 function accrueSaturationPenaltiesAndInterest(
     address affectedAccount
-) private returns (uint256 _reserveXAssets, uint256 _reserveYAssets, uint256 balanceXAssets, uint256 balanceYAssets);
+)
+    private
+    returns (uint256 _reserveXAssets, uint256 _reserveYAssets, uint256 balanceXAssets, uint256 balanceYAssets);
 ```
 
 ### updateObservation
 
 
 ```solidity
-function updateObservation(uint256 _reserveXAssets, uint256 _reserveYAssets) private;
+function updateObservation(
+    uint256 _reserveXAssets,
+    uint256 _reserveYAssets
+) private;
 ```
 
 ### updateObservation
@@ -530,21 +553,31 @@ function updateObservation(
 
 
 ```solidity
-function validateOnUpdate(address validate, address update, bool isBorrow) external;
+function validateOnUpdate(
+    address validate,
+    address update,
+    bool isBorrow
+) external;
 ```
 
 ### validateSolvency
 
 
 ```solidity
-function validateSolvency(address validate, bool isBorrow) private;
+function validateSolvency(
+    address validate,
+    bool isBorrow
+) private;
 ```
 
 ### getInputParamsAndUpdateSaturation
 
 
 ```solidity
-function getInputParamsAndUpdateSaturation(address toUpdate, bool alwaysUpdate) private;
+function getInputParamsAndUpdateSaturation(
+    address toUpdate,
+    bool alwaysUpdate
+) private;
 ```
 
 ### getInputParams
@@ -561,7 +594,11 @@ function getInputParams(
 
 
 ```solidity
-function transferAssets(address to, uint256 amountXAssets, uint256 amountYAssets) private;
+function transferAssets(
+    address to,
+    uint256 amountXAssets,
+    uint256 amountYAssets
+) private;
 ```
 
 ### calcMinLiquidityConsideringDepletion
@@ -573,71 +610,69 @@ function calcMinLiquidityConsideringDepletion(
     uint256 amountYAssets,
     uint256 _reserveXAssets,
     uint256 _reserveYAssets,
-    uint256 activeLiquidityAssets,
-    uint256 depositLiquidityAssets,
-    uint256 depositLiquidityShares,
+    uint256 liquidityAssetsNumerator,
     bool isRoundingUp
-) private view returns (uint256 liquidityAssets, uint256 liquidityShares);
+) private view returns (uint256 liquidityAssets);
 ```
 
 ## Errors
 ### Locked
 
 ```solidity
-error Locked();
+error Locked()
 ```
 
 ### InsufficientLiquidityMinted
 
 ```solidity
-error InsufficientLiquidityMinted();
+error InsufficientLiquidityMinted()
 ```
 
 ### InsufficientLiquidityBurned
 
 ```solidity
-error InsufficientLiquidityBurned();
+error InsufficientLiquidityBurned()
 ```
 
 ### InsufficientOutputAmount
 
 ```solidity
-error InsufficientOutputAmount();
+error InsufficientOutputAmount()
 ```
 
 ### InsufficientInputAmount
 
 ```solidity
-error InsufficientInputAmount();
+error InsufficientInputAmount()
 ```
 
 ### InsufficientLiquidity
 
 ```solidity
-error InsufficientLiquidity();
+error InsufficientLiquidity()
 ```
 
 ### InvalidToAddress
 
 ```solidity
-error InvalidToAddress();
+error InvalidToAddress()
 ```
 
 ### K
 
 ```solidity
-error K();
+error K()
 ```
 
 ### InsufficientRepayLiquidity
 
 ```solidity
-error InsufficientRepayLiquidity();
+error InsufficientRepayLiquidity()
 ```
 
 ### Overflow
 
 ```solidity
-error Overflow();
+error Overflow()
 ```
 

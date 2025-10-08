@@ -1,10 +1,10 @@
 # IAmmalgamERC20
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/tokens/IAmmalgamERC20.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/tokens/IAmmalgamERC20.sol)
 
 **Inherits:**
 IERC20, IERC20Metadata, IERC20Permit
 
-*This interface extends IERC20, IERC20Metadata, and IERC20Permit, and defines mint and burn functions.*
+This interface extends IERC20, IERC20Metadata, and IERC20Permit, and defines mint and burn functions.
 
 
 ## Functions
@@ -12,11 +12,16 @@ IERC20, IERC20Metadata, IERC20Permit
 
 Creates `amount` tokens and assigns them to `to` address, increasing the total supply.
 
-*Emits a IERC20.Transfer event with `from` set to the zero address.*
+Emits a IERC20.Transfer event with `from` set to the zero address.
 
 
 ```solidity
-function ownerMint(address sender, address to, uint256 assets, uint256 shares) external;
+function ownerMint(
+    address sender,
+    address to,
+    uint256 assets,
+    uint256 shares
+) external;
 ```
 **Parameters**
 
@@ -32,11 +37,16 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) e
 
 Destroys `amount` tokens from `from` address, reducing the total supply.
 
-*Emits a IERC20.Transfer event with `to` set to the zero address.*
+Emits a IERC20.Transfer event with `to` set to the zero address.
 
 
 ```solidity
-function ownerBurn(address sender, address from, uint256 assets, uint256 shares) external;
+function ownerBurn(
+    address sender,
+    address from,
+    uint256 assets,
+    uint256 shares
+) external;
 ```
 **Parameters**
 
@@ -54,7 +64,11 @@ Transfers `amount` tokens from the `from` address to the `to` address.
 
 
 ```solidity
-function ownerTransfer(address from, address to, uint256 amount) external;
+function ownerTransfer(
+    address from,
+    address to,
+    uint256 amount
+) external;
 ```
 **Parameters**
 
@@ -67,11 +81,11 @@ function ownerTransfer(address from, address to, uint256 amount) external;
 
 ## Events
 ### Mint
-*Emitted when tokens are minted*
+Emitted when tokens are minted
 
 
 ```solidity
-event Mint(address indexed sender, address indexed to, uint256 assets, uint256 shares);
+event Mint(address indexed sender, address indexed to, uint256 assets, uint256 shares)
 ```
 
 **Parameters**
@@ -84,11 +98,11 @@ event Mint(address indexed sender, address indexed to, uint256 assets, uint256 s
 |`shares`|`uint256`|The amount of token shares being minted|
 
 ### Burn
-*Emitted when tokens are burned*
+Emitted when tokens are burned
 
 
 ```solidity
-event Burn(address indexed sender, address indexed to, uint256 assets, uint256 shares);
+event Burn(address indexed sender, address indexed to, uint256 assets, uint256 shares)
 ```
 
 **Parameters**
@@ -101,11 +115,11 @@ event Burn(address indexed sender, address indexed to, uint256 assets, uint256 s
 |`shares`|`uint256`|The amount of token shares being burned|
 
 ### Borrow
-*Emitted on a borrow of tokens*
+Emitted on a borrow of tokens
 
 
 ```solidity
-event Borrow(address indexed sender, address indexed to, uint256 assets, uint256 shares);
+event Borrow(address indexed sender, address indexed to, uint256 assets, uint256 shares)
 ```
 
 **Parameters**
@@ -118,11 +132,11 @@ event Borrow(address indexed sender, address indexed to, uint256 assets, uint256
 |`shares`|`uint256`|The amount of token shares being borrowed|
 
 ### Repay
-*Emitted on a repayment of tokens*
+Emitted on a repayment of tokens
 
 
 ```solidity
-event Repay(address indexed sender, address indexed onBehalfOf, uint256 assets, uint256 shares);
+event Repay(address indexed sender, address indexed onBehalfOf, uint256 assets, uint256 shares)
 ```
 
 **Parameters**
@@ -135,11 +149,11 @@ event Repay(address indexed sender, address indexed onBehalfOf, uint256 assets, 
 |`shares`|`uint256`|The amount of tokens being repaid|
 
 ### BorrowLiquidity
-*Emitted on a liquidity borrow*
+Emitted on a liquidity borrow
 
 
 ```solidity
-event BorrowLiquidity(address indexed sender, address indexed to, uint256 assets, uint256 shares);
+event BorrowLiquidity(address indexed sender, address indexed to, uint256 assets, uint256 shares)
 ```
 
 **Parameters**
@@ -152,11 +166,11 @@ event BorrowLiquidity(address indexed sender, address indexed to, uint256 assets
 |`shares`|`uint256`|The amount of token shares being borrowed|
 
 ### RepayLiquidity
-*Emitted on a liquidity repayment*
+Emitted on a liquidity repayment
 
 
 ```solidity
-event RepayLiquidity(address indexed sender, address indexed onBehalfOf, uint256 assets, uint256 shares);
+event RepayLiquidity(address indexed sender, address indexed onBehalfOf, uint256 assets, uint256 shares)
 ```
 
 **Parameters**

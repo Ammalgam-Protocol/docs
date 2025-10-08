@@ -1,8 +1,8 @@
 # ERC20LiquidityToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC20LiquidityToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/tokens/ERC20LiquidityToken.sol)
 
 **Inherits:**
-[ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
+[ERC20Base](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
 
 
 ## Functions
@@ -17,31 +17,45 @@ constructor(
 
 ### ownerMint
 
-*override [ERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC4626DepositToken.sol/contract.ERC4626DepositToken.md#ownermint).*
+override [ERC20Base-ownerMint](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/ERC4626DebtToken.sol/contract.ERC4626DebtToken.md#ownermint).
 
 
 ```solidity
-function ownerMint(address sender, address to, uint256 assets, uint256 shares) public virtual override onlyOwner;
+function ownerMint(
+    address sender,
+    address to,
+    uint256 assets,
+    uint256 shares
+) public virtual override onlyOwner;
 ```
 
 ### ownerBurn
 
-*override [ERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC4626DepositToken.sol/contract.ERC4626DepositToken.md#ownerburn).*
+override [ERC20Base-ownerBurn](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/ERC4626DebtToken.sol/contract.ERC4626DebtToken.md#ownerburn).
 
 
 ```solidity
-function ownerBurn(address sender, address to, uint256 assets, uint256 shares) public virtual override onlyOwner;
+function ownerBurn(
+    address sender,
+    address to,
+    uint256 assets,
+    uint256 shares
+) public virtual override onlyOwner;
 ```
 
 ### ownerTransfer
 
 Transfers `amount` tokens from the `from` address to the `to` address.
 
-*override [ERC20Base-ownerTransfer](/docs/developer-guide/contracts/tokens/ERC4626DepositToken.sol/contract.ERC4626DepositToken.md#ownertransfer).*
+override [ERC20Base-ownerTransfer](//home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md#ownertransfer).
 
 
 ```solidity
-function ownerTransfer(address from, address to, uint256 amount) public virtual override onlyOwner;
+function ownerTransfer(
+    address from,
+    address to,
+    uint256 amount
+) public virtual override onlyOwner;
 ```
 **Parameters**
 

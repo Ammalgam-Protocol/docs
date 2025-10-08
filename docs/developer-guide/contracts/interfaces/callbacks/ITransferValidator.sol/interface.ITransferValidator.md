@@ -1,5 +1,5 @@
 # ITransferValidator
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/callbacks/ITransferValidator.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/callbacks/ITransferValidator.sol)
 
 This interface is intended for validating the solvency of an account when transfers occur.
 
@@ -9,12 +9,16 @@ This interface is intended for validating the solvency of an account when transf
 
 Validates the solvency of an account for a given token transfer operation.
 
-*Implementation should properly protect against any creation of new debt or transfer
-of existing debt or collateral that would leave any individual address with insufficient collateral to cover all debts.*
+Implementation should properly protect against any creation of new debt or transfer
+of existing debt or collateral that would leave any individual address with insufficient collateral to cover all debts.
 
 
 ```solidity
-function validateOnUpdate(address validate, address update, bool isBorrow) external;
+function validateOnUpdate(
+    address validate,
+    address update,
+    bool isBorrow
+) external;
 ```
 **Parameters**
 

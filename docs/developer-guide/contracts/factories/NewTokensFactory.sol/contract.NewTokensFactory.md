@@ -1,36 +1,36 @@
 # NewTokensFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/factories/NewTokensFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/factories/NewTokensFactory.sol)
 
 **Inherits:**
-[INewTokensFactory](/docs/developer-guide/contracts/interfaces/factories/INewTokensFactory.sol/interface.INewTokensFactory.md)
+[INewTokensFactory](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/factories/INewTokensFactory.sol/interface.INewTokensFactory.md)
 
 
 ## State Variables
 ### liquidityTokenFactory
 
 ```solidity
-ITokenFactory private immutable liquidityTokenFactory;
+ITokenFactory private immutable liquidityTokenFactory
 ```
 
 
 ### depositTokenFactory
 
 ```solidity
-ITokenFactory private immutable depositTokenFactory;
+ITokenFactory private immutable depositTokenFactory
 ```
 
 
 ### debtTokenFactory
 
 ```solidity
-ITokenFactory private immutable debtTokenFactory;
+ITokenFactory private immutable debtTokenFactory
 ```
 
 
 ### liquidityDebtTokenFactory
 
 ```solidity
-ITokenFactory private immutable liquidityDebtTokenFactory;
+ITokenFactory private immutable liquidityDebtTokenFactory
 ```
 
 
@@ -44,7 +44,7 @@ constructor(
     ITokenFactory _depositTokenFactory,
     ITokenFactory _borrowTokenFactory,
     ITokenFactory _liquidityDebtTokenFactory
-);
+) ;
 ```
 
 ### createAllTokens
@@ -53,7 +53,7 @@ constructor(
 ```solidity
 function createAllTokens(
     address pair,
-    address pluginRegistry,
+    address hookRegistry,
     address tokenX,
     address tokenY
 ) external returns (IAmmalgamERC20[6] memory tokens);
@@ -74,6 +74,6 @@ function createToken(
 ### ERC20TokenFactoryFailed
 
 ```solidity
-error ERC20TokenFactoryFailed();
+error ERC20TokenFactoryFailed()
 ```
 
