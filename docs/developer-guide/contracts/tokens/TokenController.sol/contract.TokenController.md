@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/b02f234f650997c7e7f19495c04e5606555377fd/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md)
@@ -158,42 +158,42 @@ uint128 internal lastActiveLiquidityAssets;
 ### totalDepositLAssets
 
 ```solidity
-uint256 internal totalDepositLAssets;
+uint256 internal transient totalDepositLAssets;
 ```
 
 
 ### totalDepositXAssets
 
 ```solidity
-uint256 internal totalDepositXAssets;
+uint256 internal transient totalDepositXAssets;
 ```
 
 
 ### totalDepositYAssets
 
 ```solidity
-uint256 internal totalDepositYAssets;
+uint256 internal transient totalDepositYAssets;
 ```
 
 
 ### totalBorrowLAssets
 
 ```solidity
-uint256 internal totalBorrowLAssets;
+uint256 internal transient totalBorrowLAssets;
 ```
 
 
 ### totalBorrowXAssets
 
 ```solidity
-uint256 internal totalBorrowXAssets;
+uint256 internal transient totalBorrowXAssets;
 ```
 
 
 ### totalBorrowYAssets
 
 ```solidity
-uint256 internal totalBorrowYAssets;
+uint256 internal transient totalBorrowYAssets;
 ```
 
 

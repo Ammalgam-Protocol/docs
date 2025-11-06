@@ -1,5 +1,5 @@
 # Constants
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/constants.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/b02f234f650997c7e7f19495c04e5606555377fd/contracts/libraries/constants.sol)
 
 ### B_IN_Q72
 *This basis was a modification to Uniswap V3's basis, to fit ticks into int16 instead of
