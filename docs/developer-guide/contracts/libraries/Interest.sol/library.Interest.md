@@ -1,100 +1,100 @@
 # Interest
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Interest.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/libraries/Interest.sol)
 
 This library is used for calculating and accruing interest.
 
-*many calculations are unchecked because we asset values are stored as uint128. We also limit
+many calculations are unchecked because we asset values are stored as uint128. We also limit
 the max amount amount of interest to ensure that it can not overflow when added to the
-current assets.*
+current assets.
 
 
 ## State Variables
 ### OPTIMAL_UTILIZATION
 
 ```solidity
-uint128 internal constant OPTIMAL_UTILIZATION = 0.8e18;
+uint128 internal constant OPTIMAL_UTILIZATION = 0.8e18
 ```
 
 
 ### DANGER_UTILIZATION
 
 ```solidity
-uint128 internal constant DANGER_UTILIZATION = 0.925e18;
+uint128 internal constant DANGER_UTILIZATION = 0.925e18
 ```
 
 
 ### SLOPE1
 
 ```solidity
-uint128 internal constant SLOPE1 = 0.1e18;
+uint128 internal constant SLOPE1 = 0.1e18
 ```
 
 
 ### SLOPE2
 
 ```solidity
-uint128 internal constant SLOPE2 = 2e18;
+uint128 internal constant SLOPE2 = 2e18
 ```
 
 
 ### SLOPE3
 
 ```solidity
-uint128 internal constant SLOPE3 = 20e18;
+uint128 internal constant SLOPE3 = 20e18
 ```
 
 
 ### BASE_OPTIMAL_UTILIZATION
 
 ```solidity
-uint128 internal constant BASE_OPTIMAL_UTILIZATION = 0.08e18;
+uint128 internal constant BASE_OPTIMAL_UTILIZATION = 0.08e18
 ```
 
 
 ### BASE_DANGER_UTILIZATION
 
 ```solidity
-uint128 internal constant BASE_DANGER_UTILIZATION = 0.33e18;
+uint128 internal constant BASE_DANGER_UTILIZATION = 0.33e18
 ```
 
 
 ### LENDING_FEE_RATE
 
 ```solidity
-uint128 internal constant LENDING_FEE_RATE = 10;
+uint128 internal constant LENDING_FEE_RATE = 10
 ```
 
 
 ### MAX_UINT112
 
 ```solidity
-uint256 private constant MAX_UINT112 = type(uint112).max;
+uint256 private constant MAX_UINT112 = type(uint112).max
 ```
 
 
 ### LAST_DEPOSIT
 
 ```solidity
-uint256 private constant LAST_DEPOSIT = 2;
+uint256 private constant LAST_DEPOSIT = 2
 ```
 
 
 ### PENALTY_SATURATION_PERCENT_IN_WAD
-*Maximum percentage for the penalty saturation allowed.
-This is used to prevent excessive penalties in case of high utilization.*
+Maximum percentage for the penalty saturation allowed.
+This is used to prevent excessive penalties in case of high utilization.
 
 
 ```solidity
-uint256 private constant PENALTY_SATURATION_PERCENT_IN_WAD = 0.85e18;
+uint256 private constant PENALTY_SATURATION_PERCENT_IN_WAD = 0.85e18
 ```
 
 
 ### SATURATION_PENALTY_BUFFER_IN_WAD
-*`MAX_SATURATION_PERCENT_IN_WAD` - `PENALTY_SATURATION_PERCENT_IN_WAD`*
+`MAX_SATURATION_PERCENT_IN_WAD` - `PENALTY_SATURATION_PERCENT_IN_WAD`
 
 
 ```solidity
-uint256 private constant SATURATION_PENALTY_BUFFER_IN_WAD = 0.1e18;
+uint256 private constant SATURATION_PENALTY_BUFFER_IN_WAD = 0.1e18
 ```
 
 
@@ -114,9 +114,9 @@ function accrueInterestAndUpdateReservesWithAssets(
 we approximate the reserves based on an average tick value since the last lending
 state update.
 
-*this will never return values greater than uint112 max when used correctly. The reserve
+this will never return values greater than uint112 max when used correctly. The reserve
 values are underestimated due to a tick being an approximate price. We use a smaller
-value when multiplying and a larger when dividing to ensure that we do not overflow.*
+value when multiplying and a larger when dividing to ensure that we do not overflow.
 
 
 ```solidity
@@ -184,12 +184,15 @@ function getUtilizationInWads(
 
 Adjusts utilization based on saturation to calculate interest penalties
 
-*When saturation exceeds `PENALTY_SATURATION_PERCENT_IN_WAD`, utilization is increased
-to apply higher interest rates as a penalty for high saturation*
+When saturation exceeds `PENALTY_SATURATION_PERCENT_IN_WAD`, utilization is increased
+to apply higher interest rates as a penalty for high saturation
 
 
 ```solidity
-function mutateUtilizationForSaturation(uint256 utilization, uint256 maxSatInWads) internal pure returns (uint256);
+function mutateUtilizationForSaturation(
+    uint256 utilization,
+    uint256 maxSatInWads
+) internal pure returns (uint256);
 ```
 **Parameters**
 
@@ -233,14 +236,17 @@ function computeInterestAssetsGivenRate(
 
 
 ```solidity
-function addInterestToAssets(uint256 prevAssets, uint256 interest) internal pure returns (uint128);
+function addInterestToAssets(
+    uint256 prevAssets,
+    uint256 interest
+) internal pure returns (uint128);
 ```
 
 ### getAnnualInterestRatePerSecondInWads
 
 Gets the annual interest rate for a given utilization
 
-*Same as getAnnualInterestRatePerSecondInWads but without dividing by SECONDS_IN_YEAR*
+Same as getAnnualInterestRatePerSecondInWads but without dividing by SECONDS_IN_YEAR
 
 
 ```solidity
@@ -272,7 +278,7 @@ event InterestAccrued(
     uint128 borrowLAssets,
     uint128 borrowXAssets,
     uint128 borrowYAssets
-);
+)
 ```
 
 ## Structs
@@ -282,7 +288,6 @@ event InterestAccrued(
 struct AccrueInterestParams {
     uint256 duration;
     int16 lendingStateTick;
-    uint256 adjustedActiveLiquidity;
     uint112[6] shares;
     uint256 satPercentageInWads;
 }

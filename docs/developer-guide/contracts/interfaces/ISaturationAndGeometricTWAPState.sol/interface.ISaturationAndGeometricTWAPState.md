@@ -1,5 +1,5 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
@@ -18,7 +18,10 @@ function init(
 
 
 ```solidity
-function setNewPositionSaturation(address pair, uint256 maxDesiredSaturationInMAG2) external;
+function setNewPositionSaturation(
+    address pair,
+    uint256 maxDesiredSaturationInMAG2
+) external;
 ```
 
 ### getLeafDetails
@@ -43,7 +46,10 @@ function getLeafDetails(
 
 
 ```solidity
-function getTreeDetails(address pairAddress, bool netX) external view returns (uint16, uint128);
+function getTreeDetails(
+    address pairAddress,
+    bool netX
+) external view returns (uint16, uint128);
 ```
 
 ### getTrancheDetails
@@ -74,7 +80,10 @@ update the borrow position of an account and potentially check (and revert) if t
 
 
 ```solidity
-function update(Validation.InputParams memory inputParams, address account) external;
+function update(
+    Validation.InputParams memory inputParams,
+    address account
+) external;
 ```
 **Parameters**
 
@@ -147,11 +156,14 @@ function calcSatChangeRatioBips(
 
 Configures the interval of long-term observations.
 
-*This function is used to set the long-term interval between observations for the long-term buffer.*
+This function is used to set the long-term interval between observations for the long-term buffer.
 
 
 ```solidity
-function configLongTermInterval(address pairAddress, uint24 longTermIntervalConfigFactor) external;
+function configLongTermInterval(
+    address pairAddress,
+    uint24 longTermIntervalConfigFactor
+) external;
 ```
 **Parameters**
 
@@ -165,16 +177,19 @@ function configLongTermInterval(address pairAddress, uint24 longTermIntervalConf
 
 Records a new observation tick value and updates the observation data.
 
-*This function is used to record new observation data for the contract. It ensures that
+This function is used to record new observation data for the contract. It ensures that
 the provided tick value is stored appropriately in both mid-term and long-term
 observations, updates interval counters, and handles tick cumulative values based
 on the current interval configuration. Ensures that this function is called in
 chronological order, with increasing timestamps. Returns in case the
-provided block timestamp is less than or equal to the last recorded timestamp.*
+provided block timestamp is less than or equal to the last recorded timestamp.
 
 
 ```solidity
-function recordObservation(int16 newTick, uint32 timeElapsed) external returns (bool);
+function recordObservation(
+    int16 newTick,
+    uint32 timeElapsed
+) external returns (bool);
 ```
 **Parameters**
 
@@ -188,12 +203,16 @@ function recordObservation(int16 newTick, uint32 timeElapsed) external returns (
 
 Gets the min and max range of tick values from the stored oracle observations.
 
-*This function calculates the minimum and maximum tick values among three observed ticks:
-long-term tick, mid-term tick, and current tick.*
+This function calculates the minimum and maximum tick values among three observed ticks:
+long-term tick, mid-term tick, and current tick.
 
 
 ```solidity
-function getTickRange(address pair, int16 currentTick, bool includeLongTermTick) external view returns (int16, int16);
+function getTickRange(
+    address pair,
+    int16 currentTick,
+    bool includeLongTermTick
+) external view returns (int16, int16);
 ```
 **Parameters**
 
@@ -217,8 +236,8 @@ Gets the tick value representing the TWAP since the last
 lending update and checkpoints the current lending cumulative sum
 as `self.lendingCumulativeSum` and the current block timestamp as `self.lastLendingTimestamp`.
 
-*See `getLendingStateTick` for implementation details which was
-separated to allow view access without any state updates.*
+See `getLendingStateTick` for implementation details which was
+separated to allow view access without any state updates.
 
 
 ```solidity
@@ -244,7 +263,7 @@ function getLendingStateTickAndCheckpoint(
 
 ### getObservedMidTermTick
 
-*Retrieves the mid-term tick value based on the stored observations.*
+Retrieves the mid-term tick value based on the stored observations.
 
 
 ```solidity
@@ -267,8 +286,8 @@ function getObservedMidTermTick(
 
 ### boundTick
 
-*The function ensures that `newTick` stays within the bounds
-determined by `lastTick` and a dynamically calculated factor.*
+The function ensures that `newTick` stays within the bounds
+determined by `lastTick` and a dynamically calculated factor.
 
 
 ```solidity
@@ -342,18 +361,18 @@ function liquidationCheckHardPremiums(
 ### PairAlreadyExists
 
 ```solidity
-error PairAlreadyExists();
+error PairAlreadyExists()
 ```
 
 ### PairDoesNotExist
 
 ```solidity
-error PairDoesNotExist();
+error PairDoesNotExist()
 ```
 
 ### InvalidUserConfiguration
 
 ```solidity
-error InvalidUserConfiguration();
+error InvalidUserConfiguration()
 ```
 

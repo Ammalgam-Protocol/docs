@@ -1,40 +1,40 @@
 # GeometricTWAP
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/GeometricTWAP.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/libraries/GeometricTWAP.sol)
 
 
 ## State Variables
 ### MID_TERM_ARRAY_LENGTH
 
 ```solidity
-uint256 internal constant MID_TERM_ARRAY_LENGTH = 51;
+uint256 internal constant MID_TERM_ARRAY_LENGTH = 51
 ```
 
 
 ### LONG_TERM_ARRAY_LENGTH
 
 ```solidity
-uint256 internal constant LONG_TERM_ARRAY_LENGTH = 9;
+uint256 internal constant LONG_TERM_ARRAY_LENGTH = 9
 ```
 
 
 ### LOG_BASE_OF_ROOT_TWO
 
 ```solidity
-uint256 internal constant LOG_BASE_OF_ROOT_TWO = 178;
+uint256 internal constant LOG_BASE_OF_ROOT_TWO = 178
 ```
 
 
 ### MID_TERM_ARRAY_LAST_INDEX
 
 ```solidity
-uint256 internal constant MID_TERM_ARRAY_LAST_INDEX = MID_TERM_ARRAY_LENGTH - 1;
+uint256 internal constant MID_TERM_ARRAY_LAST_INDEX = MID_TERM_ARRAY_LENGTH - 1
 ```
 
 
 ### LONG_TERM_ARRAY_LAST_INDEX
 
 ```solidity
-uint256 internal constant LONG_TERM_ARRAY_LAST_INDEX = LONG_TERM_ARRAY_LENGTH - 1;
+uint256 internal constant LONG_TERM_ARRAY_LAST_INDEX = LONG_TERM_ARRAY_LENGTH - 1
 ```
 
 
@@ -48,7 +48,7 @@ interval is required to be at least 14 times the mid-term interval, this is
 
 
 ```solidity
-uint256 internal constant MINIMUM_LONG_TERM_INTERVAL_FACTOR = 14;
+uint256 internal constant MINIMUM_LONG_TERM_INTERVAL_FACTOR = 14
 ```
 
 
@@ -57,9 +57,9 @@ uint256 internal constant MINIMUM_LONG_TERM_INTERVAL_FACTOR = 14;
 
 Initializes the observation struct with the specified interval configurations.
 
-*This function sets the initial values for the mid-term and long-term interval configurations.
+This function sets the initial values for the mid-term and long-term interval configurations.
 This forces the time to to go through the long term is twice as long as it takes to go
-through the mid-term interval.*
+through the mid-term interval.
 
 
 ```solidity
@@ -82,18 +82,24 @@ function initializeObservationStruct(
 
 
 ```solidity
-function addObservationAndSetLendingState(Observations storage self, int16 firstTick) internal;
+function addObservationAndSetLendingState(
+    Observations storage self,
+    int16 firstTick
+) internal;
 ```
 
 ### configLongTermInterval
 
 Configures the interval of long-term observations.
 
-*This function is used to set the long-term interval between observations for the long-term buffer.*
+This function is used to set the long-term interval between observations for the long-term buffer.
 
 
 ```solidity
-function configLongTermInterval(Observations storage self, uint24 longTermTimePerUpdate) internal;
+function configLongTermInterval(
+    Observations storage self,
+    uint24 longTermTimePerUpdate
+) internal;
 ```
 **Parameters**
 
@@ -107,12 +113,12 @@ function configLongTermInterval(Observations storage self, uint24 longTermTimePe
 
 Records a new observation tick value and updates the observation data.
 
-*This function is used to record new observation data for the contract. It ensures that
+This function is used to record new observation data for the contract. It ensures that
 the provided tick value is stored appropriately in both mid-term and long-term
 observations, updates interval counters, and handles tick cumulative values based
 on the current interval configuration. Ensures that this function is called in
 chronological order, with increasing timestamps. Returns in case the
-provided block timestamp is less than or equal to the last recorded timestamp.*
+provided block timestamp is less than or equal to the last recorded timestamp.
 
 
 ```solidity
@@ -141,12 +147,15 @@ function recordObservation(
 
 Gets the min and max range of tick values from the stored oracle observations.
 
-*This function calculates the minimum and maximum tick values among three observed ticks:
-long-term tick, mid-term tick, and current tick.*
+This function calculates the minimum and maximum tick values among three observed ticks:
+long-term tick, mid-term tick, and current tick.
 
 
 ```solidity
-function getTickRange(Observations storage self, int16 currentTick) internal view returns (int16, int16);
+function getTickRange(
+    Observations storage self,
+    int16 currentTick
+) internal view returns (int16, int16);
 ```
 **Parameters**
 
@@ -167,7 +176,7 @@ function getTickRange(Observations storage self, int16 currentTick) internal vie
 
 Gets the min and max range of tick values from the stored oracle observations.
 
-*This function calculates the minimum and maximum tick values among the mid-term tick and current tick.*
+This function calculates the minimum and maximum tick values among the mid-term tick and current tick.
 
 
 ```solidity
@@ -191,9 +200,9 @@ function getTickRangeWithoutLongTerm(
 
 ### getObservedTicks
 
-*Retrieves the long-term, mid-term, and current tick values based on the stored observations.*
+Retrieves the long-term, mid-term, and current tick values based on the stored observations.
 
-*visibility is only `internal` for testing purposes*
+visibility is only `internal` for testing purposes
 
 
 ```solidity
@@ -220,7 +229,7 @@ function getObservedTicks(
 
 ### getObservedMidTermTick
 
-*Retrieves the mid-term tick value based on the stored observations.*
+Retrieves the mid-term tick value based on the stored observations.
 
 
 ```solidity
@@ -245,7 +254,7 @@ function getObservedMidTermTick(
 
 ### getObservedLongTermTick
 
-*Retrieves the long-term tick value based on the stored observations.*
+Retrieves the long-term tick value based on the stored observations.
 
 
 ```solidity
@@ -285,35 +294,53 @@ function getTickRangeInternal(
 
 
 ```solidity
-function getMinAndMaxOfFour(int16 a, int16 b, int16 c, int16 d) private pure returns (int16 min, int16 max);
+function getMinAndMaxOfFour(
+    int16 a,
+    int16 b,
+    int16 c,
+    int16 d
+) private pure returns (int16 min, int16 max);
 ```
 
 ### getMinAndMaxOfThree
 
 
 ```solidity
-function getMinAndMaxOfThree(int16 a, int16 b, int16 c) private pure returns (int16 min, int16 max);
+function getMinAndMaxOfThree(
+    int16 a,
+    int16 b,
+    int16 c
+) private pure returns (int16 min, int16 max);
 ```
 
 ### getMidTermAtLastIndex
 
 
 ```solidity
-function getMidTermAtLastIndex(Observations storage self, uint256 index) private view returns (int56);
+function getMidTermAtLastIndex(
+    Observations storage self,
+    uint256 index
+) private view returns (int56);
 ```
 
 ### getLastIndex
 
 
 ```solidity
-function getLastIndex(uint256 index, uint256 lastIndex) private pure returns (uint256);
+function getLastIndex(
+    uint256 index,
+    uint256 lastIndex
+) private pure returns (uint256);
 ```
 
 ### getNextIndex
 
 
 ```solidity
-function getNextIndex(uint256 currentIndex, uint256 indexLength) private pure returns (uint8);
+function getNextIndex(
+    uint256 currentIndex,
+    uint256 indexLength
+) private pure returns (uint8);
 ```
 
 ### getLendingStateTickAndCheckpoint
@@ -322,8 +349,8 @@ Gets the tick value representing the TWAP since the last
 lending update and checkpoints the current lending cumulative sum
 as `self.lendingCumulativeSum` and the current block timestamp as `self.lastLendingTimestamp`.
 
-*See `getLendingStateTick` for implementation details which was
-separated to allow view access without any state updates.*
+See `getLendingStateTick` for implementation details which was
+separated to allow view access without any state updates.
 
 
 ```solidity
@@ -384,7 +411,7 @@ function getLendingStateTick(
 
 Computes the lending state tick based on the cumulative sum and duration.
 
-*If no time has passed since the last lending timestamp, it returns the last lending state tick.*
+If no time has passed since the last lending timestamp, it returns the last lending state tick.
 
 
 ```solidity
@@ -413,15 +440,19 @@ function calculateLendingStateTick(
 
 
 ```solidity
-function setLendingState(Observations storage self, int16 lendingStateTick, int56 currentCumulativeSum) private;
+function setLendingState(
+    Observations storage self,
+    int16 lendingStateTick,
+    int56 currentCumulativeSum
+) private;
 ```
 
 ### setObservationData
 
 Updates the observation data with the new tick value and current timestamp.
 
-*This function updates both mid-term and long-term observation states based on the provided
-new tick value and the current timestamp. It also updates the last recorded observation state.*
+This function updates both mid-term and long-term observation states based on the provided
+new tick value and the current timestamp. It also updates the last recorded observation state.
 
 
 ```solidity
@@ -473,7 +504,7 @@ function calculateTickAverage(
 
 ### getLongTermBufferFactor
 
-*Gets the long-term buffer factor based on the available data in long-term array.*
+Gets the long-term buffer factor based on the available data in long-term array.
 
 
 ```solidity
@@ -501,12 +532,15 @@ function getLongTermBufferFactor(
 Adjusts the new tick value to ensure it stays within valid bounds. When we have less data, the outlier
 factor is greater to allow for more flexibility to find the true price.
 
-*The function ensures that `newTick` stays within the bounds
-determined by `lastTick` and a dynamically calculated factor.*
+The function ensures that `newTick` stays within the bounds
+determined by `lastTick` and a dynamically calculated factor.
 
 
 ```solidity
-function boundTick(Observations storage self, int16 newTick) internal view returns (int16);
+function boundTick(
+    Observations storage self,
+    int16 newTick
+) internal view returns (int16);
 ```
 **Parameters**
 
@@ -524,7 +558,7 @@ function boundTick(Observations storage self, int16 newTick) internal view retur
 
 ### getCurrentTimestamp
 
-*Returns the current block timestamp casted to uint32.*
+Returns the current block timestamp casted to uint32.
 
 
 ```solidity
@@ -537,13 +571,38 @@ function getCurrentTimestamp() internal view returns (uint32);
 |`<none>`|`uint32`|The current block timestamp as a uint32 value.|
 
 
-## Events
-### UpdateLendingTick
-*Emitted when `lendingStateTick` is updated*
+### calculateTickAverageTowardsMidTerm
+
+Average the mid-term tick and the new tick, rounding towards the `midTermTick`.
 
 
 ```solidity
-event UpdateLendingTick(int16 lendingStateTick);
+function calculateTickAverageTowardsMidTerm(
+    int256 midTermTick,
+    int256 newTick
+) internal pure returns (int16);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`midTermTick`|`int256`|The midterm tick value|
+|`newTick`|`int256`|The new tick value|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`int16`|The calculated average tick value|
+
+
+## Events
+### UpdateLendingTick
+Emitted when `lendingStateTick` is updated
+
+
+```solidity
+event UpdateLendingTick(int16 lendingStateTick)
 ```
 
 **Parameters**
@@ -556,15 +615,15 @@ event UpdateLendingTick(int16 lendingStateTick);
 ### InvalidIntervalConfig
 
 ```solidity
-error InvalidIntervalConfig();
+error InvalidIntervalConfig()
 ```
 
 ## Structs
 ### Observations
 Struct for storing observations related to the Geometric TWAP calculation.
 
-*This struct holds various data points used in the Time-Weighted Average Price (TWAP)
-calculation.*
+This struct holds various data points used in the Time-Weighted Average Price (TWAP)
+calculation.
 
 
 ```solidity

@@ -1,5 +1,5 @@
 # QuadraticSwapFees
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/QuadraticSwapFees.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/libraries/QuadraticSwapFees.sol)
 
 **Author:**
 Will
@@ -18,7 +18,7 @@ Minimum fee is one tenth of a basis point.
 
 
 ```solidity
-uint256 public constant MIN_FEE_Q64 = 0x1999999999999999;
+uint256 public constant MIN_FEE_Q64 = 0x1999999999999999
 ```
 
 
@@ -27,7 +27,7 @@ uint256 public constant MIN_FEE_Q64 = 0x1999999999999999;
 
 
 ```solidity
-uint256 public constant BIPS_Q64 = 0x27100000000000000000;
+uint256 public constant BIPS_Q64 = 0x27100000000000000000
 ```
 
 
@@ -36,7 +36,7 @@ Max percent fee growing at a quadratic rate. After this the growths slows down.
 
 
 ```solidity
-uint256 internal constant MAX_QUADRATIC_FEE_PERCENT = 40;
+uint256 internal constant MAX_QUADRATIC_FEE_PERCENT = 40
 ```
 
 
@@ -46,7 +46,7 @@ a 40% fee.
 
 
 ```solidity
-uint256 internal constant N = 20;
+uint256 internal constant N = 20
 ```
 
 
@@ -58,7 +58,7 @@ the $$\sqrt{price}$$ at which we switch from quadratic fee to a more linear fee.
 
 
 ```solidity
-uint256 private constant LINEAR_START_REFERENCE_SCALER = 3;
+uint256 private constant LINEAR_START_REFERENCE_SCALER = 3
 ```
 
 
@@ -67,7 +67,7 @@ the fee at `LINEAR_START_REFERENCE_SCALER` in bips
 
 
 ```solidity
-uint256 private constant MAX_QUADRATIC_FEE_PERCENT_BIPS = 4000;
+uint256 private constant MAX_QUADRATIC_FEE_PERCENT_BIPS = 4000
 ```
 
 
@@ -76,7 +76,7 @@ $$ N * 100 * Q64 $$ or `N` times bips in one percent in Q64
 
 
 ```solidity
-uint256 private constant N_TIMES_BIPS_Q64_PER_PERCENT = 0x7d00000000000000000;
+uint256 private constant N_TIMES_BIPS_Q64_PER_PERCENT = 0x7d00000000000000000
 ```
 
 
@@ -85,7 +85,7 @@ uint256 private constant N_TIMES_BIPS_Q64_PER_PERCENT = 0x7d00000000000000000;
 
 
 ```solidity
-uint256 private constant TWO_Q64 = 0x20000000000000000;
+uint256 private constant TWO_Q64 = 0x20000000000000000
 ```
 
 
@@ -94,7 +94,7 @@ uint256 private constant TWO_Q64 = 0x20000000000000000;
 
 
 ```solidity
-uint256 private constant MAX_QUADRATIC_FEE_Q64 = 0x280000000000000000;
+uint256 private constant MAX_QUADRATIC_FEE_Q64 = 0x280000000000000000
 ```
 
 

@@ -1,5 +1,5 @@
 # TickMath
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/TickMath.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/libraries/TickMath.sol)
 
 Computes sqrt price for ticks of size B=(1-2^-9)^-1 as fixed point Q72 numbers. Supports
 prices between 2**-112 and 2**112-1
@@ -9,63 +9,63 @@ prices between 2**-112 and 2**112-1
 ### BASE_CHANGE_CONSTANT_IN_Q128
 
 ```solidity
-int256 private constant BASE_CHANGE_CONSTANT_IN_Q128 = 0xb145b7be86780ae93f;
+int256 private constant BASE_CHANGE_CONSTANT_IN_Q128 = 0xb145b7be86780ae93f
 ```
 
 
 ### TICK_LOW_ERROR_CORRECTION_IN_Q128
 
 ```solidity
-int256 private constant TICK_LOW_ERROR_CORRECTION_IN_Q128 = 0x1f6d22eefc342687357a94df44b0dbf;
+int256 private constant TICK_LOW_ERROR_CORRECTION_IN_Q128 = 0x1f6d22eefc342687357a94df44b0dbf
 ```
 
 
 ### TICK_HI_ERROR_CORRECTION_IN_Q128
 
 ```solidity
-int256 private constant TICK_HI_ERROR_CORRECTION_IN_Q128 = 0xb33c8bdbc23c5eaf1cd8140681512562;
+int256 private constant TICK_HI_ERROR_CORRECTION_IN_Q128 = 0xb33c8bdbc23c5eaf1cd8140681512562
 ```
 
 
 ### MIN_PRICE_IN_Q128
 
 ```solidity
-uint256 internal constant MIN_PRICE_IN_Q128 = 0x10000;
+uint256 internal constant MIN_PRICE_IN_Q128 = 0x10000
 ```
 
 
 ### MAX_PRICE_IN_Q128
 
 ```solidity
-uint256 internal constant MAX_PRICE_IN_Q128 = 0xffffffffffffffffffffffffffff00000000000000000000000000000000;
+uint256 internal constant MAX_PRICE_IN_Q128 = 0xffffffffffffffffffffffffffff00000000000000000000000000000000
 ```
 
 
 ### MIN_TICK
 
 ```solidity
-int16 internal constant MIN_TICK = -0x4d8f;
+int16 internal constant MIN_TICK = -0x4d8f
 ```
 
 
 ### MAX_TICK
 
 ```solidity
-int16 internal constant MAX_TICK = 0x4d8e;
+int16 internal constant MAX_TICK = 0x4d8e
 ```
 
 
 ### MIN_SQRT_PRICE_IN_Q72
 
 ```solidity
-uint256 internal constant MIN_SQRT_PRICE_IN_Q72 = 0xffc0;
+uint256 internal constant MIN_SQRT_PRICE_IN_Q72 = 0xffc0
 ```
 
 
 ### MAX_SQRT_PRICE_IN_Q72
 
 ```solidity
-uint256 internal constant MAX_SQRT_PRICE_IN_Q72 = 0xffc00ffc00ffc00ffc00ffc00ffc00ff;
+uint256 internal constant MAX_SQRT_PRICE_IN_Q72 = 0xffc00ffc00ffc00ffc00ffc00ffc00ff
 ```
 
 
@@ -110,12 +110,12 @@ function applyMultiplications(
 ### PriceOutOfBounds
 
 ```solidity
-error PriceOutOfBounds();
+error PriceOutOfBounds()
 ```
 
 ### TickOutOfBounds
 
 ```solidity
-error TickOutOfBounds();
+error TickOutOfBounds()
 ```
 

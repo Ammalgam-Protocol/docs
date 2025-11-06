@@ -1,71 +1,71 @@
 # AmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/factories/AmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/factories/AmmalgamFactory.sol)
 
 **Inherits:**
-[IAmmalgamFactory](/docs/developer-guide/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md)
+[IAmmalgamFactory](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md)
 
 
 ## State Variables
 ### tokenFactory
 
 ```solidity
-address public immutable tokenFactory;
+address public immutable tokenFactory
 ```
 
 
 ### pairFactory
 
 ```solidity
-address public immutable pairFactory;
+address public immutable pairFactory
 ```
 
 
-### pluginRegistry
+### hookRegistry
 
 ```solidity
-address public immutable pluginRegistry;
+address public immutable hookRegistry
 ```
 
 
 ### feeTo
 
 ```solidity
-address public feeTo;
+address public feeTo
 ```
 
 
 ### feeToSetter
 
 ```solidity
-address public feeToSetter;
+address public feeToSetter
 ```
 
 
 ### saturationAndGeometricTWAPState
 
 ```solidity
-ISaturationAndGeometricTWAPState public immutable saturationAndGeometricTWAPState;
+ISaturationAndGeometricTWAPState public immutable saturationAndGeometricTWAPState
 ```
 
 
 ### config
 
 ```solidity
-IFactoryCallback.TokenFactoryConfig private config;
+IFactoryCallback.TokenFactoryConfig private config
 ```
 
 
 ### getPair
 
 ```solidity
-mapping(address => mapping(address => address)) public getPair;
+mapping(address => mapping(address => address)) public getPair
 ```
 
 
 ### allPairs
 
 ```solidity
-address[] public allPairs;
+address[] public allPairs
 ```
 
 
@@ -74,7 +74,7 @@ address[] public allPairs;
 
 
 ```solidity
-modifier onlyFeeToSetter();
+modifier onlyFeeToSetter() ;
 ```
 
 ### constructor
@@ -85,9 +85,9 @@ constructor(
     address _feeToSetter,
     address _tokenFactory,
     address _pairFactory,
-    address _pluginRegistry,
+    address _hookRegistry,
     address _saturationAndGeometricTWAPState
-);
+) ;
 ```
 
 ### allPairsLength
@@ -101,7 +101,10 @@ function allPairsLength() external view returns (uint256);
 
 
 ```solidity
-function createPair(address tokenA, address tokenB) external returns (address pair);
+function createPair(
+    address tokenA,
+    address tokenB
+) external returns (address pair);
 ```
 
 ### getConfig
@@ -140,67 +143,67 @@ function setFeeToSetter(
 ### NewFeeTo
 
 ```solidity
-event NewFeeTo(address indexed feeTo);
+event NewFeeTo(address indexed feeTo)
 ```
 
 ### NewFeeToSetter
 
 ```solidity
-event NewFeeToSetter(address indexed feeToSetter);
+event NewFeeToSetter(address indexed feeToSetter)
 ```
 
 ## Errors
 ### IdenticalAddresses
 
 ```solidity
-error IdenticalAddresses();
+error IdenticalAddresses()
 ```
 
 ### ZeroAddress
 
 ```solidity
-error ZeroAddress();
+error ZeroAddress()
 ```
 
 ### FeeToIsZeroAddress
 
 ```solidity
-error FeeToIsZeroAddress();
+error FeeToIsZeroAddress()
 ```
 
 ### FeeToSetterIsZeroAddress
 
 ```solidity
-error FeeToSetterIsZeroAddress();
+error FeeToSetterIsZeroAddress()
 ```
 
 ### PairExists
 
 ```solidity
-error PairExists();
+error PairExists()
 ```
 
 ### BytecodeLengthZero
 
 ```solidity
-error BytecodeLengthZero();
+error BytecodeLengthZero()
 ```
 
 ### FailedOnDeploy
 
 ```solidity
-error FailedOnDeploy();
+error FailedOnDeploy()
 ```
 
 ### Forbidden
 
 ```solidity
-error Forbidden();
+error Forbidden()
 ```
 
 ### NewTokensFailed
 
 ```solidity
-error NewTokensFailed();
+error NewTokensFailed()
 ```
 

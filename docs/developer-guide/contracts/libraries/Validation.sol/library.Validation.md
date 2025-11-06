@@ -1,5 +1,5 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/libraries/Validation.sol)
 
 SPDX-License-Identifier: GPL-3.0-only
 
@@ -8,63 +8,63 @@ SPDX-License-Identifier: GPL-3.0-only
 ### MAX_BORROW_PERCENTAGE
 
 ```solidity
-uint256 private constant MAX_BORROW_PERCENTAGE = 90;
+uint256 private constant MAX_BORROW_PERCENTAGE = 90
 ```
 
 
 ### ONE_HUNDRED_TIMES_N
 
 ```solidity
-uint256 private constant ONE_HUNDRED_TIMES_N = 2000;
+uint256 private constant ONE_HUNDRED_TIMES_N = 2000
 ```
 
 
 ### TWO_Q64
 
 ```solidity
-uint256 private constant TWO_Q64 = 0x20000000000000000;
+uint256 private constant TWO_Q64 = 0x20000000000000000
 ```
 
 
 ### FIVE_Q64
 
 ```solidity
-uint256 private constant FIVE_Q64 = 0x50000000000000000;
+uint256 private constant FIVE_Q64 = 0x50000000000000000
 ```
 
 
 ### NINE_Q64
 
 ```solidity
-uint256 private constant NINE_Q64 = 0x90000000000000000;
+uint256 private constant NINE_Q64 = 0x90000000000000000
 ```
 
 
 ### FIFTY_Q64
 
 ```solidity
-uint256 private constant FIFTY_Q64 = 0x320000000000000000;
+uint256 private constant FIFTY_Q64 = 0x320000000000000000
 ```
 
 
 ### TWO_TIMES_N_Q64
 
 ```solidity
-uint256 private constant TWO_TIMES_N_Q64 = 0x280000000000000000;
+uint256 private constant TWO_TIMES_N_Q64 = 0x280000000000000000
 ```
 
 
 ### TWO_Q128
 
 ```solidity
-uint256 private constant TWO_Q128 = 0x200000000000000000000000000000000;
+uint256 private constant TWO_Q128 = 0x200000000000000000000000000000000
 ```
 
 
 ### TWO_THOUSAND_FIVE_HUNDRED_Q128
 
 ```solidity
-uint256 private constant TWO_THOUSAND_FIVE_HUNDRED_Q128 = 0x9c400000000000000000000000000000000;
+uint256 private constant TWO_THOUSAND_FIVE_HUNDRED_Q128 = 0x9c400000000000000000000000000000000
 ```
 
 
@@ -106,7 +106,10 @@ function validateBalanceAndLiqAndNotSameAssetsSuppliedAndBorrowed(
 
 
 ```solidity
-function validateLTVAndLeverage(CheckLtvParams memory checkLtvParams, uint256 activeLiquidityAssets) internal pure;
+function validateLTVAndLeverage(
+    CheckLtvParams memory checkLtvParams,
+    uint256 activeLiquidityAssets
+) internal pure;
 ```
 
 ### validateSolvency
@@ -173,17 +176,17 @@ function getBorrowedInL(
 ### convertXToL
 
 The original math:
-L * activeLiquidityScalerInQ72 = x / (2 * sqrt(p))
+L * activeLiquidityScalerInQ72 = x / sqrt(p)
 previous equation:
-amountLAssets = mulDiv(amount, Q72, 2 * sqrtPriceInXInQ72, rounding);
+amountLAssets = mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding);
 adding activeLiquidityScalerInQ72:
-amountLAssets = (amount * Q72 / (2 * sqrtPriceInXInQ72)) / (activeLiquidityScalerInQ72 / Q72);
+amountLAssets = (amount * Q72 / sqrtPriceInXInQ72) / (activeLiquidityScalerInQ72 / Q72);
 simplify to:
-(amount * Q72 * Q72) / (2 * sqrtPriceInXInQ72 * activeLiquidityScalerInQ72)
+(amount * Q72 * Q72) / (sqrtPriceInXInQ72 * activeLiquidityScalerInQ72)
 final equation:
-amountLAssets = mulDiv(mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding), Q72, 2 * activeLiquidityScalerInQ72, rounding);
+amountLAssets = mulDiv(mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding), Q72, activeLiquidityScalerInQ72, rounding);
 or more simplified (failed for some tests)
-amountLAssets = mulDiv(amount, Q72 * Q72, 2 * sqrtPriceInQ72 * activeLiquidityScalerInQ72);
+amountLAssets = mulDiv(amount, Q72 * Q72, sqrtPriceInQ72 * activeLiquidityScalerInQ72);
 
 
 ```solidity
@@ -209,16 +212,14 @@ function convertLToX(
 
 ### convertYToL
 
-The simplified math: L = y * sqrt(p) / 2
-mulDiv(amount, sqrtPriceInXInQ72, 2 * Q72, rounding);
-amountLAssets = amount * sqrtPriceInXInQ72Scaled / (2 * Q72)
+The simplified math: L = y * sqrt(p)
+mulDiv(amount, sqrtPriceInXInQ72, rounding);
+amountLAssets = amount * sqrtPriceInXInQ72Scaled / Q72;
 sqrtPriceInXInQ72Scaled = sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72;
 simplify to:
-amount * sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72 / (2 * Q72)
-simplify to:
-(amount * sqrtPriceInXInQ72 * Q56) / (activeLiquidityScalerInQ72 * 2)
+amount * sqrtPriceInXInQ72 / activeLiquidityScalerInQ72
 final equation:
-amountLAssets = mulDiv(amount, sqrtPriceInXInQ72 * Q56, 2 * activeLiquidityScalerInQ72, rounding);
+amountLAssets = mulDiv(amount, sqrtPriceInXInQ72, activeLiquidityScalerInQ72, rounding);
 
 
 ```solidity
@@ -226,7 +227,7 @@ function convertYToL(
     uint256 amountInYAssets,
     uint256 sqrtPriceInXInQ72,
     uint256 activeLiquidityScalerInQ72,
-    bool roundUp
+    bool roundUp // Floor xor Ceil
 ) internal pure returns (uint256 amountInLAssets);
 ```
 
@@ -337,49 +338,49 @@ function checkLeverage(
 ### InsufficientLiquidity
 
 ```solidity
-error InsufficientLiquidity();
+error InsufficientLiquidity()
 ```
 
 ### AmmalgamCannotBorrowAgainstSameCollateral
 
 ```solidity
-error AmmalgamCannotBorrowAgainstSameCollateral();
+error AmmalgamCannotBorrowAgainstSameCollateral()
 ```
 
 ### AmmalgamMaxBorrowReached
 
 ```solidity
-error AmmalgamMaxBorrowReached();
+error AmmalgamMaxBorrowReached()
 ```
 
 ### AmmalgamDepositIsNotStrictlyBigger
 
 ```solidity
-error AmmalgamDepositIsNotStrictlyBigger();
+error AmmalgamDepositIsNotStrictlyBigger()
 ```
 
 ### AmmalgamLTV
 
 ```solidity
-error AmmalgamLTV();
+error AmmalgamLTV()
 ```
 
 ### AmmalgamMaxSlippage
 
 ```solidity
-error AmmalgamMaxSlippage();
+error AmmalgamMaxSlippage()
 ```
 
 ### AmmalgamTooMuchLeverage
 
 ```solidity
-error AmmalgamTooMuchLeverage();
+error AmmalgamTooMuchLeverage()
 ```
 
 ### AmmalgamTransferAmtExceedsBalance
 
 ```solidity
-error AmmalgamTransferAmtExceedsBalance();
+error AmmalgamTransferAmtExceedsBalance()
 ```
 
 ## Structs

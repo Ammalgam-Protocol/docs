@@ -1,8 +1,8 @@
 # ERC20DebtBase
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC20DebtBase.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/tokens/ERC20DebtBase.sol)
 
 **Inherits:**
-[ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md), [IERC20DebtToken](/docs/developer-guide/contracts/interfaces/tokens/IERC20DebtToken.sol/interface.IERC20DebtToken.md)
+[ERC20Base](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md), [IERC20DebtToken](/home/runner/work/core-v1/core-v1/core-v1/docs/src/contracts/interfaces/tokens/IERC20DebtToken.sol/interface.IERC20DebtToken.md)
 
 
 ## Functions
@@ -28,38 +28,53 @@ function nonces(
 
 
 ```solidity
-function approve(address, uint256) public pure virtual override(ERC20, IERC20) returns (bool);
+function approve(
+    address, /*owner*/
+    uint256 /*amount*/
+) public pure virtual override(ERC20, IERC20) returns (bool);
 ```
 
 ### allowance
 
 
 ```solidity
-function allowance(address receiver, address spender) public view virtual override(ERC20, IERC20) returns (uint256);
+function allowance(
+    address receiver,
+    address spender
+) public view virtual override(ERC20, IERC20) returns (uint256);
 ```
 
 ### debtAllowance
 
-*Sets `amount` as the allowance of `spender` to send `receiver` debt tokens.
-Map key is the receiver of the debt approving the debt to be moved to them.*
+Sets `amount` as the allowance of `spender` to send `receiver` debt tokens.
+Map key is the receiver of the debt approving the debt to be moved to them.
 
 
 ```solidity
-function debtAllowance(address receiver, address spender) public view returns (uint256);
+function debtAllowance(
+    address receiver,
+    address spender
+) public view returns (uint256);
 ```
 
 ### approveDebt
 
 
 ```solidity
-function approveDebt(address spender, uint256 amount) public returns (bool);
+function approveDebt(
+    address spender,
+    uint256 amount
+) public returns (bool);
 ```
 
 ### transfer
 
 
 ```solidity
-function transfer(address receiver, uint256 amount) public virtual override(ERC20, IERC20) returns (bool);
+function transfer(
+    address receiver,
+    uint256 amount
+) public virtual override(ERC20, IERC20) returns (bool);
 ```
 
 ### transferFrom
@@ -77,34 +92,41 @@ function transferFrom(
 
 
 ```solidity
-function claimDebt(address owner, uint256 amount) public override;
+function claimDebt(
+    address owner,
+    uint256 amount
+) public override;
 ```
 
 ### _spendAllowance
 
-*override this method to be able to use debtAllowance*
+override this method to be able to use debtAllowance
 
 
 ```solidity
-function _spendAllowance(address receiver, address spender, uint256 amount) internal virtual override;
+function _spendAllowance(
+    address receiver,
+    address spender,
+    uint256 amount
+) internal virtual override;
 ```
 
 ## Errors
 ### DebtERC20ApproveDebt
 
 ```solidity
-error DebtERC20ApproveDebt();
+error DebtERC20ApproveDebt()
 ```
 
 ### DebtERC20IncreaseDebtAllowance
 
 ```solidity
-error DebtERC20IncreaseDebtAllowance();
+error DebtERC20IncreaseDebtAllowance()
 ```
 
 ### DebtERC20DecreaseDebtAllowance
 
 ```solidity
-error DebtERC20DecreaseDebtAllowance();
+error DebtERC20DecreaseDebtAllowance()
 ```
 

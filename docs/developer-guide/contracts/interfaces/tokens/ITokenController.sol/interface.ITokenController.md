@@ -1,9 +1,9 @@
 # ITokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/tokens/ITokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/177484d49d90b45a40c5e8affa7fab5af8d23a1a/contracts/interfaces/tokens/ITokenController.sol)
 
 The interface of a ERC20 facade for multiple token types with functionality similar to ERC1155.
 
-*The TokenController provides support to the AmmalgamPair contract for token management.*
+The TokenController provides support to the AmmalgamPair contract for token management.
 
 
 ## Functions
@@ -51,7 +51,7 @@ function externalLiquidity() external view returns (uint112);
 
 Updates the external liquidity value.
 
-*This function sets the external liquidity to a new value and emits an event with the new value. It can only be called by the fee setter.*
+This function sets the external liquidity to a new value and emits an event with the new value. It can only be called by the fee setter.
 
 
 ```solidity
@@ -111,9 +111,9 @@ function tokens(
 
 Computes the current total Assets.
 
-*If the last lending state update is outdated (i.e., not matching the current block timestamp),
+If the last lending state update is outdated (i.e., not matching the current block timestamp),
 the function recalculates the assets based on the duration since the last update, the lending state,
-and reserve balances. If the timestamp is current, the previous scaler (without recalculation) is returned.*
+and reserve balances. If the timestamp is current, the previous scaler (without recalculation) is returned.
 
 
 ```solidity
@@ -128,11 +128,11 @@ function totalAssets() external view returns (uint128[6] memory);
 
 ## Events
 ### Sync
-*Emitted when reserves are synchronized*
+Emitted when reserves are synchronized
 
 
 ```solidity
-event Sync(uint256 reserveXAssets, uint256 reserveYAssets);
+event Sync(uint256 reserveXAssets, uint256 reserveYAssets)
 ```
 
 **Parameters**
@@ -143,11 +143,11 @@ event Sync(uint256 reserveXAssets, uint256 reserveYAssets);
 |`reserveYAssets`|`uint256`|The updated reserve for token Y|
 
 ### UpdateExternalLiquidity
-*Emitted when external liquidity is updated*
+Emitted when external liquidity is updated
 
 
 ```solidity
-event UpdateExternalLiquidity(uint112 externalLiquidity);
+event UpdateExternalLiquidity(uint112 externalLiquidity)
 ```
 
 **Parameters**
@@ -157,11 +157,13 @@ event UpdateExternalLiquidity(uint112 externalLiquidity);
 |`externalLiquidity`|`uint112`|The updated value for external liquidity|
 
 ### BurnBadDebt
-*Emitted when bad debt is burned*
+Emitted when bad debt is burned
 
 
 ```solidity
-event BurnBadDebt(address indexed borrower, uint256 indexed tokenType, uint256 badDebtAssets, uint256 badDebtShares);
+event BurnBadDebt(
+    address indexed borrower, uint256 indexed tokenType, uint256 badDebtAssets, uint256 badDebtShares
+)
 ```
 
 **Parameters**
@@ -174,7 +176,7 @@ event BurnBadDebt(address indexed borrower, uint256 indexed tokenType, uint256 b
 |`badDebtShares`|`uint256`|The amount of bad debt shares being burned|
 
 ### InterestAccrued
-*Emitted when Interest gets accrued*
+Emitted when Interest gets accrued
 
 
 ```solidity
@@ -185,7 +187,7 @@ event InterestAccrued(
     uint128 borrowLAssets,
     uint128 borrowXAssets,
     uint128 borrowYAssets
-);
+)
 ```
 
 **Parameters**
