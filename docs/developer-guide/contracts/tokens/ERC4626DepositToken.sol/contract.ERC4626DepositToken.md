@@ -1,5 +1,5 @@
 # ERC4626DepositToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC4626DepositToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/777758268663000ff55bdeeb52b3c5eebb91dd7f/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
@@ -15,7 +15,7 @@ constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset
 
 ### ownerMint
 
-*override [AmmalgamERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md#ownermint).*
+*override [ERC20Base-ownerMint](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownermint).*
 
 
 ```solidity
@@ -33,7 +33,7 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override [AmmalgamERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC4626DebtToken.sol/contract.ERC4626DebtToken.md#ownerburn).*
+*override [ERC20Base-ownerBurn](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownerburn).*
 
 
 ```solidity
