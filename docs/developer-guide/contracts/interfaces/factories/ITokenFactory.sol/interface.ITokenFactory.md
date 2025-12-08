@@ -1,5 +1,5 @@
 # ITokenFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/factories/ITokenFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c91d8c8b4096710a376a45e63a9484210e767c75/contracts/interfaces/factories/ITokenFactory.sol)
 
 
 ## Functions

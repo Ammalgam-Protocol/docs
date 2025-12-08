@@ -1,8 +1,26 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c91d8c8b4096710a376a45e63a9484210e767c75/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
+### midTermIntervalConfig
+
+Exposes the public getter for the configured mid-term interval (in seconds)
+
+
+```solidity
+function midTermIntervalConfig() external view returns (uint24);
+```
+
+### longTermIntervalConfig
+
+Exposes the public getter for the configured long-term interval (in seconds)
+
+
+```solidity
+function longTermIntervalConfig() external view returns (uint24);
+```
+
 ### init
 
 initializes the sat (allocating storage for all nodes) and twap structs
@@ -21,11 +39,13 @@ function init(
 function setNewPositionSaturation(address pair, uint256 maxDesiredSaturationInMAG2) external;
 ```
 
-### getLeafDetails
+### getTreeLeafDetails
+
+get the details of a specific to the tree and leaf in the saturation state.
 
 
 ```solidity
-function getLeafDetails(
+function getTreeLeafDetails(
     address pairAddress,
     bool netDebtX,
     uint256 leaf
@@ -35,16 +55,29 @@ function getLeafDetails(
     returns (
         Saturation.SaturationPair memory saturation,
         uint256 currentPenaltyInBorrowLSharesPerSatInQ72,
+        uint128 totalSatInLAssets,
+        uint16 highestSetLeaf,
         uint16[] memory tranches
     );
 ```
+**Parameters**
 
-### getTreeDetails
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`| the pair for which the tree is being queried|
+|`netDebtX`|`bool`| whether to query the netDebtX or netDebtY side of the tree|
+|`leaf`|`uint256`| the leaf index to query, you can use zero if you don't need the leaf details|
 
+**Returns**
 
-```solidity
-function getTreeDetails(address pairAddress, bool netX) external view returns (uint16, uint128);
-```
+|Name|Type|Description|
+|----|----|-----------|
+|`saturation`|`Saturation.SaturationPair`| the saturation details for the specified leaf|
+|`currentPenaltyInBorrowLSharesPerSatInQ72`|`uint256`| the current penalty per sat in borrowL shares for the specified leaf|
+|`totalSatInLAssets`|`uint128`| the total saturation in L assets for the specified tree|
+|`highestSetLeaf`|`uint16`| the highest set leaf index for the specified tree|
+|`tranches`|`uint16[]`| the list of tranches set in the specified leaf|
+
 
 ### getTrancheDetails
 
@@ -74,7 +107,7 @@ update the borrow position of an account and potentially check (and revert) if t
 
 
 ```solidity
-function update(Validation.InputParams memory inputParams, address account) external;
+function update(Validation.InputParams memory inputParams, address account, bool skipMinOrMaxTickCheck) external;
 ```
 **Parameters**
 
@@ -82,6 +115,7 @@ function update(Validation.InputParams memory inputParams, address account) exte
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`| contains the position and pair params, like account borrows/deposits, current price and active liquidity|
 |`account`|`address`| for which is position is being updated|
+|`skipMinOrMaxTickCheck`|`bool`| whether to skip the min/max tick check during validation|
 
 
 ### accruePenalties

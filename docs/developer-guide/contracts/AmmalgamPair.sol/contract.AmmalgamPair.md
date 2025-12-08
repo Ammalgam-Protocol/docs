@@ -1,59 +1,59 @@
 # AmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/AmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c91d8c8b4096710a376a45e63a9484210e767c75/contracts/AmmalgamPair.sol)
 
 **Inherits:**
 [IAmmalgamPair](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md), [TokenController](/docs/developer-guide/contracts/tokens/TokenController.sol/contract.TokenController.md)
 
 
 ## State Variables
-### BUFFER
+### ZERO_DEPOSIT_DUE_TO_NETTING
 
 ```solidity
-uint256 private constant BUFFER = 95;
+uint256 private constant ZERO_DEPOSIT_DUE_TO_NETTING = 0;
 ```
 
 
-### INVERSE_BUFFER
+### UNLOCKED
 
 ```solidity
-uint256 private constant INVERSE_BUFFER = 5;
+uint256 private constant UNLOCKED = 0;
 ```
 
 
-### INVERSE_BUFFER_SQUARED
+### LOCKED
 
 ```solidity
-uint256 private constant INVERSE_BUFFER_SQUARED = 25;
+uint256 private constant LOCKED = 1;
 ```
 
 
-### BUFFER_NUMERATOR
+### locked
 
 ```solidity
-uint256 private constant BUFFER_NUMERATOR = 100;
-```
-
-
-### unlocked
-
-```solidity
-uint256 private unlocked = 1;
+uint256 private transient locked;
 ```
 
 
 ## Functions
-### _lock
-
-
-```solidity
-function _lock() private view;
-```
-
 ### lock
 
 
 ```solidity
 modifier lock();
+```
+
+### _lock
+
+
+```solidity
+function _lock() private;
+```
+
+### _unlock
+
+
+```solidity
+function _unlock() private;
 ```
 
 ### mint
@@ -62,7 +62,7 @@ modifier lock();
 ```solidity
 function mint(
     address to
-) external lock returns (uint256 liquidityShares);
+) external virtual lock returns (uint256 liquidityShares);
 ```
 
 ### burn
@@ -71,21 +71,22 @@ function mint(
 ```solidity
 function burn(
     address to
-) external lock returns (uint256 amountXAssets, uint256 amountYAssets);
+) external virtual lock returns (uint256 amountXAssets, uint256 amountYAssets);
 ```
 
 ### swap
 
 
 ```solidity
-function swap(uint256 amountXOut, uint256 amountYOut, address to, bytes calldata data) external lock;
+function swap(uint256 amountXOut, uint256 amountYOut, address to, bytes calldata data) external virtual lock;
 ```
 
 ### calculateAmountIn
 
 helper method to calculate amountIn for swap
 
-*Adds jump, saves on runtime size*
+*Adds jump, saves on runtime size. Must check that `reserve > amountOut`,
+which happens in swap where function is called.*
 
 
 ```solidity
@@ -140,16 +141,20 @@ function calculateBalanceAfterFees(
 
 helper method to calculate balance adjustment for missing assets
 
-*When assets are depleted, we should multiply (reserve - missing) by
+*For swap,  when assets are depleted, we should multiply (reserve - missing) by
 BUFFER_NUMERATOR / INVERSE_BUFFER, but instead of divide here, we multiply the other
 side of the K comparison, see `calculateBalanceAfterFees` where we multiply by
-INVERSE_BUFFER.*
+INVERSE_BUFFER.
+For updateObservation, different scaled `buffer` and `bufferNumerator` values
+are supplied so the adjusted reserve reflects observation-specific logic.*
 
 
 ```solidity
 function calculateReserveAdjustmentsForMissingAssets(
     uint256 reserve,
-    uint256 missing
+    uint256 missing,
+    uint256 buffer,
+    uint256 bufferNumerator
 ) private pure returns (uint256 reserveAdjustment);
 ```
 **Parameters**
@@ -158,6 +163,14 @@ function calculateReserveAdjustmentsForMissingAssets(
 |----|----|-----------|
 |`reserve`|`uint256`|the starting reserve|
 |`missing`|`uint256`|the missing assets, zero if deposits > borrows of X or Y|
+|`buffer`|`uint256`| Scaling factor applied to the reserve for the depletion comparison.|
+|`bufferNumerator`|`uint256`| Scaling factor applied to the missing amount for the comparison and for computing the depleted-case adjusted reserve.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`reserveAdjustment`|`uint256`|The adjusted reserve value used for swap or updateObservation depends on the buffer, bufferNumerator to be passed in.|
 
 
 ### deposit
@@ -166,20 +179,7 @@ function calculateReserveAdjustmentsForMissingAssets(
 ```solidity
 function deposit(
     address to
-) external lock;
-```
-
-### updateDepositShares
-
-
-```solidity
-function updateDepositShares(
-    uint256 depositedTokenType,
-    uint256 amountAssets,
-    uint256 reserveAssets,
-    uint256 _missingAssets,
-    address to
-) private returns (uint256 adjustReserves);
+) external virtual lock;
 ```
 
 ### withdraw
@@ -190,7 +190,7 @@ withdraw X and/or Y
 ```solidity
 function withdraw(
     address to
-) external lock;
+) external virtual lock;
 ```
 
 ### updateWithdrawShares
@@ -208,7 +208,7 @@ function updateWithdrawShares(
 
 
 ```solidity
-function borrow(address to, uint256 amountXAssets, uint256 amountYAssets, bytes calldata data) external lock;
+function borrow(address to, uint256 amountXAssets, uint256 amountYAssets, bytes calldata data) external virtual lock;
 ```
 
 ### borrowHelper
@@ -216,12 +216,11 @@ function borrow(address to, uint256 amountXAssets, uint256 amountYAssets, bytes 
 
 ```solidity
 function borrowHelper(
-    Validation.VerifyMaxBorrowXYParams memory maxBorrowParams,
     address to,
     uint256 amountAssets,
     uint256 reserve,
-    uint256 borrowedTokenType,
-    uint256 depositedTokenType
+    uint256 depositedTokenType,
+    uint256 borrowedTokenType
 ) private returns (uint256 amountShares);
 ```
 
@@ -245,7 +244,7 @@ function borrowLiquidity(
     address to,
     uint256 borrowAmountLAssets,
     bytes calldata data
-) external lock returns (uint256, uint256);
+) external virtual lock returns (uint256 borrowedLXAssets, uint256 borrowedLYAssets);
 ```
 
 ### repay
@@ -254,7 +253,7 @@ function borrowLiquidity(
 ```solidity
 function repay(
     address onBehalfOf
-) external lock returns (uint256 repayXInXAssets, uint256 repayYInYAssets);
+) external virtual lock returns (uint256 repayXInXAssets, uint256 repayYInYAssets);
 ```
 
 ### _repay
@@ -275,10 +274,8 @@ function _repay(
 function repayHelper(
     address onBehalfOf,
     uint256 repayInAssets,
-    uint256 reserveInAssets,
-    uint256 missingInAssets,
     uint256 borrowTokenType
-) private returns (uint256 adjustedReservesInAssets, uint256 netRepayInAssets);
+) private returns (uint256 actualRepayInAssets);
 ```
 
 ### repayLiquidity
@@ -287,7 +284,7 @@ function repayHelper(
 ```solidity
 function repayLiquidity(
     address onBehalfOf
-) external lock returns (uint256 repaidLXInXAssets, uint256 repaidLYInYAssets, uint256 repayLiquidityAssets);
+) external virtual lock returns (uint256 repaidLXInXAssets, uint256 repaidLYInYAssets, uint256 repayLiquidityAssets);
 ```
 
 ### _repayLiquidity
@@ -316,7 +313,7 @@ function liquidate(
     uint256 repayXInXAssets,
     uint256 repayYInYAssets,
     uint256 liquidationType
-) external lock;
+) external virtual lock;
 ```
 **Parameters**
 
@@ -331,7 +328,7 @@ function liquidate(
 |`repayLYInYAssets`|`uint256`|The amount of LY to be repaid by the liquidator.|
 |`repayXInXAssets`|`uint256`|The amount of X to be repaid by the liquidator.|
 |`repayYInYAssets`|`uint256`|The amount of Y to be repaid by the liquidator.|
-|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SOFT, LEVERAGE|
+|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SATURATION, LEVERAGE|
 
 
 ### liquidateHard
@@ -371,13 +368,13 @@ function repayCallback(uint256 repayXAssets, uint256 repayYAssets) private;
 function verifyRepay(uint256 actualX, uint256 expectedX, uint256 actualY, uint256 expectedY) private pure;
 ```
 
-### liquidateSoft
+### resetSaturation
 
 Liquidation based on change of saturation because of time.
 
 
 ```solidity
-function liquidateSoft(
+function resetSaturation(
     Validation.InputParams memory inputParams,
     address borrower,
     address to,
@@ -423,16 +420,17 @@ function liquidateLeverage(
 |`repayL`|`bool`|Flag indicating whether the repay by the liquidator is L xor X+Y.|
 
 
-### liquidationTransferAll
+### finalizeLiquidation
 
 
 ```solidity
-function liquidationTransferAll(
+function finalizeLiquidation(
     address borrower,
     address to,
     uint256 depositLToBeTransferredInLAssets,
     uint256 depositXToBeTransferredInXAssets,
-    uint256 depositYToBeTransferredInYAssets
+    uint256 depositYToBeTransferredInYAssets,
+    bool isBadDebt
 ) private;
 ```
 
@@ -467,35 +465,14 @@ function liquidationTransfer(
 ```solidity
 function skim(
     address to
-) external lock;
+) external virtual lock;
 ```
 
 ### sync
 
 
 ```solidity
-function sync() external lock;
-```
-
-### _sync
-
-
-```solidity
-function _sync() private;
-```
-
-### depletionReserveAdjustmentWhenAssetIsAdded
-
-*When assets are depleted, a user can deposit the depleted asset and earn additional deposit credit for moving
-the swap curve from the adjusted amount due to assets being depleted to the original curve.*
-
-
-```solidity
-function depletionReserveAdjustmentWhenAssetIsAdded(
-    uint256 amountAssets,
-    uint256 reserveAssets,
-    uint256 _missingAssets
-) private pure returns (uint256 adjustReserves_);
+function sync() external virtual lock;
 ```
 
 ### accrueSaturationPenaltiesAndInterest
@@ -503,15 +480,9 @@ function depletionReserveAdjustmentWhenAssetIsAdded(
 
 ```solidity
 function accrueSaturationPenaltiesAndInterest(
-    address affectedAccount
+    address affectedAccount,
+    uint256 minimumTimeBeforeUpdate
 ) private returns (uint256 _reserveXAssets, uint256 _reserveYAssets, uint256 balanceXAssets, uint256 balanceYAssets);
-```
-
-### updateObservation
-
-
-```solidity
-function updateObservation(uint256 _reserveXAssets, uint256 _reserveYAssets) private;
 ```
 
 ### updateObservation
@@ -530,14 +501,14 @@ function updateObservation(
 
 
 ```solidity
-function validateOnUpdate(address validate, address update, bool isBorrow) external;
+function validateOnUpdate(address validate, address update, bool alwaysUpdate) public virtual;
 ```
 
 ### validateSolvency
 
 
 ```solidity
-function validateSolvency(address validate, bool isBorrow) private;
+function validateSolvency(address validate, bool alwaysUpdate) private;
 ```
 
 ### getInputParamsAndUpdateSaturation
@@ -554,7 +525,7 @@ function getInputParamsAndUpdateSaturation(address toUpdate, bool alwaysUpdate) 
 function getInputParams(
     address toCheck,
     bool includeLongTermPrice
-) internal view returns (Validation.InputParams memory inputParams, bool hasBorrow);
+) internal view returns (Validation.InputParams memory inputParams);
 ```
 
 ### transferAssets
@@ -564,20 +535,44 @@ function getInputParams(
 function transferAssets(address to, uint256 amountXAssets, uint256 amountYAssets) private;
 ```
 
-### calcMinLiquidityConsideringDepletion
+### calculateMinimumLiquidityAssets
 
 
 ```solidity
-function calcMinLiquidityConsideringDepletion(
+function calculateMinimumLiquidityAssets(
     uint256 amountXAssets,
     uint256 amountYAssets,
     uint256 _reserveXAssets,
     uint256 _reserveYAssets,
-    uint256 activeLiquidityAssets,
-    uint256 depositLiquidityAssets,
-    uint256 depositLiquidityShares,
+    uint256 liquidityAssetsNumerator,
     bool isRoundingUp
-) private view returns (uint256 liquidityAssets, uint256 liquidityShares);
+) private pure returns (uint256 liquidityAssets);
+```
+
+### checkMaxBorrowForLiquidity
+
+
+```solidity
+function checkMaxBorrowForLiquidity(
+    uint256 reserveX,
+    uint256 reserveY,
+    uint256 totalDepositedLAssets,
+    uint256 totalBorrowedLAssets,
+    uint256 newBorrowLAssets
+) private view;
+```
+
+### checkMaxBorrow
+
+
+```solidity
+function checkMaxBorrow(
+    uint256 depositedAssets,
+    uint256 borrowedAssets,
+    uint256 reserve,
+    uint256 totalDepositedLAssets,
+    uint256 totalBorrowedLiquidityAssets
+) private pure;
 ```
 
 ## Errors
@@ -633,11 +628,5 @@ error K();
 
 ```solidity
 error InsufficientRepayLiquidity();
-```
-
-### Overflow
-
-```solidity
-error Overflow();
 ```
 

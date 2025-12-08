@@ -1,11 +1,28 @@
 # IAmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/factories/IAmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c91d8c8b4096710a376a45e63a9484210e767c75/contracts/interfaces/factories/IAmmalgamFactory.sol)
 
 **Inherits:**
 [IFactoryCallback](/docs/developer-guide/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
 
 
 ## Functions
+### pairBeacon
+
+Returns the public immutable address of the pair beacon contract. Used as a callback
+in the creation of a new pair to ensure we can maintain the create2 deterministic address
+that also require no args in the constructor.
+
+
+```solidity
+function pairBeacon() external view returns (IBeacon beacon);
+```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`beacon`|`IBeacon`|The address of the pair beacon.|
+
+
 ### getPair
 
 Returns the pair address for two tokens.
@@ -120,6 +137,21 @@ function setFeeToSetter(
 |Name|Type|Description|
 |----|----|-----------|
 |`newFeeToSetter`|`address`|The new fee setter address.|
+
+
+### hookRegistry
+
+Returns the public immutable address of the hook registry contract.
+
+
+```solidity
+function hookRegistry() external view returns (IHookRegistry);
+```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`IHookRegistry`|The address of the hook registry.|
 
 
 ## Events
