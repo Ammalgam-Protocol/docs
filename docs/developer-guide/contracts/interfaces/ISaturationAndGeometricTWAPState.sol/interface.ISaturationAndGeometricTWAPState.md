@@ -1,8 +1,26 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/0e8299e625b00def011cdc149decf27831eef326/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
+### midTermIntervalConfig
+
+Exposes the public getter for the configured mid-term interval (in seconds)
+
+
+```solidity
+function midTermIntervalConfig() external view returns (uint24);
+```
+
+### longTermIntervalConfig
+
+Exposes the public getter for the configured long-term interval (in seconds)
+
+
+```solidity
+function longTermIntervalConfig() external view returns (uint24);
+```
+
 ### init
 
 initializes the sat (allocating storage for all nodes) and twap structs
@@ -21,11 +39,11 @@ function init(
 function setNewPositionSaturation(address pair, uint256 maxDesiredSaturationInMAG2) external;
 ```
 
-### getLeafDetails
+### getTreeLeafDetails
 
 
 ```solidity
-function getLeafDetails(
+function getTreeLeafDetails(
     address pairAddress,
     bool netDebtX,
     uint256 leaf
@@ -35,15 +53,10 @@ function getLeafDetails(
     returns (
         Saturation.SaturationPair memory saturation,
         uint256 currentPenaltyInBorrowLSharesPerSatInQ72,
+        uint128 totalSatInLAssets,
+        uint16 highestSetLeaf,
         uint16[] memory tranches
     );
-```
-
-### getTreeDetails
-
-
-```solidity
-function getTreeDetails(address pairAddress, bool netX) external view returns (uint16, uint128);
 ```
 
 ### getTrancheDetails
@@ -74,7 +87,7 @@ update the borrow position of an account and potentially check (and revert) if t
 
 
 ```solidity
-function update(Validation.InputParams memory inputParams, address account) external;
+function update(Validation.InputParams memory inputParams, address account, bool skipMinOrMaxTickCheck) external;
 ```
 **Parameters**
 
@@ -82,6 +95,7 @@ function update(Validation.InputParams memory inputParams, address account) exte
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`| contains the position and pair params, like account borrows/deposits, current price and active liquidity|
 |`account`|`address`| for which is position is being updated|
+|`skipMinOrMaxTickCheck`|`bool`| whether to skip the min/max tick check during validation|
 
 
 ### accruePenalties

@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/0e8299e625b00def011cdc149decf27831eef326/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -66,10 +66,10 @@ uint256 internal constant HARD = 0;
 ```
 
 
-### SOFT
+### SATURATION
 
 ```solidity
-uint256 internal constant SOFT = 1;
+uint256 internal constant SATURATION = 1;
 ```
 
 
@@ -103,11 +103,11 @@ function calculateNetDebtAndSeizedDeposits(
 ) internal pure returns (uint256 netDebtInLAssets, uint256 netCollateralInLAssets, bool netDebtX);
 ```
 
-### checkSoftPremiums
+### checkSaturationPremiums
 
 
 ```solidity
-function checkSoftPremiums(
+function checkSaturationPremiums(
     ISaturationAndGeometricTWAPState saturationAndGeometricTWAPState,
     Validation.InputParams memory inputParams,
     address borrower,
@@ -135,7 +135,7 @@ function liquidateLeverageCalcDeltaAndPremium(
 |Name|Type|Description|
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`|The params representing the position of the borrower.|
-|`depositL`|`bool`|Flag indicating whether the liquidator is transferring depositL.|
+|`depositL`|`bool`|Flag indicating whether the liquidator is taking depositL.|
 |`repayL`|`bool`|Flag indicating whether the liquidator is repaying borrowL.|
 
 **Returns**
@@ -240,15 +240,15 @@ function calculateNetDebtAndCollateral(
 ) internal pure returns (uint256 netDebtInLAssets, uint256 netCollateralInLAssets);
 ```
 
-### calcSoftPremiumBips
+### calcSaturationPremiumBips
 
-Calculate the premium the soft liquidator is receiving given the borrowers deposit and the depositToTransfer to the liquidator.
+Calculate the premium the saturation liquidator is receiving given the borrowers deposit and the depositToTransfer to the liquidator.
 The end premium is the max of the premiums in L, X, Y
-If no soft liq is requested (liquidationParams.softDepositLToBeTransferred==liquidationParams.softDepositXToBeTransferred==liquidationParams.softDepositYToBeTransferred==0), the premium will be 0
+If no saturation liq is requested (liquidationParams.saturationDepositLToBeTransferred==liquidationParams.saturationDepositXToBeTransferred==liquidationParams.saturationDepositYToBeTransferred==0), the premium will be 0
 
 
 ```solidity
-function calcSoftPremiumBips(
+function calcSaturationPremiumBips(
     Validation.InputParams memory inputParams,
     uint256 depositLToTransferInLAssets,
     uint256 depositXToTransferInXAssets,
@@ -271,13 +271,14 @@ function calcSoftPremiumBips(
 |`premiumInBips`|`uint256`|The premium being received by the liquidator.|
 
 
-### calcSoftMaxPremiumInBips
+### calcSaturationMaxPremiumInBips
 
-Calculate the max premium the soft liquidator can receive given position of `account`.
+Calculate the max premium the saturation liquidator can receive given position of
+`account`.
 
 
 ```solidity
-function calcSoftMaxPremiumInBips(
+function calcSaturationMaxPremiumInBips(
     ISaturationAndGeometricTWAPState saturationAndGeometricTWAPState,
     Validation.InputParams memory inputParams,
     address account

@@ -1,5 +1,5 @@
 # SaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/SaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/0e8299e625b00def011cdc149decf27831eef326/contracts/SaturationAndGeometricTWAPState.sol)
 
 **Inherits:**
 [ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.sol/interface.ISaturationAndGeometricTWAPState.md), Ownable
@@ -107,11 +107,11 @@ function getNewPositionSaturation(
 function getTree(address pairAddress, bool netDebtX) private view returns (Saturation.Tree storage);
 ```
 
-### getLeafDetails
+### getTreeLeafDetails
 
 
 ```solidity
-function getLeafDetails(
+function getTreeLeafDetails(
     address pairAddress,
     bool netDebtX,
     uint256 leafIndex
@@ -121,15 +121,10 @@ function getLeafDetails(
     returns (
         Saturation.SaturationPair memory saturation,
         uint256 currentPenaltyInBorrowLSharesPerSatInQ72,
+        uint128 totalSatInLAssets,
+        uint16 highestSetLeaf,
         uint16[] memory tranches
     );
-```
-
-### getTreeDetails
-
-
-```solidity
-function getTreeDetails(address pairAddress, bool netDebtX) external view returns (uint16, uint128);
 ```
 
 ### getTrancheDetails
@@ -162,7 +157,11 @@ update the borrow position of an account and potentially check (and revert) if t
 
 
 ```solidity
-function update(Validation.InputParams memory inputParams, address account) external virtual;
+function update(
+    Validation.InputParams memory inputParams,
+    address account,
+    bool skipMinOrMaxTickCheck
+) external virtual;
 ```
 **Parameters**
 
@@ -170,13 +169,18 @@ function update(Validation.InputParams memory inputParams, address account) exte
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`| contains the position and pair params, like account borrows/deposits, current price and active liquidity|
 |`account`|`address`| for which is position is being updated|
+|`skipMinOrMaxTickCheck`|`bool`||
 
 
 ### _update
 
 
 ```solidity
-function _update(Validation.InputParams memory inputParams, address account) internal isInitialized;
+function _update(
+    Validation.InputParams memory inputParams,
+    address account,
+    bool skipMinOrMaxTickCheck
+) internal isInitialized;
 ```
 
 ### accruePenalties
@@ -278,7 +282,7 @@ provided block timestamp is less than or equal to the last recorded timestamp.*
 
 
 ```solidity
-function recordObservation(int16 newTick, uint32 timeElapsed) external isInitialized returns (bool);
+function recordObservation(int16 newTick, uint32 timeElapsed) external virtual isInitialized returns (bool);
 ```
 **Parameters**
 
@@ -293,6 +297,13 @@ function recordObservation(int16 newTick, uint32 timeElapsed) external isInitial
 |----|----|-----------|
 |`<none>`|`bool`|bool indicating whether the observation was recorded or not.|
 
+
+### _recordObservation
+
+
+```solidity
+function _recordObservation(int16 newTick, uint32 timeElapsed) internal isInitialized returns (bool);
+```
 
 ### getTickRange
 
