@@ -1,29 +1,22 @@
 # AmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/factories/AmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/714a6abe39ed88de6e42d84043a3067d73ac6e8d/contracts/factories/AmmalgamFactory.sol)
 
 **Inherits:**
 [IAmmalgamFactory](/docs/developer-guide/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md)
 
 
 ## State Variables
-### tokenFactory
+### pairBeacon
 
 ```solidity
-address public immutable tokenFactory;
+IBeacon public immutable override pairBeacon;
 ```
 
 
-### pairFactory
+### hookRegistry
 
 ```solidity
-address public immutable pairFactory;
-```
-
-
-### pluginRegistry
-
-```solidity
-address public immutable pluginRegistry;
+IHookRegistry public immutable hookRegistry;
 ```
 
 
@@ -45,6 +38,34 @@ address public feeToSetter;
 
 ```solidity
 ISaturationAndGeometricTWAPState public immutable saturationAndGeometricTWAPState;
+```
+
+
+### liquidityTokenFactory
+
+```solidity
+ITokenFactory private immutable liquidityTokenFactory;
+```
+
+
+### depositTokenFactory
+
+```solidity
+ITokenFactory private immutable depositTokenFactory;
+```
+
+
+### debtTokenFactory
+
+```solidity
+ITokenFactory private immutable debtTokenFactory;
+```
+
+
+### liquidityDebtTokenFactory
+
+```solidity
+ITokenFactory private immutable liquidityDebtTokenFactory;
 ```
 
 
@@ -83,10 +104,13 @@ modifier onlyFeeToSetter();
 ```solidity
 constructor(
     address _feeToSetter,
-    address _tokenFactory,
-    address _pairFactory,
-    address _pluginRegistry,
-    address _saturationAndGeometricTWAPState
+    IBeacon _pairBeacon,
+    IHookRegistry _hookRegistry,
+    ISaturationAndGeometricTWAPState _saturationAndGeometricTWAPState,
+    ITokenFactory _liquidityTokenFactory,
+    ITokenFactory _depositTokenFactory,
+    ITokenFactory _borrowTokenFactory,
+    ITokenFactory _liquidityDebtTokenFactory
 );
 ```
 
@@ -118,6 +142,17 @@ function getConfig() private view returns (IFactoryCallback.TokenFactoryConfig m
 function generateTokensWithinFactory() external returns (IERC20, IERC20, IAmmalgamERC20[6] memory);
 ```
 
+### createAllTokens
+
+
+```solidity
+function createAllTokens(
+    address pair,
+    address tokenX,
+    address tokenY
+) private returns (IAmmalgamERC20[6] memory tokens);
+```
+
 ### setFeeTo
 
 
@@ -134,6 +169,26 @@ function setFeeTo(
 function setFeeToSetter(
     address newFeeToSetter
 ) external onlyFeeToSetter;
+```
+
+### createPairFromSalt
+
+
+```solidity
+function createPairFromSalt(
+    bytes32 salt
+) private returns (address pair);
+```
+
+### createToken
+
+
+```solidity
+function createToken(
+    address tokenFactory,
+    address asset,
+    ERC20BaseConfig memory _config
+) private returns (IAmmalgamERC20);
 ```
 
 ## Events
@@ -202,5 +257,11 @@ error Forbidden();
 
 ```solidity
 error NewTokensFailed();
+```
+
+### ERC20TokenFactoryFailed
+
+```solidity
+error ERC20TokenFactoryFailed();
 ```
 

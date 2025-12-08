@@ -1,8 +1,26 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/714a6abe39ed88de6e42d84043a3067d73ac6e8d/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
+### midTermIntervalConfig
+
+Exposes the public getter for the configured mid-term interval (in seconds)
+
+
+```solidity
+function midTermIntervalConfig() external view returns (uint24);
+```
+
+### longTermIntervalConfig
+
+Exposes the public getter for the configured long-term interval (in seconds)
+
+
+```solidity
+function longTermIntervalConfig() external view returns (uint24);
+```
+
 ### init
 
 initializes the sat (allocating storage for all nodes) and twap structs
@@ -74,7 +92,7 @@ update the borrow position of an account and potentially check (and revert) if t
 
 
 ```solidity
-function update(Validation.InputParams memory inputParams, address account) external;
+function update(Validation.InputParams memory inputParams, address account, bool skipMinOrMaxTickCheck) external;
 ```
 **Parameters**
 
@@ -82,6 +100,7 @@ function update(Validation.InputParams memory inputParams, address account) exte
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`| contains the position and pair params, like account borrows/deposits, current price and active liquidity|
 |`account`|`address`| for which is position is being updated|
+|`skipMinOrMaxTickCheck`|`bool`| whether to skip the min/max tick check during validation|
 
 
 ### accruePenalties
