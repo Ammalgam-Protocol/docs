@@ -1,5 +1,5 @@
 # GeometricTWAP
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/GeometricTWAP.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/52b6f0b5383b0a1424ddcfa43cb570bd19227607/contracts/libraries/GeometricTWAP.sol)
 
 
 ## State Variables
@@ -535,6 +535,28 @@ function getCurrentTimestamp() internal view returns (uint32);
 |Name|Type|Description|
 |----|----|-----------|
 |`<none>`|`uint32`|The current block timestamp as a uint32 value.|
+
+
+### calculateTickAverageTowardsMidTerm
+
+*Average the mid-term tick and the new tick, rounding towards the `midTermTick`.*
+
+
+```solidity
+function calculateTickAverageTowardsMidTerm(int256 midTermTick, int256 newTick) internal pure returns (int16);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`midTermTick`|`int256`|The midterm tick value|
+|`newTick`|`int256`|The new tick value|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`int16`|The calculated average tick value|
 
 
 ## Events
