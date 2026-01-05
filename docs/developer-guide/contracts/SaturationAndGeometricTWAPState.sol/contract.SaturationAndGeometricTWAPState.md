@@ -1,22 +1,22 @@
 # SaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/SaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/61b1ab7701fa14fd2a7118a53d1bf31ffec17c1a/contracts/SaturationAndGeometricTWAPState.sol)
 
 **Inherits:**
-[ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.sol/interface.ISaturationAndGeometricTWAPState.md), Ownable
+Initializable, [ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.sol/interface.ISaturationAndGeometricTWAPState.md), OwnableUpgradeable
 
 
 ## State Variables
 ### midTermIntervalConfig
 
 ```solidity
-uint24 public immutable midTermIntervalConfig;
+uint24 public midTermIntervalConfig;
 ```
 
 
 ### longTermIntervalConfig
 
 ```solidity
-uint24 public immutable longTermIntervalConfig;
+uint24 public longTermIntervalConfig;
 ```
 
 
@@ -41,6 +41,13 @@ mapping(address => mapping(address => uint256)) maxNewPositionSaturationInMAG2;
 ```
 
 
+### lastUsedActiveLiquidityInLAssets
+
+```solidity
+mapping(address => mapping(address => uint256)) lastUsedActiveLiquidityInLAssets;
+```
+
+
 ### isPairInitialized
 
 ```solidity
@@ -53,7 +60,14 @@ mapping(address => bool) internal isPairInitialized;
 
 
 ```solidity
-constructor(uint24 _midTermIntervalConfig, uint24 _longTermIntervalConfig) Ownable(msg.sender);
+constructor();
+```
+
+### initialize
+
+
+```solidity
+function initialize(uint24 _midTermIntervalConfig, uint24 _longTermIntervalConfig, address _owner) public initializer;
 ```
 
 ### isInitialized
@@ -90,16 +104,6 @@ function init(
 function setNewPositionSaturation(address pair, uint256 maxDesiredSaturationMag2) external;
 ```
 
-### getNewPositionSaturation
-
-
-```solidity
-function getNewPositionSaturation(
-    address pair,
-    address account
-) internal view returns (uint256 maxDesiredSaturationInMAG2);
-```
-
 ### getTree
 
 
@@ -107,11 +111,11 @@ function getNewPositionSaturation(
 function getTree(address pairAddress, bool netDebtX) private view returns (Saturation.Tree storage);
 ```
 
-### getLeafDetails
+### getTreeLeafDetails
 
 
 ```solidity
-function getLeafDetails(
+function getTreeLeafDetails(
     address pairAddress,
     bool netDebtX,
     uint256 leafIndex
@@ -121,15 +125,10 @@ function getLeafDetails(
     returns (
         Saturation.SaturationPair memory saturation,
         uint256 currentPenaltyInBorrowLSharesPerSatInQ72,
+        uint128 totalSatInLAssets,
+        uint16 highestSetLeaf,
         uint16[] memory tranches
     );
-```
-
-### getTreeDetails
-
-
-```solidity
-function getTreeDetails(address pairAddress, bool netDebtX) external view returns (uint16, uint128);
 ```
 
 ### getTrancheDetails
@@ -162,7 +161,11 @@ update the borrow position of an account and potentially check (and revert) if t
 
 
 ```solidity
-function update(Validation.InputParams memory inputParams, address account) external virtual;
+function update(
+    Validation.InputParams memory inputParams,
+    address account,
+    bool skipMinOrMaxTickCheck
+) public virtual isInitialized;
 ```
 **Parameters**
 
@@ -170,14 +173,43 @@ function update(Validation.InputParams memory inputParams, address account) exte
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`| contains the position and pair params, like account borrows/deposits, current price and active liquidity|
 |`account`|`address`| for which is position is being updated|
+|`skipMinOrMaxTickCheck`|`bool`||
 
 
-### _update
+### scaleDesiredSaturation
+
+Scales the desired saturation threshold based on changes in Active Liquidity Assets (ALA).
+
+*When liquidity is burned from the pool, ALA decreases. Without scaling, this would cause
+existing positions to appear more saturated (since saturation = borrows / ALA), potentially
+triggering unwarranted liquidation premiums. This function scales the desired saturation
+proportionally to ALA changes to maintain the position's relative health.
+The scaling formula: scaled = lastUsedALA * desiredSat / currentALA*
 
 
 ```solidity
-function _update(Validation.InputParams memory inputParams, address account) internal isInitialized;
+function scaleDesiredSaturation(
+    address pair,
+    address account,
+    uint256 currentALA,
+    bool capAtPenaltyStart
+) internal view returns (uint256 desiredSaturationInMAG2);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pair`|`address`|The address of the pair contract.|
+|`account`|`address`|The account whose saturation threshold is being scaled.|
+|`currentALA`|`uint256`|The current active liquidity assets in the pool.|
+|`capAtPenaltyStart`|`bool`|If `true`, caps the scaled value at START_SATURATION_PENALTY_RATIO_IN_MAG2. Used in _update() to prevent excessive. Set to `false` in calcSatChangeRatioBips() for accurate premium calculations.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`desiredSaturationInMAG2`|`uint256`|The scaled desired saturation threshold.|
+
 
 ### accruePenalties
 
@@ -278,7 +310,7 @@ provided block timestamp is less than or equal to the last recorded timestamp.*
 
 
 ```solidity
-function recordObservation(int16 newTick, uint32 timeElapsed) external isInitialized returns (bool);
+function recordObservation(int16 newTick, uint32 timeElapsed) public virtual isInitialized returns (bool);
 ```
 **Parameters**
 
@@ -324,17 +356,6 @@ function getTickRange(
 |`<none>`|`int16`|minTick The minimum tick value among the three observed ticks.|
 |`<none>`|`int16`|maxTick The maximum tick value among the three observed ticks.|
 
-
-### _getTickRange
-
-
-```solidity
-function _getTickRange(
-    address pair,
-    int16 currentTick,
-    bool includeLongTermTick
-) internal view returns (int16, int16);
-```
 
 ### getLendingStateTickAndCheckpoint
 
@@ -388,30 +409,6 @@ function getObservedMidTermTick(
 |Name|Type|Description|
 |----|----|-----------|
 |`<none>`|`int16`|midTermTick The mid-term tick value.|
-
-
-### boundTick
-
-*The function ensures that `newTick` stays within the bounds
-determined by `lastTick` and a dynamically calculated factor.*
-
-
-```solidity
-function boundTick(
-    int16 newTick
-) external view returns (int16);
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`newTick`|`int16`|The proposed new tick value to be adjusted within valid bounds.|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`<none>`|`int16`|The adjusted tick value constrained within the allowable range.|
 
 
 ### getLendingStateTick
