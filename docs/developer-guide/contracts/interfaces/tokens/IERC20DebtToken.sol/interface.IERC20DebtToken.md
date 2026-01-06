@@ -1,5 +1,5 @@
 # IERC20DebtToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/tokens/IERC20DebtToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2147358c53f5b1c77eb18db72089539dd0f4e5b9/contracts/interfaces/tokens/IERC20DebtToken.sol)
 
 **Inherits:**
 [IAmmalgamERC20](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
