@@ -1,5 +1,5 @@
 # IAmmalgamERC20
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/tokens/IAmmalgamERC20.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5d18f8dbce5dfd269fee5cbf7ff5d5ec6c7da584/contracts/interfaces/tokens/IAmmalgamERC20.sol)
 
 **Inherits:**
 IERC20, IERC20Metadata, IERC20Permit

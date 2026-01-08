@@ -1,8 +1,8 @@
 # ERC20Base
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC20Base.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5d18f8dbce5dfd269fee5cbf7ff5d5ec6c7da584/contracts/tokens/ERC20Base.sol)
 
 **Inherits:**
-ERC20Plugins, Ownable, ERC20Permit, [IAmmalgamERC20](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
+ERC20Hooks, Ownable, ERC20Permit, [IAmmalgamERC20](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)
 
 
 ## State Variables
@@ -13,10 +13,10 @@ ITransferValidator public immutable pair;
 ```
 
 
-### pluginRegistry
+### hookRegistry
 
 ```solidity
-IPluginRegistry private immutable pluginRegistry;
+IHookRegistry private immutable hookRegistry;
 ```
 
 
@@ -27,10 +27,20 @@ uint256 public immutable tokenType;
 ```
 
 
-### transferPenaltyFromPairToBorrower
+### ownerTransferSkipValidation
+This boolean is reserved for moving collateral to liquidators. And we reuse it
+to transfer debt from the pair to a borrower. Since the borrower might already be in trouble
+if this is called during a liquidation, we do not call `validateOnUpdate` to avoid failing
+on the loan to value check. This also means that saturation is not updated for this penalty
+owed. we think this is an acceptable discrepancy since it is only the penalty for over
+saturation that is not being included in the saturation update, which should be a negligible
+amount with respect to the total debt. Once a position is updated either by the users
+actions, or by a saturation liquidation reset, this penalty will be adjusted to the correct
+value in the Saturation State.
+
 
 ```solidity
-bool transient transferPenaltyFromPairToBorrower;
+bool transient ownerTransferSkipValidation;
 ```
 
 
@@ -41,7 +51,7 @@ bool transient transferPenaltyFromPairToBorrower;
 ```solidity
 constructor(
     ERC20BaseConfig memory config
-) ERC20(config.name, config.symbol) ERC20Plugins(10, 500_000) ERC20Permit(config.name) Ownable(config.pair);
+) ERC20(config.name, config.symbol) ERC20Hooks(10, 500_000) ERC20Permit(config.name) Ownable(config.pair);
 ```
 
 ### nonces
@@ -73,7 +83,7 @@ function ownerTransfer(address from, address to, uint256 amount) public virtual 
 ```solidity
 function balanceOf(
     address account
-) public view virtual override(ERC20, ERC20Plugins, IERC20) returns (uint256);
+) public view virtual override(ERC20, ERC20Hooks, IERC20) returns (uint256);
 ```
 
 ### decimals
@@ -85,17 +95,37 @@ function decimals() public view virtual override(ERC20, IERC20Metadata) returns 
 
 ### _update
 
+Updates the pair state based on the transfer.
+
+*Triggers pair state updates for DEPOSIT_L and debt token transfers
+to avoid potential L token accumulation in the pair during burn operations.*
+
 
 ```solidity
-function _update(address from, address to, uint256 amount) internal virtual override(ERC20, ERC20Plugins);
+function _update(address from, address to, uint256 amount) internal virtual override(ERC20, ERC20Hooks);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`from`|`address`|The address of the sender.|
+|`to`|`address`|The address of the recipient.|
+|`amount`|`uint256`|The amount of tokens transferred.|
+
+
+### addHook
+
+
+```solidity
+function addHook(
+    address hook
+) public override;
 ```
 
-### addPlugin
-
+## Errors
+### HookIsNotAllowed
 
 ```solidity
-function addPlugin(
-    address plugin
-) public override;
+error HookIsNotAllowed();
 ```
 
