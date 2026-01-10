@@ -1,5 +1,5 @@
 # ICallback
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ade3fb5924e99225b77da44828cb9ede6929caf6/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
 
 *This interface should be implemented by anyone wishing to use callbacks in the
 `swap`, `borrow`, and `borrowLiquidity` functions in the  IAmmalgamPair interface.*
@@ -33,6 +33,10 @@ function ammalgamSwapCallV1(
 
 ### ammalgamBorrowCallV1
 
+The callback in the `AmmalgamPair.borrow()` function transfers borrowed `amountXAssets` and `amountYAssets`
+to the borrower which doesn't include the initial lending fee. The `amountXShares` and `amountYShares`
+minted debt shares for the `borrower` include the initial lending fee.
+
 
 ```solidity
 function ammalgamBorrowCallV1(
@@ -51,12 +55,16 @@ function ammalgamBorrowCallV1(
 |`sender`|`address`||
 |`amountXAssets`|`uint256`|The amount of token X involved in the borrow.|
 |`amountYAssets`|`uint256`|The amount of token Y involved in the borrow.|
-|`amountXShares`|`uint256`|The shares of token X involved in the borrow.|
-|`amountYShares`|`uint256`|The shares of token Y involved in the borrow.|
+|`amountXShares`|`uint256`|The shares of token X involved in the borrow including the initial lending fee.|
+|`amountYShares`|`uint256`|The shares of token Y involved in the borrow including the initial lending fee.|
 |`data`|`bytes`|The calldata provided to the borrow function.|
 
 
 ### ammalgamBorrowLiquidityCallV1
+
+The callback in the `AmmalgamPair.borrowLiquidity()` function transfers borrowed
+`amountXAssets` and `amountYAssets` to the borrower which doesn't include the initial lending fee.
+The `amountLShares` minted debt shares for the `borrower` include the initial lending fee.
 
 
 ```solidity
@@ -73,10 +81,10 @@ function ammalgamBorrowLiquidityCallV1(
 |Name|Type|Description|
 |----|----|-----------|
 |`sender`|`address`||
-|`amountXAssets`|`uint256`|The amount of token X involved in the borrow.|
-|`amountYAssets`|`uint256`|The amount of token Y involved in the borrow.|
-|`amountLShares`|`uint256`|The shares of liquidity involved in the borrow.|
-|`data`|`bytes`|The calldata provided to the borrow function.|
+|`amountXAssets`|`uint256`|The amount of token X involved in the borrow liquidity.|
+|`amountYAssets`|`uint256`|The amount of token Y involved in the borrow liquidity.|
+|`amountLShares`|`uint256`|The shares of liquidity involved in the borrow liquidity including the initial lending fee.|
+|`data`|`bytes`|The calldata provided to the borrow liquidity function.|
 
 
 ### ammalgamLiquidateCallV1

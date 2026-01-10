@@ -1,5 +1,5 @@
 # ERC4626DepositToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC4626DepositToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ade3fb5924e99225b77da44828cb9ede6929caf6/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
@@ -15,7 +15,7 @@ constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset
 
 ### ownerMint
 
-*override [AmmalgamERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md#ownermint).*
+*override [ERC20Base-ownerMint](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownermint).*
 
 
 ```solidity
@@ -33,7 +33,7 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override [AmmalgamERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC4626DebtToken.sol/contract.ERC4626DebtToken.md#ownerburn).*
+*override [ERC20Base-ownerBurn](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownerburn).*
 
 
 ```solidity
@@ -47,23 +47,6 @@ function ownerBurn(address sender, address to, uint256 assets, uint256 shares) p
 |`to`|`address`|The address that will receive the underlying assets.|
 |`assets`|`uint256`|The amount of underlying assets that will be received.|
 |`shares`|`uint256`|The amount of shares that will be burned.|
-
-
-### ownerTransfer
-
-Transfers `amount` tokens from the `from` address to the `to` address.
-
-
-```solidity
-function ownerTransfer(address from, address to, uint256 amount) public virtual override onlyOwner;
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`from`|`address`|The account to deduct the tokens from.|
-|`to`|`address`|The account to deliver the tokens to.|
-|`amount`|`uint256`|The amount of tokens to be transferred.|
 
 
 ### _deposit
@@ -114,6 +97,13 @@ function decimals() public view override(ERC20Base, ERC4626) returns (uint8);
 
 ```solidity
 function totalAssets() public view override returns (uint256);
+```
+
+### totalSupply
+
+
+```solidity
+function totalSupply() public view virtual override(ERC20, IERC20) returns (uint256);
 ```
 
 ### _convertToShares
