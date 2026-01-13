@@ -1,11 +1,11 @@
 # ERC20BaseConfig
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC20Base.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/7e1bc8c0bed339c4fdc8f6935163845021887015/contracts/tokens/ERC20Base.sol)
 
 
 ```solidity
 struct ERC20BaseConfig {
     address pair;
-    address pluginRegistry;
+    IHookRegistry hookRegistry;
     string name;
     string symbol;
     uint256 tokenType;

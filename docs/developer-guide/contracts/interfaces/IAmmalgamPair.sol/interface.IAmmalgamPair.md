@@ -1,8 +1,8 @@
 # IAmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/IAmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/7e1bc8c0bed339c4fdc8f6935163845021887015/contracts/interfaces/IAmmalgamPair.sol)
 
 **Inherits:**
-[ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md), [ITransferValidator](/docs/developer-guide/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
+[ITransferValidator](/docs/developer-guide/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
 
 
 ## Functions
@@ -152,7 +152,7 @@ Handles liquidity borrowing from the contract.
 ```solidity
 function borrowLiquidity(
     address to,
-    uint256 borrowAmountLShares,
+    uint256 borrowAmountLAssets,
     bytes calldata data
 ) external returns (uint256, uint256);
 ```
@@ -161,7 +161,7 @@ function borrowLiquidity(
 |Name|Type|Description|
 |----|----|-----------|
 |`to`|`address`||
-|`borrowAmountLShares`|`uint256`|Amount of liquidity to borrow.|
+|`borrowAmountLAssets`|`uint256`|Amount of liquidity to borrow.|
 |`data`|`bytes`|Call data to be sent to external contract if flash loan is desired.|
 
 **Returns**
@@ -287,7 +287,7 @@ function liquidate(
 |`repayLY`|`uint256`|The amount of L tokens repaid in Y.|
 |`repayX`|`uint256`|The amount of X tokens repaid.|
 |`repayY`|`uint256`|The amount of Y tokens repaid.|
-|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SOFT, LEVERAGE|
+|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SATURATION, LEVERAGE|
 
 
 ## Events
@@ -349,5 +349,5 @@ event Liquidate(
 |`repayLY`|`uint256`|The amount of L tokens repaid in Y.|
 |`repayX`|`uint256`|The amount of X tokens repaid.|
 |`repayY`|`uint256`|The amount of Y tokens repaid.|
-|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SOFT, LEVERAGE|
+|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SATURATION, LEVERAGE|
 
