@@ -1,8 +1,8 @@
 # IAmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/IAmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bab12491a59b8a6007058139c71cddb33c6f5ccb/contracts/interfaces/IAmmalgamPair.sol)
 
 **Inherits:**
-[ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md), [ITransferValidator](/docs/developer-guide/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
+[ITransferValidator](/docs/developer-guide/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
 
 
 ## Functions
@@ -152,7 +152,7 @@ Handles liquidity borrowing from the contract.
 ```solidity
 function borrowLiquidity(
     address to,
-    uint256 borrowAmountLShares,
+    uint256 borrowAmountLAssets,
     bytes calldata data
 ) external returns (uint256, uint256);
 ```
@@ -161,7 +161,7 @@ function borrowLiquidity(
 |Name|Type|Description|
 |----|----|-----------|
 |`to`|`address`||
-|`borrowAmountLShares`|`uint256`|Amount of liquidity to borrow.|
+|`borrowAmountLAssets`|`uint256`|Amount of liquidity to borrow.|
 |`data`|`bytes`|Call data to be sent to external contract if flash loan is desired.|
 
 **Returns**
@@ -264,13 +264,11 @@ LTV based liquidation. The LTV dictates the max discount that can be had by the 
 function liquidate(
     address borrower,
     address to,
-    uint256 depositLToBeTransferred,
-    uint256 depositXToBeTransferred,
-    uint256 depositYToBeTransferred,
-    uint256 repayLX,
-    uint256 repayLY,
-    uint256 repayX,
-    uint256 repayY,
+    uint256 seizedLAssets,
+    uint256 seizedXAssets,
+    uint256 seizedYAssets,
+    uint256 repayXAssets,
+    uint256 repayYAssets,
     uint256 liquidationType
 ) external;
 ```
@@ -280,14 +278,12 @@ function liquidate(
 |----|----|-----------|
 |`borrower`|`address`|The account being liquidated.|
 |`to`|`address`|The account to send the liquidated deposit to|
-|`depositLToBeTransferred`|`uint256`|The amount of L tokens to be transferred from the hard deposit.|
-|`depositXToBeTransferred`|`uint256`|The amount of X tokens to be transferred from the hard deposit.|
-|`depositYToBeTransferred`|`uint256`|The amount of Y tokens to be transferred from the hard deposit.|
-|`repayLX`|`uint256`|The amount of L tokens repaid in X.|
-|`repayLY`|`uint256`|The amount of L tokens repaid in Y.|
-|`repayX`|`uint256`|The amount of X tokens repaid.|
-|`repayY`|`uint256`|The amount of Y tokens repaid.|
-|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SOFT, LEVERAGE|
+|`seizedLAssets`|`uint256`|The amount of L tokens to be transferred from the hard deposit.|
+|`seizedXAssets`|`uint256`|The amount of X tokens to be transferred from the hard deposit.|
+|`seizedYAssets`|`uint256`|The amount of Y tokens to be transferred from the hard deposit.|
+|`repayXAssets`|`uint256`|The amount of X assets being repaid on behalf of the borrower.|
+|`repayYAssets`|`uint256`|The amount of Y assets being repaid on behalf of the|
+|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SATURATION, LEVERAGE|
 
 
 ## Events
@@ -325,13 +321,13 @@ event Swap(
 event Liquidate(
     address indexed borrower,
     address indexed to,
-    uint256 depositL,
-    uint256 depositX,
-    uint256 depositY,
-    uint256 repayLX,
-    uint256 repayLY,
-    uint256 repayX,
-    uint256 repayY,
+    uint256 seizedLAssets,
+    uint256 seizedXAssets,
+    uint256 seizedYAssets,
+    uint256 repayXAssets,
+    uint256 repayYAssets,
+    uint256 actualRepaidXAssets,
+    uint256 actualRepaidYAssets,
     uint256 liquidationType
 );
 ```
@@ -342,12 +338,12 @@ event Liquidate(
 |----|----|-----------|
 |`borrower`|`address`|The account being liquidated.|
 |`to`|`address`|The account to send the liquidated deposit to|
-|`depositL`|`uint256`|The amount of L tokens to be transferred from the hard deposit.|
-|`depositX`|`uint256`|The amount of X tokens to be transferred from the hard deposit.|
-|`depositY`|`uint256`|The amount of Y tokens to be transferred from the hard deposit.|
-|`repayLX`|`uint256`|The amount of L tokens repaid in X.|
-|`repayLY`|`uint256`|The amount of L tokens repaid in Y.|
-|`repayX`|`uint256`|The amount of X tokens repaid.|
-|`repayY`|`uint256`|The amount of Y tokens repaid.|
-|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SOFT, LEVERAGE|
+|`seizedLAssets`|`uint256`|The amount of L tokens to be transferred from the hard deposit.|
+|`seizedXAssets`|`uint256`|The amount of X tokens to be transferred from the hard deposit.|
+|`seizedYAssets`|`uint256`|The amount of Y tokens to be transferred from the hard deposit.|
+|`repayXAssets`|`uint256`|The amount of X assets requested to be credited, in the case of hard liquidations, this will be the portion of the repay credited to borrowed X assets, but not L assets.|
+|`repayYAssets`|`uint256`|The amount of Y assets requested to be credited, in the case of hard liquidations, this will be the portion of the repay credited to borrowed Y assets, but not L assets.|
+|`actualRepaidXAssets`|`uint256`|The actual amount of X assets repaid by the liquidator. In the case of repaid L, this amount will exceed repayXAssets by that amount of X assets portion of L.|
+|`actualRepaidYAssets`|`uint256`|The actual amount of Y assets repaid by the liquidator. In the case of repaid L, this amount will exceed repayYAssets by that amount of Y assets portion of L.|
+|`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SATURATION, LEVERAGE|
 

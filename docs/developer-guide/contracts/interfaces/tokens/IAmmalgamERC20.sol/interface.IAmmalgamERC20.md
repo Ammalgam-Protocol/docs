@@ -1,5 +1,5 @@
 # IAmmalgamERC20
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/tokens/IAmmalgamERC20.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bab12491a59b8a6007058139c71cddb33c6f5ccb/contracts/interfaces/tokens/IAmmalgamERC20.sol)
 
 **Inherits:**
 IERC20, IERC20Metadata, IERC20Permit
@@ -36,14 +36,14 @@ Destroys `amount` tokens from `from` address, reducing the total supply.
 
 
 ```solidity
-function ownerBurn(address sender, address from, uint256 assets, uint256 shares) external;
+function ownerBurn(address sender, address receiver, uint256 assets, uint256 shares) external;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`sender`|`address`||
-|`from`|`address`|The account to deduct the tokens from.|
+|`receiver`|`address`|The account receiving the value, for deposits this is who the tokens go to, in debt this will be the share holder whos debt is reduced.|
 |`assets`|`uint256`|The quantity of assets represented by the shares.|
 |`shares`|`uint256`|The amount of shares to be burned.|
 
