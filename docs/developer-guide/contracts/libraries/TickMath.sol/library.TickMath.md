@@ -1,5 +1,5 @@
 # TickMath
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/TickMath.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c003bfc0d3ee9b096ce81d76aa7ef613ec29ebcc/contracts/libraries/TickMath.sol)
 
 Computes sqrt price for ticks of size B=(1-2^-9)^-1 as fixed point Q72 numbers. Supports
 prices between 2**-112 and 2**112-1
@@ -105,6 +105,28 @@ function applyMultiplications(
     uint256 absTick
 ) private pure returns (uint256 valueInQ128);
 ```
+
+### getTickFromReserves
+
+*Get the new tick based on the current reserves.*
+
+
+```solidity
+function getTickFromReserves(uint256 reserveXAssets, uint256 reserveYAssets) internal pure returns (int16);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`reserveXAssets`|`uint256`|The current reserve X assets.|
+|`reserveYAssets`|`uint256`|The current reserve Y assets.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`int16`|newTick The current tick.|
+
 
 ## Errors
 ### PriceOutOfBounds
