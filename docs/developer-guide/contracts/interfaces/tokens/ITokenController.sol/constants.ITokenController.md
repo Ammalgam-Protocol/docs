@@ -1,5 +1,5 @@
 # Constants
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/tokens/ITokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/tokens/ITokenController.sol)
 
 ### DEPOSIT_L
 
@@ -41,6 +41,12 @@ uint256 constant BORROW_Y = 5;
 
 ```solidity
 uint256 constant FIRST_DEBT_TOKEN = 3;
+```
+
+### TOKEN_COUNT
+
+```solidity
+uint256 constant TOKEN_COUNT = 6;
 ```
 
 ### ROUNDING_UP
