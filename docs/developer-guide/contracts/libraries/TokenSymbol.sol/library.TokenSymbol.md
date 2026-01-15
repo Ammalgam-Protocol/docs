@@ -1,5 +1,5 @@
 # TokenSymbol
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/TokenSymbol.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/cef53501625920a7a613159ed164f5d718c999a3/contracts/libraries/TokenSymbol.sol)
 
 
 ## Functions

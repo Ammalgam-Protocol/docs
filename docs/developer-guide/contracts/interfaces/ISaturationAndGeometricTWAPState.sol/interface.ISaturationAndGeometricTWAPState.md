@@ -1,17 +1,33 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/cef53501625920a7a613159ed164f5d718c999a3/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
+### midTermIntervalConfig
+
+Exposes the public getter for the configured mid-term interval (in seconds)
+
+
+```solidity
+function midTermIntervalConfig() external view returns (uint24);
+```
+
+### longTermIntervalConfig
+
+Exposes the public getter for the configured long-term interval (in seconds)
+
+
+```solidity
+function longTermIntervalConfig() external view returns (uint24);
+```
+
 ### init
 
 initializes the sat (allocating storage for all nodes) and twap structs
 
 
 ```solidity
-function init(
-    int16 firstTick
-) external;
+function init(uint256 reserveX, uint256 reserveY) external;
 ```
 
 ### setNewPositionSaturation
@@ -21,11 +37,13 @@ function init(
 function setNewPositionSaturation(address pair, uint256 maxDesiredSaturationInMAG2) external;
 ```
 
-### getLeafDetails
+### getTreeLeafDetails
+
+get the details of a specific to the tree and leaf in the saturation state.
 
 
 ```solidity
-function getLeafDetails(
+function getTreeLeafDetails(
     address pairAddress,
     bool netDebtX,
     uint256 leaf
@@ -35,16 +53,29 @@ function getLeafDetails(
     returns (
         Saturation.SaturationPair memory saturation,
         uint256 currentPenaltyInBorrowLSharesPerSatInQ72,
+        uint128 totalSatInLAssets,
+        uint16 highestSetLeaf,
         uint16[] memory tranches
     );
 ```
+**Parameters**
 
-### getTreeDetails
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`| the pair for which the tree is being queried|
+|`netDebtX`|`bool`| whether to query the netDebtX or netDebtY side of the tree|
+|`leaf`|`uint256`| the leaf index to query, you can use zero if you don't need the leaf details|
 
+**Returns**
 
-```solidity
-function getTreeDetails(address pairAddress, bool netX) external view returns (uint16, uint128);
-```
+|Name|Type|Description|
+|----|----|-----------|
+|`saturation`|`Saturation.SaturationPair`| the saturation details for the specified leaf|
+|`currentPenaltyInBorrowLSharesPerSatInQ72`|`uint256`| the current penalty per sat in borrowL shares for the specified leaf|
+|`totalSatInLAssets`|`uint128`| the total saturation in L assets for the specified tree|
+|`highestSetLeaf`|`uint16`| the highest set leaf index for the specified tree|
+|`tranches`|`uint16[]`| the list of tranches set in the specified leaf|
+
 
 ### getTrancheDetails
 
@@ -70,11 +101,12 @@ function getAccount(
 
 ### update
 
-update the borrow position of an account and potentially check (and revert) if the resulting sat is too high
+update the borrow position of an account and potentially check (and revert) if the
+resulting sat is too high
 
 
 ```solidity
-function update(Validation.InputParams memory inputParams, address account) external;
+function update(Validation.InputParams memory inputParams, address account, bool skipMinOrMaxTickCheck) external;
 ```
 **Parameters**
 
@@ -82,6 +114,7 @@ function update(Validation.InputParams memory inputParams, address account) exte
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`| contains the position and pair params, like account borrows/deposits, current price and active liquidity|
 |`account`|`address`| for which is position is being updated|
+|`skipMinOrMaxTickCheck`|`bool`| whether to skip the min/max tick check during validation|
 
 
 ### accruePenalties
@@ -193,14 +226,20 @@ long-term tick, mid-term tick, and current tick.*
 
 
 ```solidity
-function getTickRange(address pair, int16 currentTick, bool includeLongTermTick) external view returns (int16, int16);
+function getTickRange(
+    address pair,
+    uint256 reserveXAssets,
+    uint256 reserveYAssets,
+    bool includeLongTermTick
+) external view returns (int16, int16);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`pair`|`address`|The address of the pair for which the tick range is being queried.|
-|`currentTick`|`int16`|The current tick value.|
+|`reserveXAssets`|`uint256`|The current pair reserves of asset X.|
+|`reserveYAssets`|`uint256`|The current pair reserves of asset Y.|
 |`includeLongTermTick`|`bool`|Boolean value indicating whether to include the long-term tick in the range.|
 
 **Returns**
@@ -265,30 +304,6 @@ function getObservedMidTermTick(
 |`midTermTick`|`int16`|The mid-term tick value.|
 
 
-### boundTick
-
-*The function ensures that `newTick` stays within the bounds
-determined by `lastTick` and a dynamically calculated factor.*
-
-
-```solidity
-function boundTick(
-    int16 newTick
-) external view returns (int16);
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`newTick`|`int16`|The proposed new tick value to be adjusted within valid bounds.|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`<none>`|`int16`|The adjusted tick value constrained within the allowable range.|
-
-
 ### getLendingStateTick
 
 Gets the tick value representing the TWAP since the last lending update.
@@ -324,18 +339,6 @@ function getLendingStateTick(
 function getObservations(
     address pair
 ) external view returns (GeometricTWAP.Observations memory);
-```
-
-### liquidationCheckHardPremiums
-
-
-```solidity
-function liquidationCheckHardPremiums(
-    Validation.InputParams memory inputParams,
-    address borrower,
-    Liquidation.HardLiquidationParams memory hardLiquidationParams,
-    uint256 actualRepaidLiquidityAssets
-) external view returns (bool badDebt);
 ```
 
 ## Errors
