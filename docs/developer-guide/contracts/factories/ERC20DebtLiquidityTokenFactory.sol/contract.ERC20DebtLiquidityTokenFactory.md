@@ -1,5 +1,5 @@
 # ERC20DebtLiquidityTokenFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/factories/ERC20DebtLiquidityTokenFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/569946a105ba5696a3f30dfd05e01dfbb1c6c82a/contracts/factories/ERC20DebtLiquidityTokenFactory.sol)
 
 **Inherits:**
 [ITokenFactory](/docs/developer-guide/contracts/interfaces/factories/ITokenFactory.sol/interface.ITokenFactory.md)
