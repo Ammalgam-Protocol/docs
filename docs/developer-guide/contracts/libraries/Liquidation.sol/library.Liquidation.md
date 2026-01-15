@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/88a65e17fbe942033d24664b3ae6c731eb80e1ee/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -46,6 +46,9 @@ uint256 private constant POSITIVE_PREMIUM_INTERCEPT_IN_BIPS = 4444;
 
 
 ### LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR
+The factor to controls the pace of the increase in the premium the leverage
+liquidation premium function.
+
 
 ```solidity
 uint256 private constant LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR = 5;
@@ -55,7 +58,7 @@ uint256 private constant LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR = 5;
 ### MAX_PREMIUM_IN_BIPS
 
 ```solidity
-uint256 private constant MAX_PREMIUM_IN_BIPS = 11_111;
+uint256 internal constant MAX_PREMIUM_IN_BIPS = 11_111;
 ```
 
 
@@ -66,10 +69,10 @@ uint256 internal constant HARD = 0;
 ```
 
 
-### SOFT
+### SATURATION
 
 ```solidity
-uint256 internal constant SOFT = 1;
+uint256 internal constant SATURATION = 1;
 ```
 
 
@@ -81,6 +84,19 @@ uint256 internal constant LEVERAGE = 2;
 
 
 ## Functions
+### verifyHardLiquidation
+
+
+```solidity
+function verifyHardLiquidation(
+    ISaturationAndGeometricTWAPState saturationState,
+    address pairAddress,
+    Validation.InputParams memory inputParams,
+    uint256[6] memory proposedLiquidation,
+    address borrower
+) external view returns (uint256[6] memory partialLiquidation, bool badDebt);
+```
+
 ### checkHardPremiums
 
 
@@ -88,8 +104,8 @@ uint256 internal constant LEVERAGE = 2;
 function checkHardPremiums(
     uint256 repaidDebtInL,
     uint256 seizedCollateralValueInL,
-    uint256 maxPremiumInBips
-) internal pure returns (bool maxPremiumExceeded);
+    uint256 maxAllowedPremiumBips
+) internal pure;
 ```
 
 ### calculateNetDebtAndSeizedDeposits
@@ -97,17 +113,18 @@ function checkHardPremiums(
 
 ```solidity
 function calculateNetDebtAndSeizedDeposits(
-    Validation.InputParams memory inputParams,
-    HardLiquidationParams memory hardLiquidationParams,
-    uint256 actualRepaidLiquidityAssets
+    uint256[6] memory proposedLiquidation,
+    uint256 activeLiquidityScalerInQ72,
+    uint256 sqrtPriceMinInQ72,
+    uint256 sqrtPriceMaxInQ72
 ) internal pure returns (uint256 netDebtInLAssets, uint256 netCollateralInLAssets, bool netDebtX);
 ```
 
-### checkSoftPremiums
+### checkSaturationPremiums
 
 
 ```solidity
-function checkSoftPremiums(
+function checkSaturationPremiums(
     ISaturationAndGeometricTWAPState saturationAndGeometricTWAPState,
     Validation.InputParams memory inputParams,
     address borrower,
@@ -120,14 +137,36 @@ function checkSoftPremiums(
 ### liquidateLeverageCalcDeltaAndPremium
 
 Calculate the amount to be closed (from both deposit and borrow) and premium to be
-paid.
+paid. The formula for the premium is calculated with the average net borrow of X and Y
+$$B$$ and the net deposit of X and Y $$B$$ and a scaler $$S$$ that sets the pace at which
+the premium increased, in code we call this `LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR`, and
+allowed leverage $$AL$$, `ALLOWED_LIQUIDITY_LEVERAGE`:
+```math
+premium = \begin{cases}
+S \left(
+\frac{B}{D}
+- \frac{AL - 1}{AL}
+\right)
+\text { if } \frac{B}{D} >
+\frac{AL - 1}{AL} \\
+0 \text { otherwise }
+\end{cases}
+```
+This can be visualized [here](https://www.desmos.com/calculator/slheqlelvu).
+The premium is a percentage of the total deposit. If the premium is low enough, then we
+we attempt to deleverage the position such that the premium and closed part of the
+position leaves it under the leveraged threshold. If this is not possible, then all of the
+users deposit will be transferred to the liquidator and there will be bad debt.
+Note that the de leveraging relies on the min and max tick to be equal, so the result may
+not be a valid amount of leverage using a min and max price as is done in the Validation
+library.
 
 
 ```solidity
 function liquidateLeverageCalcDeltaAndPremium(
     Validation.InputParams memory inputParams,
-    bool depositL,
-    bool repayL
+    bool depositXAndY,
+    bool repayXAndY
 ) external pure returns (LeveragedLiquidationParams memory leveragedLiquidationParams);
 ```
 **Parameters**
@@ -135,8 +174,8 @@ function liquidateLeverageCalcDeltaAndPremium(
 |Name|Type|Description|
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`|The params representing the position of the borrower.|
-|`depositL`|`bool`|Flag indicating whether the liquidator is transferring depositL.|
-|`repayL`|`bool`|Flag indicating whether the liquidator is repaying borrowL.|
+|`depositXAndY`|`bool`|Flag indicating whether the liquidator is taking deposit of X and Y.|
+|`repayXAndY`|`bool`|Flag indicating whether the liquidator is repaying borrow of X and Y.|
 
 **Returns**
 
@@ -154,15 +193,13 @@ Calculate the maximum premium the liquidator may receive given the LTV of the bo
 
 ```solidity
 function calcHardMaxPremiumInBips(
-    Validation.InputParams memory inputParams
+    uint256[6] memory validatedLiquidation,
+    uint256 activeLiquidityAssets,
+    uint256 activeLiquidityScalerInQ72,
+    uint256 sqrtPriceMinInQ72,
+    uint256 sqrtPriceMaxInQ72
 ) internal pure returns (uint256 maxPremiumInBips);
 ```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`inputParams`|`Validation.InputParams`|Params containing the prices to be used.|
-
 **Returns**
 
 |Name|Type|Description|
@@ -231,24 +268,15 @@ function convertLtvToPremium(
 |`maxPremiumInBips`|`uint256`|The maximum premium for the liquidator.|
 
 
-### calculateNetDebtAndCollateral
+### calcSaturationPremiumBips
 
-
-```solidity
-function calculateNetDebtAndCollateral(
-    Validation.InputParams memory inputParams
-) internal pure returns (uint256 netDebtInLAssets, uint256 netCollateralInLAssets);
-```
-
-### calcSoftPremiumBips
-
-Calculate the premium the soft liquidator is receiving given the borrowers deposit and the depositToTransfer to the liquidator.
+Calculate the premium the saturation liquidator is receiving given the borrowers deposit and the depositToTransfer to the liquidator.
 The end premium is the max of the premiums in L, X, Y
-If no soft liq is requested (liquidationParams.softDepositLToBeTransferred==liquidationParams.softDepositXToBeTransferred==liquidationParams.softDepositYToBeTransferred==0), the premium will be 0
+If no saturation liq is requested (liquidationParams.saturationDepositLToBeTransferred==liquidationParams.saturationDepositXToBeTransferred==liquidationParams.saturationDepositYToBeTransferred==0), the premium will be 0
 
 
 ```solidity
-function calcSoftPremiumBips(
+function calcSaturationPremiumBips(
     Validation.InputParams memory inputParams,
     uint256 depositLToTransferInLAssets,
     uint256 depositXToTransferInXAssets,
@@ -271,13 +299,14 @@ function calcSoftPremiumBips(
 |`premiumInBips`|`uint256`|The premium being received by the liquidator.|
 
 
-### calcSoftMaxPremiumInBips
+### calcSaturationMaxPremiumInBips
 
-Calculate the max premium the soft liquidator can receive given position of `account`.
+Calculate the max premium the saturation liquidator can receive given position of
+`account`.
 
 
 ```solidity
-function calcSoftMaxPremiumInBips(
+function calcSaturationMaxPremiumInBips(
     ISaturationAndGeometricTWAPState saturationAndGeometricTWAPState,
     Validation.InputParams memory inputParams,
     address account
@@ -317,6 +346,12 @@ error NotEnoughRepaidForLiquidation();
 error TooMuchDepositToTransferForLeverageLiquidation();
 ```
 
+### LiquidationMutation
+
+```solidity
+error LiquidationMutation();
+```
+
 ## Structs
 ### LeveragedLiquidationParams
 
@@ -329,20 +364,6 @@ struct LeveragedLiquidationParams {
     uint256 premiumLInXAssets;
     uint256 premiumLInYAssets;
     bool badDebt;
-}
-```
-
-### HardLiquidationParams
-
-```solidity
-struct HardLiquidationParams {
-    uint256 depositLToBeTransferredInLAssets;
-    uint256 depositXToBeTransferredInXAssets;
-    uint256 depositYToBeTransferredInYAssets;
-    uint256 repayLXInXAssets;
-    uint256 repayLYInYAssets;
-    uint256 repayXInXAssets;
-    uint256 repayYInYAssets;
 }
 ```
 
