@@ -1,21 +1,22 @@
 # function deployFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/utils/deployHelper.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d6b4c039e98cef61e30ce6c4ebc5ce540082e4dd/contracts/utils/deployHelper.sol)
 
 ### deployFactory(address)
 
 ```solidity
 function deployFactory(
     address deployer
-) returns (AmmalgamFactory);
+) returns (AmmalgamFactory, TimelockController);
 ```
 
-### deployFactory(address, IPairFactory, address)
+### deployFactory(address, TimelockController, IAmmalgamPair, ISaturationAndGeometricTWAPState)
 
 ```solidity
 function deployFactory(
     address deployer,
-    IPairFactory pairFactory,
-    address saturationAndGeometricTWAPState
-) returns (AmmalgamFactory);
+    TimelockController timelock,
+    IAmmalgamPair pairImplementation,
+    ISaturationAndGeometricTWAPState satProxy
+) returns (AmmalgamFactory, TimelockController);
 ```
 
