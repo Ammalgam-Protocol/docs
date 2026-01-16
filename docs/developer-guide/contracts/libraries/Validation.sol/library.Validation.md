@@ -1,5 +1,5 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/4ed3f1084ef4b5c994f2270ef9139e3c029cb627/contracts/libraries/Validation.sol)
 
 SPDX-License-Identifier: GPL-3.0-only
 
@@ -71,11 +71,16 @@ uint256 private constant TWO_THOUSAND_FIVE_HUNDRED_Q128 = 0x9c400000000000000000
 ## Functions
 ### getInputParams
 
+Get the input parameters for the validation
+
+*hasBorrow is set to true here, because we assume that the caller has verified there is
+a borrowed asset*
+
 
 ```solidity
 function getInputParams(
-    uint128[6] memory currentAssets,
     uint256[6] memory userAssets,
+    uint256 activeLiquidityAssets,
     uint256 reserveXAssets,
     uint256 reserveYAssets,
     uint256 externalLiquidity,
@@ -83,22 +88,58 @@ function getInputParams(
     int16 maxTick
 ) internal pure returns (Validation.InputParams memory inputParams);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`userAssets`|`uint256[6]`|The user assets of the pool|
+|`activeLiquidityAssets`|`uint256`|The current active liquidity assets of the pool|
+|`reserveXAssets`|`uint256`|The reserve of the X asset|
+|`reserveYAssets`|`uint256`|The reserve of the Y asset|
+|`externalLiquidity`|`uint256`|The external liquidity of the pool|
+|`minTick`|`int16`|The min tick of the pool|
+|`maxTick`|`int16`|The max tick of the pool|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`inputParams`|`Validation.InputParams`|The input parameters for the validation|
+
 
 ### getCheckLtvParams
+
+Get the check LTV parameters for needed for `validateLTVAndLeverage()`
+
+*the sqrt prices are in the input params, but by passing them we allow for the ability
+to switch them as needed in liquidation and other cases.*
 
 
 ```solidity
 function getCheckLtvParams(
-    InputParams memory inputParams
+    uint256[6] memory userAssets,
+    uint256 activeLiquidityScalerInQ72,
+    uint256 sqrtPriceMinInQ72,
+    uint256 sqrtPriceMaxInQ72
 ) internal pure returns (CheckLtvParams memory checkLtvParams);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`userAssets`|`uint256[6]`|User asset array|
+|`activeLiquidityScalerInQ72`|`uint256`|The active liquidity scaler in Q72|
+|`sqrtPriceMinInQ72`|`uint256`|The minimum sqrt price in Q72|
+|`sqrtPriceMaxInQ72`|`uint256`|The maximum sqrt price in Q72|
+
 
 ### validateBalanceAndLiqAndNotSameAssetsSuppliedAndBorrowed
 
 
 ```solidity
 function validateBalanceAndLiqAndNotSameAssetsSuppliedAndBorrowed(
-    InputParams memory inputParams
+    uint256[6] memory userAssets,
+    uint256 activeLiquidityAssets
 ) internal pure;
 ```
 
@@ -118,7 +159,11 @@ check of a balance that can be done from within a token.
 
 ```solidity
 function validateSolvency(
-    InputParams memory inputParams
+    uint256[6] memory userAssets,
+    uint256 sqrtPriceMinInQ72,
+    uint256 sqrtPriceMaxInQ72,
+    uint256 activeLiquidityScalerInQ72,
+    uint256 activeLiquidityAssets
 ) internal pure;
 ```
 
@@ -134,21 +179,12 @@ function verifyNotSameAssetsSuppliedAndBorrowed(
 ) internal pure;
 ```
 
-### verifyMaxBorrowXY
+### verifyMaxBorrow
 
 
 ```solidity
-function verifyMaxBorrowXY(
-    VerifyMaxBorrowXYParams memory params
-) internal pure;
-```
-
-### verifyMaxBorrowL
-
-
-```solidity
-function verifyMaxBorrowL(
-    VerifyMaxBorrowLParams memory params
+function verifyMaxBorrow(
+    VerifyMaxBorrowParams memory params
 ) internal pure;
 ```
 
@@ -157,7 +193,10 @@ function verifyMaxBorrowL(
 
 ```solidity
 function getDepositsInL(
-    InputParams memory inputParams
+    uint256[6] memory userAssets,
+    uint256 activeLiquidityScalerInQ72,
+    uint256 sqrtPriceMinInQ72,
+    uint256 sqrtPriceMaxInQ72
 ) private pure returns (uint256 netDepositedXinLAssets, uint256 netDepositedYinLAssets);
 ```
 
@@ -166,24 +205,27 @@ function getDepositsInL(
 
 ```solidity
 function getBorrowedInL(
-    InputParams memory inputParams
+    uint256[6] memory userAssets,
+    uint256 activeLiquidityScalerInQ72,
+    uint256 sqrtPriceMinInQ72,
+    uint256 sqrtPriceMaxInQ72
 ) private pure returns (uint256 netBorrowedXinLAssets, uint256 netBorrowedYinLAssets);
 ```
 
 ### convertXToL
 
 The original math:
-L * activeLiquidityScalerInQ72 = x / (2 * sqrt(p))
+L * activeLiquidityScalerInQ72 = x / sqrt(p)
 previous equation:
-amountLAssets = mulDiv(amount, Q72, 2 * sqrtPriceInXInQ72, rounding);
+amountLAssets = mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding);
 adding activeLiquidityScalerInQ72:
-amountLAssets = (amount * Q72 / (2 * sqrtPriceInXInQ72)) / (activeLiquidityScalerInQ72 / Q72);
+amountLAssets = (amount * Q72 / sqrtPriceInXInQ72) / (activeLiquidityScalerInQ72 / Q72);
 simplify to:
-(amount * Q72 * Q72) / (2 * sqrtPriceInXInQ72 * activeLiquidityScalerInQ72)
+(amount * Q72 * Q72) / (sqrtPriceInXInQ72 * activeLiquidityScalerInQ72)
 final equation:
-amountLAssets = mulDiv(mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding), Q72, 2 * activeLiquidityScalerInQ72, rounding);
+amountLAssets = mulDiv(mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding), Q72, activeLiquidityScalerInQ72, rounding);
 or more simplified (failed for some tests)
-amountLAssets = mulDiv(amount, Q72 * Q72, 2 * sqrtPriceInQ72 * activeLiquidityScalerInQ72);
+amountLAssets = mulDiv(amount, Q72 * Q72, sqrtPriceInQ72 * activeLiquidityScalerInQ72);
 
 
 ```solidity
@@ -209,16 +251,14 @@ function convertLToX(
 
 ### convertYToL
 
-The simplified math: L = y * sqrt(p) / 2
-mulDiv(amount, sqrtPriceInXInQ72, 2 * Q72, rounding);
-amountLAssets = amount * sqrtPriceInXInQ72Scaled / (2 * Q72)
+The simplified math: L = y * sqrt(p)
+mulDiv(amount, sqrtPriceInXInQ72, rounding);
+amountLAssets = amount * sqrtPriceInXInQ72Scaled / Q72;
 sqrtPriceInXInQ72Scaled = sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72;
 simplify to:
-amount * sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72 / (2 * Q72)
-simplify to:
-(amount * sqrtPriceInXInQ72 * Q56) / (activeLiquidityScalerInQ72 * 2)
+amount * sqrtPriceInXInQ72 / activeLiquidityScalerInQ72
 final equation:
-amountLAssets = mulDiv(amount, sqrtPriceInXInQ72 * Q56, 2 * activeLiquidityScalerInQ72, rounding);
+amountLAssets = mulDiv(amount, sqrtPriceInXInQ72, activeLiquidityScalerInQ72, rounding);
 
 
 ```solidity
@@ -307,7 +347,7 @@ L_{in}
 ```
 Using $L_{out}$ described in our method as `debtLiquidityAssets`, $L$ or `activeLiquidityAssets`,
 and our fee, we use the above equation to solve for the amount of liquidity that
-must come in to buy the debt.
+must come into buy the debt.
 
 
 ```solidity
@@ -388,12 +428,15 @@ error AmmalgamTransferAmtExceedsBalance();
 ```solidity
 struct InputParams {
     uint256[6] userAssets;
+    int16 minTick;
+    int16 maxTick;
     uint256 sqrtPriceMinInQ72;
     uint256 sqrtPriceMaxInQ72;
     uint256 activeLiquidityScalerInQ72;
     uint256 activeLiquidityAssets;
     uint256 reservesXAssets;
     uint256 reservesYAssets;
+    bool hasBorrow;
 }
 ```
 
@@ -405,31 +448,18 @@ struct CheckLtvParams {
     uint256 netDepositedYinLAssets;
     uint256 netBorrowedXinLAssets;
     uint256 netBorrowedYinLAssets;
-    uint256 depositedLAssets;
 }
 ```
 
-### VerifyMaxBorrowXYParams
+### VerifyMaxBorrowParams
 
 ```solidity
-struct VerifyMaxBorrowXYParams {
-    uint256 amount;
+struct VerifyMaxBorrowParams {
     uint256 depositedAssets;
     uint256 borrowedAssets;
     uint256 reserve;
-    uint256 totalLiquidityAssets;
-    uint256 borrowedLiquidityAssets;
-}
-```
-
-### VerifyMaxBorrowLParams
-
-```solidity
-struct VerifyMaxBorrowLParams {
-    uint256[6] totalAssets;
-    uint256 newBorrowedLAssets;
-    uint256 reserveXAssets;
-    uint256 reserveYAssets;
+    uint256 totalDepositedLAssets;
+    uint256 totalBorrowedLAssets;
 }
 ```
 

@@ -1,5 +1,5 @@
 # ITokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/tokens/ITokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/4ed3f1084ef4b5c994f2270ef9139e3c029cb627/contracts/interfaces/tokens/ITokenController.sol)
 
 The interface of a ERC20 facade for multiple token types with functionality similar to ERC1155.
 
@@ -25,7 +25,7 @@ function underlyingTokens() external view returns (IERC20, IERC20);
 
 ### getReserves
 
-Fetches the current reserves of asset X and asset Y, as well as the block of the last operation.
+Fetches the current reserves and the last update timestamp.
 
 
 ```solidity
@@ -35,8 +35,8 @@ function getReserves() external view returns (uint112 reserveXAssets, uint112 re
 
 |Name|Type|Description|
 |----|----|-----------|
-|`reserveXAssets`|`uint112`|The current reserve of asset X.|
-|`reserveYAssets`|`uint112`|The current reserve of asset Y.|
+|`reserveXAssets`|`uint112`|The raw reserveX or reserveX plus unaccrued interest.|
+|`reserveYAssets`|`uint112`|The raw reserveY or reserveY plus unaccrued interest.|
 |`lastTimestamp`|`uint32`|The timestamp of the last operation.|
 
 
@@ -45,6 +45,13 @@ function getReserves() external view returns (uint112 reserveXAssets, uint112 re
 
 ```solidity
 function externalLiquidity() external view returns (uint112);
+```
+
+### fragileLiquidityShares
+
+
+```solidity
+function fragileLiquidityShares() external view returns (uint112);
 ```
 
 ### updateExternalLiquidity
@@ -107,23 +114,36 @@ function tokens(
 |`<none>`|`IAmmalgamERC20`|The IAmmalgamERC20 token|
 
 
-### totalAssets
+### totalAssetsAndShares
 
-Computes the current total Assets.
+Computes current total assets and shares.
 
-*If the last lending state update is outdated (i.e., not matching the current block timestamp),
-the function recalculates the assets based on the duration since the last update, the lending state,
-and reserve balances. If the timestamp is current, the previous scaler (without recalculation) is returned.*
+*Behavior depends on the `withInterest` flag:
+1. If `withInterest` is `false`: Returns stored values (`allAssets`, `allShares`) without adjustments.
+2. If `withInterest` is `true`:
+- First calls `computeAssetsState()` to recalculate assets and shares (accounts for elapsed time, interest, and lending state).
+- Converts protocol fees to shares for DEPOSIT_L/X/Y and adds them to `_allShares`.
+- Adds protocol fees to DEPOSIT_L/X/Y in `_allAssets` (updated after shares to avoid double-counting).
+3. If `computeAssetsState()` detects no elapsed lending time, it returns stored values without recalculation.*
 
 
 ```solidity
-function totalAssets() external view returns (uint128[6] memory);
+function totalAssetsAndShares(
+    bool withInterest
+) external view returns (uint112[6] memory _allAssets, uint112[6] memory _allShares);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`withInterest`|`bool`|Toggle to enable/disable interest accrual, reserve adjustments, and protocol fee application.|
+
 **Returns**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`uint128[6]`|totalAssets An array of six `uint128` values representing the total assets for each of the 6 amalgam token types. These values may be adjusted based on the time elapsed since the last update. If the timestamp is up-to-date, the previously calculated total assets are returned without recalculation.|
+|`_allAssets`|`uint112[6]`|Array of six `uint128` values: Total assets for each of the 6 Amalgam token types. If `withInterest` is `true`, includes protocol fees for DEPOSIT_L/X/Y.|
+|`_allShares`|`uint112[6]`|Array of six `uint112` values: Total shares for each of the 6 Amalgam token types. If `withInterest` is `true`, includes shares converted from protocol fees for DEPOSIT_L/X/Y.|
 
 
 ## Events
@@ -179,12 +199,12 @@ event BurnBadDebt(address indexed borrower, uint256 indexed tokenType, uint256 b
 
 ```solidity
 event InterestAccrued(
-    uint128 depositLAssets,
-    uint128 depositXAssets,
-    uint128 depositYAssets,
-    uint128 borrowLAssets,
-    uint128 borrowXAssets,
-    uint128 borrowYAssets
+    uint112 depositLAssets,
+    uint112 depositXAssets,
+    uint112 depositYAssets,
+    uint112 borrowLAssets,
+    uint112 borrowXAssets,
+    uint112 borrowYAssets
 );
 ```
 
@@ -192,10 +212,10 @@ event InterestAccrued(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`depositLAssets`|`uint128`|The amount of total `DEPOSIT_L` assets in the pool after interest accrual|
-|`depositXAssets`|`uint128`|The amount of total `DEPOSIT_X` assets in the pool after interest accrual|
-|`depositYAssets`|`uint128`|The amount of total `DEPOSIT_Y` assets in the pool after interest accrual|
-|`borrowLAssets`|`uint128`|The amount of total `BORROW_L` assets in the pool after interest accrual|
-|`borrowXAssets`|`uint128`|The amount of total `BORROW_X` assets in the pool after interest accrual|
-|`borrowYAssets`|`uint128`|The amount of total `BORROW_Y` assets in the pool after interest accrual|
+|`depositLAssets`|`uint112`|The amount of total `DEPOSIT_L` assets in the pool after interest accrual|
+|`depositXAssets`|`uint112`|The amount of total `DEPOSIT_X` assets in the pool after interest accrual|
+|`depositYAssets`|`uint112`|The amount of total `DEPOSIT_Y` assets in the pool after interest accrual|
+|`borrowLAssets`|`uint112`|The amount of total `BORROW_L` assets in the pool after interest accrual|
+|`borrowXAssets`|`uint112`|The amount of total `BORROW_X` assets in the pool after interest accrual|
+|`borrowYAssets`|`uint112`|The amount of total `BORROW_Y` assets in the pool after interest accrual|
 
