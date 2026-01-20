@@ -1,5 +1,5 @@
 # ERC4626DebtToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/tokens/ERC4626DebtToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/27b7e0cf8dd31e42b89a491c679d5a6c1b6818c1/contracts/tokens/ERC4626DebtToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)
@@ -69,6 +69,54 @@ function ammalgamBorrowCallV1(
 |`data`|`bytes`|encoded data containing the caller and receiver addresses|
 
 
+### previewDeposit
+
+*Preview the amount of shares that will be minted for a given amount of assets
+the user is borrowing, including the initial lending fee.*
+
+
+```solidity
+function previewDeposit(
+    uint256 assets
+) public view override returns (uint256);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`assets`|`uint256`|The amount of assets user is borrowing.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`uint256`|The amount of shares that will be minted, including the initial lending fee.|
+
+
+### previewMint
+
+*Preview the amount of assets required to mint a given amount of shares,
+including the initial lending fee.*
+
+
+```solidity
+function previewMint(
+    uint256 shares
+) public view override returns (uint256);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`shares`|`uint256`|The amount of shares to mint.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`uint256`|The amount of assets required to mint the given amount of shares, including the initial lending fee.|
+
+
 ### _deposit
 
 *ERC4626 facade for [IAmmalgamPair-borrow](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#borrow).
@@ -88,7 +136,13 @@ This is called when the user is repaying their debt*
 
 
 ```solidity
-function _withdraw(address caller, address receiver, address, uint256 assets, uint256) internal virtual override;
+function _withdraw(
+    address caller,
+    address receiver,
+    address owner,
+    uint256 assets,
+    uint256
+) internal virtual override;
 ```
 
 ### approve
@@ -120,6 +174,13 @@ function decimals() public view override(ERC20Base, ERC4626, IERC20Metadata) ret
 
 ```solidity
 function totalAssets() public view override returns (uint256);
+```
+
+### totalSupply
+
+
+```solidity
+function totalSupply() public view override(ERC20, IERC20) returns (uint256);
 ```
 
 ### transfer
@@ -179,5 +240,16 @@ function _convertToShares(uint256 assets, Math.Rounding rounding) internal view 
 
 ```solidity
 function _convertToAssets(uint256 shares, Math.Rounding rounding) internal view override returns (uint256);
+```
+
+## Errors
+### ReceiverIsNotOwner
+for the ERC4626 applied to a debt token, a withdraw reduces debt, thus the
+`receiver` of value is the `owner`. We require these arguments to be equal to ensure the
+caller understands this design.
+
+
+```solidity
+error ReceiverIsNotOwner();
 ```
 
