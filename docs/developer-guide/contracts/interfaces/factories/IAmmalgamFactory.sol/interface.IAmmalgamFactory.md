@@ -1,8 +1,8 @@
 # IAmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/factories/IAmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/0de309c2d649ef8a8b8cfbcf17ff86c15e09a942/contracts/interfaces/factories/IAmmalgamFactory.sol)
 
 **Inherits:**
-[IFactoryCallback](/docs/developer-guide/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md)
+[IFactoryCallback](/docs/developer-guide/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md), [IBeaconCallback](/docs/developer-guide/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IBeaconCallback.md)
 
 
 ## Functions
@@ -120,6 +120,21 @@ function setFeeToSetter(
 |Name|Type|Description|
 |----|----|-----------|
 |`newFeeToSetter`|`address`|The new fee setter address.|
+
+
+### hookRegistry
+
+Returns the public immutable address of the hook registry contract.
+
+
+```solidity
+function hookRegistry() external view returns (IHookRegistry);
+```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`IHookRegistry`|The address of the hook registry.|
 
 
 ## Events
