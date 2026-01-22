@@ -1,5 +1,5 @@
 # IFactoryCallback
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/82dff11576b9df76b675736dba889653cf737de9/contracts/interfaces/factories/IFactoryCallback.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1f18f84b8f40a3c2c9eee06e5c517dd82d1cb19c/contracts/interfaces/factories/IFactoryCallback.sol)
 
 This interface provides methods for getting the token factory configuration.
 
@@ -71,7 +71,6 @@ the addresses of tokenX, tokenY, and the factory itself.
 struct TokenFactoryConfig {
     address tokenX;
     address tokenY;
-    address factory;
 }
 ```
 
