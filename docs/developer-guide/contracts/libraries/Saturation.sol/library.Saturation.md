@@ -1,5 +1,5 @@
 # Saturation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/Saturation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2ced318822dafebfff7d67fabcd7025224bffea6/contracts/libraries/Saturation.sol)
 
 **Authors:**
 imi@1m1.io, Will duelingGalois@protonmail.com
@@ -178,6 +178,16 @@ $$EXPECTED\_SATURATION\_LTV\_MAG2 + 100$$, a constant used in calculations.
 
 ```solidity
 uint256 internal constant EXPECTED_SATURATION_LTV_PLUS_ONE_MAG2 = 185;
+```
+
+
+### SAT_RESET_FOR_STRADDLE_SLOPE_BIPS
+Slope for calculating premium when resetting saturation for straddle positions
+(where L² < X*Y transitions to L² > X*Y).
+
+
+```solidity
+uint256 internal constant SAT_RESET_FOR_STRADDLE_SLOPE_BIPS = 500;
 ```
 
 
@@ -384,16 +394,6 @@ quarters per tranche.
 
 ```solidity
 uint256 private constant NUMBER_OF_QUARTERS = 4;
-```
-
-
-### SATURATION_LIQUIDATION_SCALER
-We make the penalty slightly larger to hit our desired premium for exceeding the
-time buffer.
-
-
-```solidity
-uint256 private constant SATURATION_LIQUIDATION_SCALER = 10_020;
 ```
 
 
@@ -1211,7 +1211,46 @@ function findHighestSetLeafDownwards(
 
 ### calcLiqSqrtPriceQ72
 
-Calc sqrt price at which positions' LTV would reach LTV_MAX
+Calc sqrt price at which positions' LTV would reach LTV_MAX. Given the net $$L$$,
+$$X$$, and Y, we define the the sqrt price $$s_p$$ at which the position would be at the
+expected loan to value of liquidation $$k$$, then the following formulas are what we are
+calculating,
+```math
+\begin{align}
+k &=
+\begin{cases}
+-\frac{L + \frac{X}{s_p}}{L + Y \cdot s_p}
+\text{ if } L+ \frac{X}{s_p} < 0
+\\
+-\frac{L + Y \cdot s_p}{L + \frac{X}{s_p}}
+\text{ if } L + Y \cdot s_p < 0
+\end{cases}
+\\
+s_p &=
+\begin{cases}
+\frac{
+-(k+1)L +
+\sqrt{\left((k+1)L\right)^2 - 4 \left( k\cdot Y \right) \left(X \right)}
+}{
+2 \cdot k \cdot Y
+}
+\text{ if } L + \frac{X}{s_p} < 0
+\\
+\frac{
+-(k+1)L -
+\sqrt{((k+1)L)^2-4(Y)(k\cdot X)}
+}{
+2\cdot k
+}
+\text{ if } L + Y \cdot s_p < 0
+\end{cases}
+\end{align}
+```
+The equation gives four solutions due to the plus minus of the radical, but we choose the
+direction due to the conditions. When we have a net debt of x, $$L + \frac{X}{s_p} < 0$$,
+the loan to value will be increasing as the price decreases, thus we choose the positive
+value of the radical. For the net debt of y, $$L + Y \cdot s_p < 0$$ we have the loan to
+value increasing as the price increases, thus we use the negative value of the radical.
 
 Output guarantees $$0 \le liqSqrtPriceXInQ72 \le uint256(type(uint56).max) << 72$$
 (fuzz tested and logic)
@@ -1283,7 +1322,7 @@ function calcSatChangeRatioBips(
     uint256 liqSqrtPriceInYInQ72,
     address account,
     uint256 desiredSaturationMAG2
-) internal view returns (uint256 ratioNetXBips, uint256 ratioNetYBips);
+) internal view returns (uint256 ratioBips);
 ```
 **Parameters**
 
@@ -1300,8 +1339,39 @@ function calcSatChangeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioNetXBips`|`uint256`|The ratio representing the change in netX saturation for account.|
-|`ratioNetYBips`|`uint256`|The ratio representing the change in netY saturation for account.|
+|`ratioBips`|`uint256`|The ratio representing the change in saturation for account.|
+
+
+### calcStraddlePremiumRatioBips
+
+Calculate the ratio bips for a straddle position transitioning from zero to positive saturation.
+```math
+\text{premiumBips} = \max\left(0, \left\lceil \text{BIPS} \cdot (L^2 - XY) \cdot \text{slope} \right\rceil \right)
+```
+where L, X, Y are in 1e18 units, so L² and XY are in 1e36 units.
+The ratioBips encodes premium for downstream consumption:
+```math
+\text{ratioBips} = \text{premiumBips} \cdot \text{MAG1} + \text{BIPS}
+```
+and premium is recovered as: `(ratioBips - BIPS) / MAG1`.
+
+
+```solidity
+function calcStraddlePremiumRatioBips(
+    Validation.InputParams memory inputParams
+) private pure returns (uint256 ratioBips);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`inputParams`|`Validation.InputParams`|The user's position parameters.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`ratioBips`|`uint256`|The ratio in bips, or 0 if L² <= X*Y.|
 
 
 ### calculateEndOfLiquidationAdjustment
