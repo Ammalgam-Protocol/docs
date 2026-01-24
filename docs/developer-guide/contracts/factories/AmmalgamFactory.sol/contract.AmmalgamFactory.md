@@ -1,5 +1,5 @@
 # AmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/factories/AmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1178c7587abcafe4377697cf77e38b680afac99f/contracts/factories/AmmalgamFactory.sol)
 
 **Inherits:**
 [IAmmalgamFactory](/docs/developer-guide/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IAmmalgamFactory.md)

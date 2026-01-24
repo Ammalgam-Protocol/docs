@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1178c7587abcafe4377697cf77e38b680afac99f/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -127,11 +127,8 @@ function calculateNetDebtAndSeizedDeposits(
 function checkSaturationPremiums(
     ISaturationAndGeometricTWAPState saturationAndGeometricTWAPState,
     Validation.InputParams memory inputParams,
-    address borrower,
-    uint256 depositLToTransferInLAssets,
-    uint256 depositXToTransferInXAssets,
-    uint256 depositYToTransferInYAssets
-) external view;
+    address borrower
+) external view returns (uint256 seizeXAssets, uint256 seizeYAssets, uint256 seizeLAssets);
 ```
 
 ### liquidateLeverageCalcDeltaAndPremium
@@ -268,36 +265,17 @@ function convertLtvToPremium(
 |`maxPremiumInBips`|`uint256`|The maximum premium for the liquidator.|
 
 
-### calcSaturationPremiumBips
-
-Calculate the premium the saturation liquidator is receiving given the borrowers deposit and the depositToTransfer to the liquidator.
-The end premium is the max of the premiums in L, X, Y
-If no saturation liq is requested (liquidationParams.saturationDepositLToBeTransferred==liquidationParams.saturationDepositXToBeTransferred==liquidationParams.saturationDepositYToBeTransferred==0), the premium will be 0
+### calcSaturationSeizedAssets
 
 
 ```solidity
-function calcSaturationPremiumBips(
-    Validation.InputParams memory inputParams,
-    uint256 depositLToTransferInLAssets,
-    uint256 depositXToTransferInXAssets,
-    uint256 depositYToTransferInYAssets
-) internal pure returns (uint256 premiumInBips);
+function calcSaturationSeizedAssets(
+    uint256 depositedLAssets,
+    uint256 depositedXAssets,
+    uint256 depositedYAssets,
+    uint256 premiumInBips
+) internal pure returns (uint256 seizedLAssets, uint256 seizedXAssets, uint256 seizedYAssets);
 ```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`inputParams`|`Validation.InputParams`|The params containing the position of the borrower.|
-|`depositLToTransferInLAssets`|`uint256`||
-|`depositXToTransferInXAssets`|`uint256`||
-|`depositYToTransferInYAssets`|`uint256`||
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`premiumInBips`|`uint256`|The premium being received by the liquidator.|
-
 
 ### calcSaturationMaxPremiumInBips
 
