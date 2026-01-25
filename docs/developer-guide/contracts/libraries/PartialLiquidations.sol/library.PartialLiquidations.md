@@ -1,5 +1,5 @@
 # PartialLiquidations
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/PartialLiquidations.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2eece5abfebce288fb02f1e415a4c82da2c74b65/contracts/libraries/PartialLiquidations.sol)
 
 We allow liquidations to happen in parts when the position is spread across more than
 one tranche. These partial liquidations allow the liquidator to specify how many tranches they
