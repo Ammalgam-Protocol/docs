@@ -1,5 +1,5 @@
 # ERC20DebtLiquidityToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/ERC20DebtLiquidityToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ee6470734bab2e1693f22d61eec44d4bf778f1df/contracts/tokens/ERC20DebtLiquidityToken.sol)
 
 **Inherits:**
 [ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)

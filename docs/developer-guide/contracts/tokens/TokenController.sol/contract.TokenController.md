@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ee6470734bab2e1693f22d61eec44d4bf778f1df/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [InitializablePair](/docs/developer-guide/contracts/proxy/PairBeaconProxy.sol/contract.InitializablePair.md), [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md)
@@ -88,7 +88,7 @@ uint112[6] private allShares;
 ### allAssets
 
 ```solidity
-uint112[6] internal allAssets;
+uint112[6] private allAssets;
 ```
 
 
@@ -237,7 +237,7 @@ function underlyingTokens() public view virtual override returns (IERC20, IERC20
 
 
 ```solidity
-function updateAssets(uint256 tokenType, uint112 assets) private;
+function updateAssets(uint256 tokenType, uint112 assets) internal;
 ```
 
 ### updateExternalLiquidity

@@ -1,5 +1,5 @@
 # ITokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/tokens/ITokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ee6470734bab2e1693f22d61eec44d4bf778f1df/contracts/interfaces/tokens/ITokenController.sol)
 
 The interface of a ERC20 facade for multiple token types with functionality similar to ERC1155.
 
