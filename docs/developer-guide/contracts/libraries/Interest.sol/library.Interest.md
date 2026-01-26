@@ -1,5 +1,5 @@
 # Interest
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/Interest.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/8e57018f78e1e5a59824e1e28b626974eadc7fc3/contracts/libraries/Interest.sol)
 
 This library is used for calculating and accruing interest.
 
