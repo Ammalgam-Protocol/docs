@@ -1,5 +1,5 @@
 # IBeaconController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/proxy/BeaconController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/3f6245483ee1f2b746eda1035b78135366a9694d/contracts/proxy/BeaconController.sol)
 
 
 ## Functions
