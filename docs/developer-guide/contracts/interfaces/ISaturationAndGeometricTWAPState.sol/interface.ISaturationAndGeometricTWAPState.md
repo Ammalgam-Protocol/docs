@@ -1,5 +1,5 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/7bd94fcabcb7d53f97e30a15843e54bc4e10b2d4/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
@@ -156,7 +156,7 @@ function calcSatChangeRatioBips(
     uint256 liqSqrtPriceInYInQ72,
     address pairAddress,
     address account
-) external view returns (uint256 ratioNetXBips, uint256 ratioNetYBips);
+) external view returns (uint256 ratioBips);
 ```
 **Parameters**
 
@@ -172,8 +172,7 @@ function calcSatChangeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioNetXBips`|`uint256`|The ratio representing the change in netX saturation for account.|
-|`ratioNetYBips`|`uint256`|The ratio representing the change in netY saturation for account.|
+|`ratioBips`|`uint256`|The ratio representing the change in saturation for account.|
 
 
 ### configLongTermInterval
