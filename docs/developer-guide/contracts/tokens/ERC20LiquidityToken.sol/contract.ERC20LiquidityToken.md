@@ -1,5 +1,5 @@
 # ERC20LiquidityToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/ERC20LiquidityToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/199cb86306d921ce989cfb1182c36cddd344d591/contracts/tokens/ERC20LiquidityToken.sol)
 
 **Inherits:**
 [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
