@@ -1,5 +1,5 @@
 # PairLockedLoans
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/proxy/PairLockedLoans.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/31f1fe876c540cfaa9a5decb545c6fce5714e157/contracts/proxy/PairLockedLoans.sol)
 
 **Inherits:**
 [AmmalgamPair](/docs/developer-guide/contracts/AmmalgamPair.sol/contract.AmmalgamPair.md)
