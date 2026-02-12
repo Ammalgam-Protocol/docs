@@ -1,5 +1,5 @@
 # SaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/SaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1e9f832cf58cf9b2fb60a347939c2da19caff649/contracts/SaturationAndGeometricTWAPState.sol)
 
 **Inherits:**
 Initializable, [ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.sol/interface.ISaturationAndGeometricTWAPState.md), OwnableUpgradeable
@@ -52,6 +52,13 @@ mapping(address => mapping(address => uint256)) lastUsedActiveLiquidityInLAssets
 
 ```solidity
 mapping(address => bool) internal isPairInitialized;
+```
+
+
+### borrowCapStateGivenPair
+
+```solidity
+mapping(address => BorrowCap.State) internal borrowCapStateGivenPair;
 ```
 
 
@@ -151,10 +158,32 @@ function getAccount(
 ) external view returns (Saturation.Account memory);
 ```
 
+### accountExistsInSaturation
+
+Check if an account exists in either netX or netY saturation tree
+
+
+```solidity
+function accountExistsInSaturation(address pairAddress, address accountAddress) external view returns (bool exists);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The address of the pair|
+|`accountAddress`|`address`|The address of the account to check|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`exists`|`bool`|True if the account exists in either tree|
+
+
 ### update
 
-update the borrow position of an account and potentially check (and revert) if the
-resulting sat is too high
+update the borrow position of an account, check the per-block borrow cap,
+and potentially check (and revert) if the resulting saturation is too high
 
 *run accruePenalties before running this function*
 
@@ -163,7 +192,10 @@ resulting sat is too high
 function update(
     Validation.InputParams memory inputParams,
     address account,
-    bool skipMinOrMaxTickCheck
+    bool skipMinOrMaxTickCheck,
+    uint256 totalBorrowLAssets,
+    uint256 totalBorrowXAssets,
+    uint256 totalBorrowYAssets
 ) public virtual isInitialized;
 ```
 **Parameters**
@@ -172,7 +204,10 @@ function update(
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`| contains the position and pair params, like account borrows/deposits, current price and active liquidity|
 |`account`|`address`| for which is position is being updated|
-|`skipMinOrMaxTickCheck`|`bool`||
+|`skipMinOrMaxTickCheck`|`bool`| whether to skip the min/max tick check during validation|
+|`totalBorrowLAssets`|`uint256`| pair-level total BORROW_L assets (for borrow cap)|
+|`totalBorrowXAssets`|`uint256`| pair-level total BORROW_X assets (for borrow cap)|
+|`totalBorrowYAssets`|`uint256`| pair-level total BORROW_Y assets (for borrow cap)|
 
 
 ### scaleDesiredSaturation
@@ -249,7 +284,7 @@ function calcSatChangeRatioBips(
     uint256 liqSqrtPriceInYInQ72,
     address pairAddress,
     address account
-) external view virtual isInitialized returns (uint256 ratioNetXBips, uint256 ratioNetYBips);
+) external view virtual isInitialized returns (uint256 ratioBips);
 ```
 **Parameters**
 
@@ -265,8 +300,7 @@ function calcSatChangeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioNetXBips`|`uint256`|The ratio representing the change in netX saturation for account.|
-|`ratioNetYBips`|`uint256`|The ratio representing the change in netY saturation for account.|
+|`ratioBips`|`uint256`|The ratio representing the change saturation for account.|
 
 
 ### getObservations
@@ -276,6 +310,13 @@ function calcSatChangeRatioBips(
 function getObservations(
     address pairAddress
 ) external view returns (GeometricTWAP.Observations memory);
+```
+
+### configBorrowCap
+
+
+```solidity
+function configBorrowCap(address pairAddress, uint16 _borrowCapBips) external onlyOwner;
 ```
 
 ### configLongTermInterval
