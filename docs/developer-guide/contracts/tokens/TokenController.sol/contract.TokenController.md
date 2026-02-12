@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/4d2f4d795e41c416369cdfb007849b5c034fc068/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [InitializablePair](/docs/developer-guide/contracts/proxy/PairBeaconProxy.sol/contract.InitializablePair.md), [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md)
@@ -86,9 +86,14 @@ uint112[6] private allShares;
 
 
 ### allAssets
+The first position in this array is never stored because it is instead computed as
+$$\sqrt{reserveX * reserveY} + borrowedLAssets$$. We keep this storage spot because
+we heavily use DEPOSIT_L, DEPOSIT_X, DEPOSIT_Y, BORROW_L, BORROW_X, BORROW_Y to look
+up positions throughout the code and didn't want to change all those references.
+
 
 ```solidity
-uint112[6] internal allAssets;
+uint112[6] private allAssets;
 ```
 
 
@@ -134,13 +139,6 @@ uint32 internal lastLendingTimestamp;
 ```
 
 
-### lastReserveLiquidity
-
-```solidity
-uint112 internal lastReserveLiquidity;
-```
-
-
 ### externalLiquidity
 
 ```solidity
@@ -159,6 +157,13 @@ uint112 public override fragileLiquidityShares;
 
 ```solidity
 mapping(address => uint256) internal userFragileLiquidityShares;
+```
+
+
+### priceExtremesState
+
+```solidity
+PriceExtremes.State internal priceExtremesState;
 ```
 
 
@@ -204,6 +209,13 @@ uint112 internal transient totalBorrowYAssets;
 ```
 
 
+### activeLiquidityAssets
+
+```solidity
+uint112 internal transient activeLiquidityAssets;
+```
+
+
 ## Functions
 ### _initialize
 
@@ -237,7 +249,7 @@ function underlyingTokens() public view virtual override returns (IERC20, IERC20
 
 
 ```solidity
-function updateAssets(uint256 tokenType, uint112 assets) private;
+function updateAssets(uint256 tokenType, uint112 assets) internal;
 ```
 
 ### updateExternalLiquidity
@@ -294,7 +306,7 @@ function totalShares(
 ```solidity
 function rawTotalAssets(
     uint256 tokenType
-) internal view returns (uint112);
+) internal view returns (uint256 assetAmount);
 ```
 
 ### getRawReserves
@@ -494,9 +506,7 @@ function missingAssets() internal view returns (uint112 missingXAssets, uint112 
 
 ### getDepositAndActiveLiquidityAssets
 
-Get the deposit, borrow, and active liquidity assets.
-
-*This function is used to get the deposit liquidity assets, borrow liquidity assets (BLA), last active liquidity assets (ALA_0), and current active liquidity assets (ALA_1).*
+Get the deposit, and active liquidity assets.
 
 
 ```solidity
