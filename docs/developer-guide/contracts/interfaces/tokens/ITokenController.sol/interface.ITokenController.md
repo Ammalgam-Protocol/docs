@@ -1,5 +1,5 @@
 # ITokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/tokens/ITokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/d1b20011f9eaef99c3e362d1b1382b0810f96b76/contracts/interfaces/tokens/ITokenController.sol)
 
 The interface of a ERC20 facade for multiple token types with functionality similar to ERC1155.
 
@@ -199,7 +199,8 @@ event BurnBadDebt(address indexed borrower, uint256 indexed tokenType, uint256 b
 
 ```solidity
 event InterestAccrued(
-    uint112 depositLAssets,
+    uint256 reserveXAssets,
+    uint256 reserveYAssets,
     uint112 depositXAssets,
     uint112 depositYAssets,
     uint112 borrowLAssets,
@@ -212,7 +213,8 @@ event InterestAccrued(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`depositLAssets`|`uint112`|The amount of total `DEPOSIT_L` assets in the pool after interest accrual|
+|`reserveXAssets`|`uint256`|The amount reserve X assets in the pool after interest accrual|
+|`reserveYAssets`|`uint256`|The amount reserve Y assets in the pool after interest accrual|
 |`depositXAssets`|`uint112`|The amount of total `DEPOSIT_X` assets in the pool after interest accrual|
 |`depositYAssets`|`uint112`|The amount of total `DEPOSIT_Y` assets in the pool after interest accrual|
 |`borrowLAssets`|`uint112`|The amount of total `BORROW_L` assets in the pool after interest accrual|
