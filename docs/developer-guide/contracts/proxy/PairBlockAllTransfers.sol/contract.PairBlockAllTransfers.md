@@ -1,5 +1,5 @@
 # PairBlockAllTransfers
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/proxy/PairBlockAllTransfers.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ed37f3684002fff9966615450959b8e33e7d08ce/contracts/proxy/PairBlockAllTransfers.sol)
 
 **Inherits:**
 [AmmalgamPair](/docs/developer-guide/contracts/AmmalgamPair.sol/contract.AmmalgamPair.md)
