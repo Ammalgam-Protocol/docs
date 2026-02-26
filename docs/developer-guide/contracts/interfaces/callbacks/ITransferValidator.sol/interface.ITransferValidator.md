@@ -1,5 +1,5 @@
 # ITransferValidator
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/callbacks/ITransferValidator.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bf8d65327c2855dc6ef8eec9e222a72a334011ee/contracts/interfaces/callbacks/ITransferValidator.sol)
 
 This interface is intended for validating the solvency of an account when transfers occur.
 

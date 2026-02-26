@@ -1,5 +1,5 @@
 # IAmmalgamFactory
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/factories/IAmmalgamFactory.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bf8d65327c2855dc6ef8eec9e222a72a334011ee/contracts/interfaces/factories/IAmmalgamFactory.sol)
 
 **Inherits:**
 [IFactoryCallback](/docs/developer-guide/contracts/interfaces/factories/IFactoryCallback.sol/interface.IFactoryCallback.md), [IBeaconCallback](/docs/developer-guide/contracts/interfaces/factories/IAmmalgamFactory.sol/interface.IBeaconCallback.md)
