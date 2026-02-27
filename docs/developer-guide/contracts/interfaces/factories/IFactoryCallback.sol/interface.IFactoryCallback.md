@@ -1,5 +1,5 @@
 # IFactoryCallback
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/factories/IFactoryCallback.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/bd478d255979027169469dcb5ce6c0ab9360cb64/contracts/interfaces/factories/IFactoryCallback.sol)
 
 This interface provides methods for getting the token factory configuration.
 
