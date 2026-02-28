@@ -1,5 +1,5 @@
 # IAmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/IAmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c6b8319335ad54346e09219fdd910f1ff5b460bc/contracts/interfaces/IAmmalgamPair.sol)
 
 **Inherits:**
 [ITransferValidator](/docs/developer-guide/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
