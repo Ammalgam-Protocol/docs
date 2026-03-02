@@ -1,5 +1,5 @@
 # AmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/AmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2c580944b201d051da27728f7a334d7a14204344/contracts/AmmalgamPair.sol)
 
 **Inherits:**
 [IAmmalgamPair](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md), [TokenController](/docs/developer-guide/contracts/tokens/TokenController.sol/contract.TokenController.md)
@@ -369,14 +369,7 @@ Liquidation based on change of saturation because of time.
 
 
 ```solidity
-function resetSaturation(
-    Validation.InputParams memory inputParams,
-    address borrower,
-    address to,
-    uint256 depositLToBeTransferredInLAssets,
-    uint256 depositXToBeTransferredInXAssets,
-    uint256 depositYToBeTransferredInYAssets
-) private;
+function resetSaturation(Validation.InputParams memory inputParams, address borrower, address to) private;
 ```
 **Parameters**
 
@@ -385,9 +378,6 @@ function resetSaturation(
 |`inputParams`|`Validation.InputParams`||
 |`borrower`|`address`|The account being liquidated.|
 |`to`|`address`|The account to send the liquidated deposit to|
-|`depositLToBeTransferredInLAssets`|`uint256`|The amount of L to be transferred to the liquidator.|
-|`depositXToBeTransferredInXAssets`|`uint256`|The amount of X to be transferred to the liquidator.|
-|`depositYToBeTransferredInYAssets`|`uint256`|The amount of Y to be transferred to the liquidator.|
 
 
 ### liquidateLeverage
@@ -510,12 +500,27 @@ function validateOnUpdate(address validate, address update, bool alwaysUpdate) p
 function validateSolvency(address validate, bool alwaysUpdate) private;
 ```
 
-### getInputParamsAndUpdateSaturation
+### updateSaturationIfNeeded
+
+Update saturation state for an account if it already exists in saturation.
+
+*Note that during a repay of debt, we may not have an entry in saturation if
+1. The position is a straddle with a payout that never reaches zero
+2. Repay is occurring during a callback of a flash loan, saturation will not be updated
+until the end of the borrow call after the callback concludes.*
 
 
 ```solidity
-function getInputParamsAndUpdateSaturation(address toUpdate, bool alwaysUpdate) private;
+function updateSaturationIfNeeded(
+    address toUpdate
+) private;
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`toUpdate`|`address`|The account to update saturation for.|
+
 
 ### getInputParams
 
@@ -615,6 +620,12 @@ error InsufficientLiquidity();
 
 ```solidity
 error InvalidToAddress();
+```
+
+### LiquidationToBorrower
+
+```solidity
+error LiquidationToBorrower();
 ```
 
 ### K
