@@ -1,5 +1,5 @@
 # ERC4626DebtToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/ERC4626DebtToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/9e2e4860004d166d43e104b933bcb6c16866d6fb/contracts/tokens/ERC4626DebtToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.sol/abstract.ERC20DebtBase.md)
@@ -119,7 +119,7 @@ function previewMint(
 
 ### _deposit
 
-*ERC4626 facade for [IAmmalgamPair-borrow](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#borrow).
+*ERC4626 facade for [IAmmalgamPair-borrow](/lib/morpho-blue/src/interfaces/IMorpho.sol/interface.IMorphoBase.md#borrow).
 both deposit and mint calls _deposit
 This is called when the user is borrowing*
 
@@ -130,7 +130,7 @@ function _deposit(address caller, address receiver, uint256 assets, uint256) int
 
 ### _withdraw
 
-*ERC4626 facade for [IAmmalgamPair-repay](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#repay).
+*ERC4626 facade for [IAmmalgamPair-repay](/lib/morpho-blue/src/interfaces/IMorpho.sol/interface.IMorphoBase.md#repay).
 both withdraw and redeem calls _withdraw
 This is called when the user is repaying their debt*
 
@@ -149,7 +149,7 @@ function _withdraw(
 
 
 ```solidity
-function approve(address account, uint256 balance) public pure override(ERC20, ERC20DebtBase, IERC20) returns (bool);
+function approve(address spender, uint256 amount) public override(ERC20, ERC20DebtBase, IERC20) returns (bool);
 ```
 
 ### allowance
