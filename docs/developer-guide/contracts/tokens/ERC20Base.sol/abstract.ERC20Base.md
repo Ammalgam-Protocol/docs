@@ -1,5 +1,5 @@
 # ERC20Base
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/ERC20Base.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/0e32574bf1d88581c440dc714d9b0c71a37368d5/contracts/tokens/ERC20Base.sol)
 
 **Inherits:**
 ERC20Hooks, Ownable, ERC20Permit, [IAmmalgamERC20](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md)

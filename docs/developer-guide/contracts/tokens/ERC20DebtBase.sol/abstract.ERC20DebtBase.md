@@ -1,5 +1,5 @@
 # ERC20DebtBase
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/ERC20DebtBase.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/0e32574bf1d88581c440dc714d9b0c71a37368d5/contracts/tokens/ERC20DebtBase.sol)
 
 **Inherits:**
 [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md), [IERC20DebtToken](/docs/developer-guide/contracts/interfaces/tokens/IERC20DebtToken.sol/interface.IERC20DebtToken.md)
@@ -26,12 +26,9 @@ function nonces(
 
 ### approve
 
-*Standard ERC20 approve is disabled for debt tokens.
-Allowances must be set via approveDebt using debt-specific semantics.*
-
 
 ```solidity
-function approve(address, uint256) public pure virtual override(ERC20, IERC20) returns (bool);
+function approve(address spender, uint256 amount) public virtual override(ERC20, IERC20) returns (bool);
 ```
 
 ### allowance

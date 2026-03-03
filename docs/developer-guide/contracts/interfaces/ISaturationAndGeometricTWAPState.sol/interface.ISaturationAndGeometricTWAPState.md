@@ -1,5 +1,5 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/0e32574bf1d88581c440dc714d9b0c71a37368d5/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
@@ -99,6 +99,28 @@ function getAccount(
 ) external view returns (Saturation.Account memory);
 ```
 
+### accountExistsInSaturation
+
+Check if an account exists in either netX or netY saturation tree
+
+
+```solidity
+function accountExistsInSaturation(address pairAddress, address accountAddress) external view returns (bool exists);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The address of the pair|
+|`accountAddress`|`address`|The address of the account to check|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`exists`|`bool`|True if the account exists in either tree|
+
+
 ### update
 
 update the borrow position of an account and potentially check (and revert) if the
@@ -156,7 +178,7 @@ function calcSatChangeRatioBips(
     uint256 liqSqrtPriceInYInQ72,
     address pairAddress,
     address account
-) external view returns (uint256 ratioNetXBips, uint256 ratioNetYBips);
+) external view returns (uint256 ratioBips);
 ```
 **Parameters**
 
@@ -172,8 +194,7 @@ function calcSatChangeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioNetXBips`|`uint256`|The ratio representing the change in netX saturation for account.|
-|`ratioNetYBips`|`uint256`|The ratio representing the change in netY saturation for account.|
+|`ratioBips`|`uint256`|The ratio representing the change in saturation for account.|
 
 
 ### configLongTermInterval
