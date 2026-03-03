@@ -1,5 +1,5 @@
 # SaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/SaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/e7d678e55cb2292e97adbe9762d6006ba7739179/contracts/SaturationAndGeometricTWAPState.sol)
 
 **Inherits:**
 Initializable, [ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.sol/interface.ISaturationAndGeometricTWAPState.md), OwnableUpgradeable
@@ -151,6 +151,28 @@ function getAccount(
 ) external view returns (Saturation.Account memory);
 ```
 
+### accountExistsInSaturation
+
+Check if an account exists in either netX or netY saturation tree
+
+
+```solidity
+function accountExistsInSaturation(address pairAddress, address accountAddress) external view returns (bool exists);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The address of the pair|
+|`accountAddress`|`address`|The address of the account to check|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`exists`|`bool`|True if the account exists in either tree|
+
+
 ### update
 
 update the borrow position of an account and potentially check (and revert) if the
@@ -249,7 +271,7 @@ function calcSatChangeRatioBips(
     uint256 liqSqrtPriceInYInQ72,
     address pairAddress,
     address account
-) external view virtual isInitialized returns (uint256 ratioNetXBips, uint256 ratioNetYBips);
+) external view virtual isInitialized returns (uint256 ratioBips);
 ```
 **Parameters**
 
@@ -265,8 +287,7 @@ function calcSatChangeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioNetXBips`|`uint256`|The ratio representing the change in netX saturation for account.|
-|`ratioNetYBips`|`uint256`|The ratio representing the change in netY saturation for account.|
+|`ratioBips`|`uint256`|The ratio representing the change saturation for account.|
 
 
 ### getObservations
