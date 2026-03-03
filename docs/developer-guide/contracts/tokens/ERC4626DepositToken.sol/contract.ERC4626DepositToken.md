@@ -1,5 +1,5 @@
 # ERC4626DepositToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/ERC4626DepositToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/15372364f447bc8a3cfdf61e53c38abb19412d55/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.sol/abstract.ERC20Base.md)
@@ -15,7 +15,7 @@ constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset
 
 ### ownerMint
 
-*override [ERC20Base-ownerMint](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownermint).*
+*override [ERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC20DebtLiquidityToken.sol/contract.ERC20DebtLiquidityToken.md#ownermint).*
 
 
 ```solidity
@@ -33,7 +33,7 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override [ERC20Base-ownerBurn](/docs/developer-guide/contracts/interfaces/tokens/IAmmalgamERC20.sol/interface.IAmmalgamERC20.md#ownerburn).*
+*override [ERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC20DebtLiquidityToken.sol/contract.ERC20DebtLiquidityToken.md#ownerburn).*
 
 
 ```solidity
@@ -51,7 +51,7 @@ function ownerBurn(address sender, address to, uint256 assets, uint256 shares) p
 
 ### _deposit
 
-*ERC4626 facade for [IAmmalgamPair-deposit](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#deposit).
+*ERC4626 facade for [IAmmalgamPair-deposit](/lib/morpho-blue/lib/forge-std/src/interfaces/IERC4626.sol/interface.IERC4626.md#deposit).
 both deposit and mint calls _deposit*
 
 
@@ -61,7 +61,7 @@ function _deposit(address caller, address receiver, uint256 assets, uint256) int
 
 ### _withdraw
 
-*ERC4626 facade for [IAmmalgamPair-withdraw](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.sol/interface.IAmmalgamPair.md#withdraw).
+*ERC4626 facade for [IAmmalgamPair-withdraw](/lib/morpho-blue/lib/forge-std/src/interfaces/IERC4626.sol/interface.IERC4626.md#withdraw).
 both withdraw and redeem calls _withdraw*
 
 

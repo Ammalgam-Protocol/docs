@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/15372364f447bc8a3cfdf61e53c38abb19412d55/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -45,13 +45,13 @@ uint256 private constant POSITIVE_PREMIUM_INTERCEPT_IN_BIPS = 4444;
 ```
 
 
-### LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR
+### LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR_MAG2
 The factor to controls the pace of the increase in the premium the leverage
 liquidation premium function.
 
 
 ```solidity
-uint256 private constant LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR = 5;
+uint256 internal constant LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR_MAG2 = 10;
 ```
 
 
@@ -114,7 +114,6 @@ function checkHardPremiums(
 ```solidity
 function calculateNetDebtAndSeizedDeposits(
     uint256[6] memory proposedLiquidation,
-    uint256 activeLiquidityScalerInQ72,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
 ) internal pure returns (uint256 netDebtInLAssets, uint256 netCollateralInLAssets, bool netDebtX);
@@ -127,11 +126,8 @@ function calculateNetDebtAndSeizedDeposits(
 function checkSaturationPremiums(
     ISaturationAndGeometricTWAPState saturationAndGeometricTWAPState,
     Validation.InputParams memory inputParams,
-    address borrower,
-    uint256 depositLToTransferInLAssets,
-    uint256 depositXToTransferInXAssets,
-    uint256 depositYToTransferInYAssets
-) external view;
+    address borrower
+) external view returns (uint256 seizeLAssets, uint256 seizeXAssets, uint256 seizeYAssets);
 ```
 
 ### liquidateLeverageCalcDeltaAndPremium
@@ -139,7 +135,7 @@ function checkSaturationPremiums(
 Calculate the amount to be closed (from both deposit and borrow) and premium to be
 paid. The formula for the premium is calculated with the average net borrow of X and Y
 $$B$$ and the net deposit of X and Y $$B$$ and a scaler $$S$$ that sets the pace at which
-the premium increased, in code we call this `LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR`, and
+the premium increased, in code we call this `LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR_MAG2`, and
 allowed leverage $$AL$$, `ALLOWED_LIQUIDITY_LEVERAGE`:
 ```math
 premium = \begin{cases}
@@ -195,7 +191,6 @@ Calculate the maximum premium the liquidator may receive given the LTV of the bo
 function calcHardMaxPremiumInBips(
     uint256[6] memory validatedLiquidation,
     uint256 activeLiquidityAssets,
-    uint256 activeLiquidityScalerInQ72,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
 ) internal pure returns (uint256 maxPremiumInBips);
@@ -268,36 +263,17 @@ function convertLtvToPremium(
 |`maxPremiumInBips`|`uint256`|The maximum premium for the liquidator.|
 
 
-### calcSaturationPremiumBips
-
-Calculate the premium the saturation liquidator is receiving given the borrowers deposit and the depositToTransfer to the liquidator.
-The end premium is the max of the premiums in L, X, Y
-If no saturation liq is requested (liquidationParams.saturationDepositLToBeTransferred==liquidationParams.saturationDepositXToBeTransferred==liquidationParams.saturationDepositYToBeTransferred==0), the premium will be 0
+### calcSaturationSeizedAssets
 
 
 ```solidity
-function calcSaturationPremiumBips(
-    Validation.InputParams memory inputParams,
-    uint256 depositLToTransferInLAssets,
-    uint256 depositXToTransferInXAssets,
-    uint256 depositYToTransferInYAssets
-) internal pure returns (uint256 premiumInBips);
+function calcSaturationSeizedAssets(
+    uint256 depositedLAssets,
+    uint256 depositedXAssets,
+    uint256 depositedYAssets,
+    uint256 premiumInBips
+) internal pure returns (uint256 seizedLAssets, uint256 seizedXAssets, uint256 seizedYAssets);
 ```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`inputParams`|`Validation.InputParams`|The params containing the position of the borrower.|
-|`depositLToTransferInLAssets`|`uint256`||
-|`depositXToTransferInXAssets`|`uint256`||
-|`depositYToTransferInYAssets`|`uint256`||
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`premiumInBips`|`uint256`|The premium being received by the liquidator.|
-
 
 ### calcSaturationMaxPremiumInBips
 
@@ -332,6 +308,12 @@ function calcSaturationMaxPremiumInBips(
 
 ```solidity
 error LiquidationPremiumTooHigh();
+```
+
+### LiquidationZeroPremium
+
+```solidity
+error LiquidationZeroPremium();
 ```
 
 ### NotEnoughRepaidForLiquidation
