@@ -1,5 +1,5 @@
 # PartialLiquidations
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/PartialLiquidations.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5ac46547ffbb6abdf27c767fa34cf39ae135dbf8/contracts/libraries/PartialLiquidations.sol)
 
 We allow liquidations to happen in parts when the position is spread across more than
 one tranche. These partial liquidations allow the liquidator to specify how many tranches they
@@ -74,7 +74,7 @@ function calcMutation(
     uint256 totalSaturation,
     uint256 activeLiquidityAssets,
     bool netDebtX
-) private pure returns (uint256[6] memory);
+) internal pure returns (uint256[6] memory);
 ```
 
 ### calcXWeightQ72
