@@ -14,7 +14,7 @@ Each DP Pool is structured as an isolated AMM pair where liquidity can be:
 Capital allocation is continuously rebalanced in real time, and market demand for borrowing or trading determines how each side of the pool is used. This makes every LP share inherently multi-functional.
 
 ## Providing Liquidity
-Luidity providers must deposit a supported pair (e.g. ETH/USDC) into a pool via the Pools tab. Upon deposit:
+Liquidity providers must deposit a supported pair (e.g. ETH/USDC) into a pool via the Pools tab. Upon deposit:
 - Assets are recorded in vaults where they remain non-custodial.
 - These vaults represent composable capital that can be lent or traded against.
 - There’s no need for external liquidity management or manual rebalancing.
