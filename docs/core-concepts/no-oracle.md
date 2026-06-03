@@ -3,8 +3,6 @@ sidebar_position: 5
 title: "No-Oracle Design"
 ---
 
-import { Tweet } from 'react-tweet';
-
 # No-Oracle Design & Funding Rate
 
 Ammalgam operates without any dependence on other protocols or oracles. In order to facilitate lending, we must define the concept of price so that assets can be valued at for the purpose of properly comparing collateral securing them. There are three key components to our method of defining price:
@@ -34,6 +32,10 @@ Ammalgam is an automated market maker that lends out unutilized assets. As price
 
 Below are some examples of how the UST de-pegging exhausted reserves on Uniswap v3 UST/USDC pool and emptied the Binance UST/USDT book. These are shared to point out that this condition is not unique to Ammalgam’s design, but has happened in other DeFi protocols and centralized exchanges. For Ammalgam, it is critical to know what the market thinks each asset is worth at all times in order to appropriately value collateral for outstanding loans.
 
-<Tweet id="1523782169276997633" />
+<a href="https://x.com/0xdoug/status/1523782169276997633" target="_blank" rel="noopener noreferrer">
+  <img src="/img/tweets/colkitt.png" alt="Doug Colkitt (@0xdoug): the price in the Uniswap UST/USDC pool is stuck at $0.952 despite the market price being $0.93." width="550" />
+</a>
 
-<Tweet id="1523817151471230976" />
+<a href="https://x.com/hasufl/status/1523817151471230976" target="_blank" rel="noopener noreferrer">
+  <img src="/img/tweets/hasufl.png" alt="Hasu (@hasufl): the Binance UST/USDT order book is empty during the depeg." width="550" />
+</a>

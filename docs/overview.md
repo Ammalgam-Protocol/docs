@@ -2,8 +2,6 @@
 sidebar_position: 1
 ---
 
-import { Tweet } from 'react-tweet';
-
 # Overview
 
 Ammalgam introduces a new primitive in decentralized finance: the Decentralized Lending Exchange (DLEX). By combining trading and lending into a single protocol, DLEX unlocks a level of capital efficiency that traditional platforms can't match, offering up to a 60% increase in yield for liquidity providers.
