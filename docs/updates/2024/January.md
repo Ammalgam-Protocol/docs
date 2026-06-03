@@ -2,8 +2,6 @@
 sidebar_position: 1
 ---
 
-import { Tweet } from 'react-tweet';
-
 # January 2024
 
 ## tl;dr
@@ -38,7 +36,9 @@ level priorities for the front end.
 We continue to do our Sprint reviews publicly in Discord every other week. We
 are also tweeting those progress updates on X:
 
-<Tweet id="1745471899956859266" />
+<a href="https://x.com/ammalgam/status/1745471897004032365" target="_blank" rel="noopener noreferrer">
+  <img src="/img/tweets/jan2024.png" alt="Ammalgam (@ammalgam): the last few weeks introducing Ammalgam's alpha dapp have been incredible, prepping for #Beta release." width="550" />
+</a>
 
 I am super proud of how our front end team has taken ownership and is driving continuous progress with very little oversight. 
 
