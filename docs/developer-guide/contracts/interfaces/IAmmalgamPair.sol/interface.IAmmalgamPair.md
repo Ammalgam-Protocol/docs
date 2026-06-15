@@ -1,11 +1,15 @@
 # IAmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/IAmmalgamPair.sol)
-
-**Inherits:**
-[ITransferValidator](/docs/developer-guide/contracts/interfaces/callbacks/ITransferValidator.sol/interface.ITransferValidator.md)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/interfaces/IAmmalgamPair.sol)
 
 
 ## Functions
+### validateOnUpdate
+
+
+```solidity
+function validateOnUpdate(address validate, address update, bool alwaysUpdate) external;
+```
+
 ### mint
 
 Mints tokens and assigns them to `to` address.

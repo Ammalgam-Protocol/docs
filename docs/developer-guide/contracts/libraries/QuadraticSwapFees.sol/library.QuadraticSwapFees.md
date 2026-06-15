@@ -1,5 +1,5 @@
 # QuadraticSwapFees
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/QuadraticSwapFees.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/QuadraticSwapFees.sol)
 
 **Author:**
 Will
@@ -151,14 +151,14 @@ The resulting fee for the beyond-reference portion is then weighted by `pastBy /
 \begin{equation*}
 f_\phi(X_{in}) =
 \begin{cases}
-n \cdot \frac{2(X_{0}-X_{R})+X_{in}}{X_{R}}
-&\text{if } X_0 \ge X_R \text{ \& } X_{in} + 2 X_{0} \le X_{R}\left(\frac{M_Q +\ 2n}{n}\right) \\
-M_Q \left( 2 - X_R \frac{M_Q}{n\left( X_{in} + 2 (X_0 - X_R) \right)} \right)
-&\text {if } X_0 \ge X_R \text{ \& } X_{in} + 2X_{0} \ge X_{R}\left(\frac{M_Q+\ 2n}{n}\right) \\
-\frac{n \cdot \left( \frac{pastBy^2}{X_R} \right)}{X_{in}}
-&\text{ if } X_0 + X_{in} \gt X_R \text{ \& } X_{in} + 2 X_{0} \le X_{R}\left(\frac{M_Q +\ 2n}{n}\right) \\
-\frac{M_Q \left( 2 - X_R \frac{M_Q}{n \cdot pastBy} \right) \cdot pastBy}{X_{in}}
-&\text{ if } X_0 + X_{in} \gt X_R \text{ \& } X_{in} + 2 X_{0} \ge X_{R}\left(\frac{M_Q +\ 2n}{n}\right) \\
+n \cdot \frac{2(X_{0}-X_`R`)+X_{in}}`X_{R`}
+&\text{if } X_0 \ge X_R \text{ \& } X_{in} + 2 X_{0} \le X_`R`\left(\frac`M_Q +\ 2n`{n}\right) \\
+M_Q \left( 2 - X_R \frac`M_Q`{n\left( X_{in} + 2 (X_0 - X_R) \right)} \right)
+&\text {if } X_0 \ge X_R \text{ \& } X_{in} + 2X_{0} \ge X_`R`\left(\frac`M_Q+\ 2n`{n}\right) \\
+\frac{n \cdot \left( \frac{pastBy^2}`X_R` \right)}`X_{in`}
+&\text{ if } X_0 + X_{in} \gt X_R \text{ \& } X_{in} + 2 X_{0} \le X_`R`\left(\frac`M_Q +\ 2n`{n}\right) \\
+\frac`M_Q \left( 2 - X_R \frac{M_Q`{n \cdot pastBy} \right) \cdot pastBy}`X_{in`}
+&\text{ if } X_0 + X_{in} \gt X_R \text{ \& } X_{in} + 2 X_{0} \ge X_`R`\left(\frac`M_Q +\ 2n`{n}\right) \\
 MinBips &\text{ otherwise } X_0 + X_{in} \le  X_R \\
 \end{cases}
 \end{equation*}

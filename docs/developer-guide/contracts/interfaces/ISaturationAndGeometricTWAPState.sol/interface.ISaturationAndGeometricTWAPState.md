@@ -1,5 +1,5 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
@@ -99,6 +99,28 @@ function getAccount(
 ) external view returns (Saturation.Account memory);
 ```
 
+### accountExistsInSaturation
+
+Check if an account exists in either netX or netY saturation tree
+
+
+```solidity
+function accountExistsInSaturation(address pairAddress, address accountAddress) external view returns (bool exists);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The address of the pair|
+|`accountAddress`|`address`|The address of the account to check|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`exists`|`bool`|True if the account exists in either tree|
+
+
 ### update
 
 update the borrow position of an account and potentially check (and revert) if the
@@ -156,15 +178,15 @@ function calcSatChangeRatioBips(
     uint256 liqSqrtPriceInYInQ72,
     address pairAddress,
     address account
-) external view returns (uint256 ratioNetXBips, uint256 ratioNetYBips);
+) external view returns (uint256 ratioBips);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`|The params containing the position of `account`.|
-|`liqSqrtPriceInXInQ72`|`uint256`|The liquidation price.|
-|`liqSqrtPriceInYInQ72`|`uint256`||
+|`liqSqrtPriceInXInQ72`|`uint256`|The liquidation sqrt price for netX in Q72; pass 0 if not applicable.|
+|`liqSqrtPriceInYInQ72`|`uint256`|The liquidation sqrt price for netY in Q72; pass 0 if not applicable.|
 |`pairAddress`|`address`|The address of the pair|
 |`account`|`address`|The account for which we are calculating the saturation change ratio.|
 
@@ -172,9 +194,19 @@ function calcSatChangeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioNetXBips`|`uint256`|The ratio representing the change in netX saturation for account.|
-|`ratioNetYBips`|`uint256`|The ratio representing the change in netY saturation for account.|
+|`ratioBips`|`uint256`|The ratio representing the change in saturation for account.|
 
+
+### recordPriceExtreme
+
+Record a price extreme observation for the calling pair.
+
+
+```solidity
+function recordPriceExtreme(
+    uint256 priceQ128
+) external;
+```
 
 ### configLongTermInterval
 
@@ -287,16 +319,8 @@ function getLendingStateTickAndCheckpoint(
 
 
 ```solidity
-function getObservedMidTermTick(
-    bool isLongTermBufferInitialized
-) external view returns (int16 midTermTick);
+function getObservedMidTermTick() external view returns (int16 midTermTick);
 ```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`isLongTermBufferInitialized`|`bool`|Boolean value which represents whether long-term buffer is filled or not.|
-
 **Returns**
 
 |Name|Type|Description|

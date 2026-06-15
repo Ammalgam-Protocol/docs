@@ -1,11 +1,20 @@
-# PairBlockAllTransfers
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/proxy/PairBlockAllTransfers.sol)
+# PairBlockLendingFundRemoval
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/proxy/PairBlockLendingFundRemoval.sol)
 
 **Inherits:**
 [AmmalgamPair](/docs/developer-guide/contracts/AmmalgamPair.sol/contract.AmmalgamPair.md)
 
 
 ## Functions
+### _initialize
+
+*Reverts during proxy construction so createPair fails, forbidding new pairs under this restricted implementation.*
+
+
+```solidity
+function _initialize() internal pure override;
+```
+
 ### withdraw
 
 
@@ -68,5 +77,11 @@ error BORROW_BLOCKED();
 
 ```solidity
 error LIQUIDATION_BLOCKED();
+```
+
+### INIT_BLOCKED
+
+```solidity
+error INIT_BLOCKED();
 ```
 

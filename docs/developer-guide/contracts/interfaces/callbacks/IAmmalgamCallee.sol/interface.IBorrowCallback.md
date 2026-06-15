@@ -1,5 +1,5 @@
 # IBorrowCallback
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/interfaces/callbacks/IAmmalgamCallee.sol)
 
 
 ## Functions
@@ -24,7 +24,7 @@ function ammalgamBorrowCallV1(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`sender`|`address`||
+|`sender`|`address`|The address of the sender initiating the borrow call.|
 |`amountXAssets`|`uint256`|The amount of token X involved in the borrow.|
 |`amountYAssets`|`uint256`|The amount of token Y involved in the borrow.|
 |`amountXShares`|`uint256`|The shares of token X involved in the borrow including the initial lending fee.|
@@ -52,7 +52,7 @@ function ammalgamBorrowLiquidityCallV1(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`sender`|`address`||
+|`sender`|`address`|The address of the sender initiating the borrow liquidity call.|
 |`amountXAssets`|`uint256`|The amount of token X involved in the borrow liquidity.|
 |`amountYAssets`|`uint256`|The amount of token Y involved in the borrow liquidity.|
 |`amountLShares`|`uint256`|The shares of liquidity involved in the borrow liquidity including the initial lending fee.|

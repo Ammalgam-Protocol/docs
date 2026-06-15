@@ -1,5 +1,5 @@
 # SaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/SaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/SaturationAndGeometricTWAPState.sol)
 
 **Inherits:**
 Initializable, [ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.sol/interface.ISaturationAndGeometricTWAPState.md), OwnableUpgradeable
@@ -52,6 +52,13 @@ mapping(address => mapping(address => uint256)) lastUsedActiveLiquidityInLAssets
 
 ```solidity
 mapping(address => bool) internal isPairInitialized;
+```
+
+
+### priceExtremesGivenPair
+
+```solidity
+mapping(address => PriceExtremes.State) internal priceExtremesGivenPair;
 ```
 
 
@@ -151,12 +158,47 @@ function getAccount(
 ) external view returns (Saturation.Account memory);
 ```
 
+### accountExistsInSaturation
+
+Check if an account exists in either netX or netY saturation tree
+
+
+```solidity
+function accountExistsInSaturation(address pairAddress, address accountAddress) external view returns (bool exists);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The address of the pair|
+|`accountAddress`|`address`|The address of the account to check|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`exists`|`bool`|True if the account exists in either tree|
+
+
+### _accountExistsInSaturation
+
+Internal sibling of `accountExistsInSaturation` so callers within this contract
+can check tree membership without paying the external-call overhead or making the
+getter `public`.
+
+
+```solidity
+function _accountExistsInSaturation(address pairAddress, address accountAddress) private view returns (bool exists);
+```
+
 ### update
 
 update the borrow position of an account and potentially check (and revert) if the
 resulting sat is too high
 
-*run accruePenalties before running this function*
+*run accruePenalties before running this function. `lastUsedActiveLiquidityInLAssets`
+is captured only on the transition into saturation, so third-party-triggered updates
+cannot clobber a position's baseline ALA (OV-6-1).*
 
 
 ```solidity
@@ -183,7 +225,9 @@ Scales the desired saturation threshold based on changes in Active Liquidity Ass
 existing positions to appear more saturated (since saturation = borrows / ALA), potentially
 triggering unwarranted liquidation premiums. This function scales the desired saturation
 proportionally to ALA changes to maintain the position's relative health.
-The scaling formula: scaled = lastUsedALA * desiredSat / currentALA*
+The scaling formula: scaled = lastUsedALA * desiredSat / currentALA.
+Scaling is applied only while the account is in the saturation tree, so baselines
+left over from previously-closed positions cannot influence a freshly-opened one.*
 
 
 ```solidity
@@ -249,15 +293,15 @@ function calcSatChangeRatioBips(
     uint256 liqSqrtPriceInYInQ72,
     address pairAddress,
     address account
-) external view virtual isInitialized returns (uint256 ratioNetXBips, uint256 ratioNetYBips);
+) external view virtual isInitialized returns (uint256 ratioBips);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`|The params containing the position of `account`.|
-|`liqSqrtPriceInXInQ72`|`uint256`|The liquidation price.|
-|`liqSqrtPriceInYInQ72`|`uint256`||
+|`liqSqrtPriceInXInQ72`|`uint256`|The liquidation sqrt price for netX in Q72; pass 0 if not applicable.|
+|`liqSqrtPriceInYInQ72`|`uint256`|The liquidation sqrt price for netY in Q72; pass 0 if not applicable.|
 |`pairAddress`|`address`|The address of the pair|
 |`account`|`address`|The account for which we are calculating the saturation change ratio.|
 
@@ -265,9 +309,17 @@ function calcSatChangeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioNetXBips`|`uint256`|The ratio representing the change in netX saturation for account.|
-|`ratioNetYBips`|`uint256`|The ratio representing the change in netY saturation for account.|
+|`ratioBips`|`uint256`|The ratio representing the change saturation for account.|
 
+
+### recordPriceExtreme
+
+
+```solidity
+function recordPriceExtreme(
+    uint256 priceQ128
+) external isInitialized;
+```
 
 ### getObservations
 
@@ -339,7 +391,7 @@ function getTickRange(
     uint256 reserveXAssets,
     uint256 reserveYAssets,
     bool includeLongTermTick
-) external view virtual returns (int16, int16);
+) external view virtual returns (int16 minTick, int16 maxTick);
 ```
 **Parameters**
 
@@ -354,8 +406,8 @@ function getTickRange(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`int16`|minTick The minimum tick value among the three observed ticks.|
-|`<none>`|`int16`|maxTick The maximum tick value among the three observed ticks.|
+|`minTick`|`int16`|The minimum tick value among the three observed ticks.|
+|`maxTick`|`int16`|The maximum tick value among the three observed ticks.|
 
 
 ### getLendingStateTickAndCheckpoint
@@ -395,16 +447,8 @@ function getLendingStateTickAndCheckpoint(
 
 
 ```solidity
-function getObservedMidTermTick(
-    bool isLongTermBufferInitialized
-) external view returns (int16);
+function getObservedMidTermTick() external view returns (int16);
 ```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`isLongTermBufferInitialized`|`bool`|Boolean value which represents whether long-term buffer is filled or not.|
-
 **Returns**
 
 |Name|Type|Description|

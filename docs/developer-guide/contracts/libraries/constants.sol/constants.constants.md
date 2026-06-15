@@ -1,5 +1,5 @@
 # Constants
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/constants.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/constants.sol)
 
 ### B_IN_Q72
 *This basis was a modification to Uniswap V3's basis, to fit ticks into int16 instead of
@@ -81,21 +81,12 @@ uint256 constant EXPECTED_SATURATION_LTV_MAG2 = 85;
 
 ### MAX_SATURATION_RATIO_IN_MAG2
 *percentage of max sat per tranche considered healthy; max sat per
-tranche is $$liquidity \frac{B-1}{2}$$ with B the tranche basis, which is the max
+tranche is $$liquidity \frac`B-1`{2}$$ with B the tranche basis, which is the max
 sat such that the liquidation would not cause a swap larger than a tranche*
 
 
 ```solidity
 uint256 constant MAX_SATURATION_RATIO_IN_MAG2 = 95;
-```
-
-### LENDING_TICK_NOT_AVAILABLE
-*Represents the absence of a valid lending tick, initialized to `int16` minimum value since a
-`type(int16).min < MIN_TICK`.*
-
-
-```solidity
-int16 constant LENDING_TICK_NOT_AVAILABLE = type(int16).min;
 ```
 
 ### ZERO_ADDRESS

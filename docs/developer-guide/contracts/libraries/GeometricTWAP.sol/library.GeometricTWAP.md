@@ -1,5 +1,5 @@
 # GeometricTWAP
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/GeometricTWAP.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/GeometricTWAP.sol)
 
 
 ## State Variables
@@ -43,7 +43,7 @@ Minimum long-term interval factor is used to verify the long-term interval
 is at least 14 times the mid-term interval. This ensures that the long term
 interval is required to be at least 14 times the mid-term interval, this is
 ```math
-\left \lceil \frac{2 * MID\_TERM\_ARRAY\_LAST\_INDEX}{LONG\_TERM\_ARRAY\_LAST\_INDEX} \right \rceil.
+\left \lceil \frac{2 * MID\_TERM\_ARRAY\_LAST\_INDEX}`LONG\_TERM\_ARRAY\_LAST\_INDEX` \right \rceil.
 ```
 
 
@@ -225,8 +225,7 @@ function getObservedTicks(
 
 ```solidity
 function getObservedMidTermTick(
-    Observations storage self,
-    bool isLongTermBufferInitialized
+    Observations storage self
 ) internal view returns (int16 midTermTick);
 ```
 **Parameters**
@@ -234,7 +233,6 @@ function getObservedMidTermTick(
 |Name|Type|Description|
 |----|----|-----------|
 |`self`|`Observations`|The observation struct.|
-|`isLongTermBufferInitialized`|`bool`|Boolean value which represents whether long-term buffer is filled or not.|
 
 **Returns**
 
@@ -380,42 +378,6 @@ function getLendingStateTick(
 |`<none>`|`int56`|currentCumulativeSum The current cumulative sum for the last updated timestamp.|
 
 
-### calculateLendingStateTick
-
-Computes the lending state tick based on the cumulative sum and duration.
-
-*If no time has passed since the last lending timestamp, it returns the last lending state tick.*
-
-
-```solidity
-function calculateLendingStateTick(
-    int56 cumulativeSum,
-    int56 previousCumulativeSum,
-    uint32 timeElapsedSinceLendingUpdate
-) private pure returns (int16);
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`cumulativeSum`|`int56`|The current cumulative sum of mid-term values.|
-|`previousCumulativeSum`|`int56`|The previous cumulative sum recorded for lending.|
-|`timeElapsedSinceLendingUpdate`|`uint32`|time elapsed since the last lending state update.|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`<none>`|`int16`|lendingStateTick The computed or fallback lending state tick.|
-
-
-### setLendingState
-
-
-```solidity
-function setLendingState(Observations storage self, int16 lendingStateTick, int56 currentCumulativeSum) private;
-```
-
 ### setObservationData
 
 Updates the observation data with the new tick value and current timestamp.
@@ -559,21 +521,6 @@ function calculateTickAverageTowardsMidTerm(int256 midTermTick, int256 newTick) 
 |`<none>`|`int16`|The calculated average tick value|
 
 
-## Events
-### UpdateLendingTick
-*Emitted when `lendingStateTick` is updated*
-
-
-```solidity
-event UpdateLendingTick(int16 lendingStateTick);
-```
-
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`lendingStateTick`|`int16`|The updated value for lending state tick|
-
 ## Errors
 ### InvalidIntervalConfig
 
@@ -596,7 +543,6 @@ struct Observations {
     uint8 midTermIndex;
     uint8 longTermIndex;
     int16 lastTick;
-    int16 lastLendingStateTick;
     uint24 midTermIntervalConfig;
     uint24 longTermIntervalConfig;
     int56 lendingCumulativeSum;

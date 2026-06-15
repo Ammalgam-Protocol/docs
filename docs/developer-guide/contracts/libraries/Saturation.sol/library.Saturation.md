@@ -1,5 +1,5 @@
 # Saturation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/Saturation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/Saturation.sol)
 
 **Authors:**
 imi@1m1.io, Will duelingGalois@protonmail.com
@@ -15,8 +15,8 @@ square root price as $B^T$ for some tranche $T$. Using the square root price, we
 amount of x or y in each tranche as:
 ```math
 \begin{align*}
-x =  L \cdot B^{T_0} - L \cdot B^{T_1} \\
-y = \frac{L}{ B^{T_1}} - \frac{L}{B^{T_0}}
+x =  L \cdot B^`T_0` - L \cdot B^`T_1` \\
+y = \frac`L`{ B^`T_1`} - \frac`L``B^{T_0`}
 \end{align*}
 ```
 where liquidity is $L = \sqrt{reserveX \cdot reserveY}$. If we want to know how much debt of x
@@ -24,7 +24,7 @@ or y can be liquidated within one tick, we can solve these equations for L and t
 of x and y are considered the debt we would like to see if it could be liquidated in one tick.
 If saturation with respect to our starting $L$ is smaller, that amount of debt can be
 liquidated in one swap in the given ticks. Otherwise it is too big and can not. Note that we
-assume $$t_1 \text{ and } t_0 \in \mathbb{Z}$$ and $$t_0 + 1 = t_1$$. Then our definition of
+assume $$t_1 \text{ and } t_0 \in \mathbb`Z`$$ and $$t_0 + 1 = t_1$$. Then our definition of
 saturation relative to L is as follows,
 ```math
 \begin{equation}
@@ -76,22 +76,22 @@ for the start and end of liquidation $$t_s$$ and $$t_e$$ respectively. When we c
 buckets of TICKS_PER_TRANCHE we can rewrite this as a series where each boundary of each
 tranche $$T_i$$ where $$T_0 = t_e \% TICKS_PER_TRANCHE$$ for a net debt of X and $$T_0 = (-t_e)
 \% TICKS_PER_TRANCHE$$ for a net debt of Y and $$T_i = T_{i-1} + TICKS_PER_TRANCHE$$ for each
-subsequent tranche and $$B= b^{TICKS_PER_TRANCHE}$$. Thus we can rewrite the equations as:
+subsequent tranche and $$B= b^`TICKS_PER_TRANCHE`$$. Thus we can rewrite the equations as:
 ```math
 \begin{align*}
 X &=
-L \left(b^{T_1} - b^{t_e} \right)
-+ L \left( b^{T_2} - b^{T_1}\right)
+L \left(b^`T_1` - b^{t_e} \right)
++ L \left( b^`T_2` - b^`T_1`\right)
 + ...
-+ L \left( b^{T_n} - b^{T_{n-1}}\right)
-+ L \left(b^{t_s}-b^{T_n}  \right)
++ L \left( b^`T_n` - b^`T_{n-1`}\right)
++ L \left(b^{t_s}-b^`T_n`  \right)
 \\
-\Large\frac{X}{b^{t_e}(B-1)} &=
+\Large\frac`X`{b^{t_e}(B-1)} &=
 \Large L \left(
-\frac{B \cdot b^{t_e-T_0} - 1}{B-1}
+\frac`B \cdot b^{t_e-T_0` - 1}`B-1`
 + \frac{ \sum_{i=1}^{n-1} B^{i} }{ b^{t_e-T_0} }
-+ \frac{B^{n} \left(
-\frac{b^{t_s}}{B^{n} \cdot  b^{T_0}}-1 \right) }{ b^{t_e-T_0}(B-1)}
++ \frac`B^{n` \left(
+\frac{b^{t_s}}`B^{n` \cdot  b^`T_0`}-1 \right) }{ b^{t_e-T_0}(B-1)}
 \right)
 \end{align*}
 ```
@@ -104,13 +104,13 @@ furthest point from the tranche and moving forward.
 T_{sat} &=
 s_0
 + \frac{\sum_{i=1}^{n-1} s_i \cdot B^{i}}{b^{t_e-T_0}}
-+ \frac{B^n \cdot  s_n}{b^{t_e-T_0}}
++ \frac`B^n \cdot  s_n`{b^{t_e-T_0}}
 \\
-\frac{(T_{sat} - s_0)b^{t_e-T_0}}{B} - s_1 &=
+\frac{(T_{sat} - s_0)b^{t_e-T_0}}`B` - s_1 &=
 \left(\sum_{i=2}^{n-1} s_i \cdot B^{i-1} \right)
 + B^{n-1} \cdot s_n
 \\
-\frac{\frac{(T_{sat} - s_0)b^{t_e-T_0}}{B} - s_1 }{ B } -s_2 &=
+\frac{\frac{(T_{sat} - s_0)b^{t_e-T_0}}`B` - s_1 }{ B } -s_2 &=
 \left(\sum_{i=2}^{n-1} s_i \cdot B^{i-2} \right)
 + B^{n-2} \cdot s_n
 \end{align*}
@@ -178,6 +178,29 @@ $$EXPECTED\_SATURATION\_LTV\_MAG2 + 100$$, a constant used in calculations.
 
 ```solidity
 uint256 internal constant EXPECTED_SATURATION_LTV_PLUS_ONE_MAG2 = 185;
+```
+
+
+### SAT_RESET_FOR_STRADDLE_SLOPE_BIPS
+Slope for calculating premium when resetting saturation for straddle positions
+where $$L^2 < X \cdot Y$$ transitions to $$L^2 > X \cdot Y$$. Applied to
+$$(L^{2} - X \cdot Y) / (X \cdot Y)$$ to produce `premiumBips`. Matches the
+Desmos coefficient $$\frac`BIPS`{10} \cdot 100 = 100000$$. At
+$$L^{2} = 1.02 \cdot X \cdot Y$$ the raw premium evaluates to
+`MAX_SAT_RESET_FOR_STRADDLE_PREMIUM_BIPS`; past that point the cap engages.
+
+
+```solidity
+uint256 internal constant SAT_RESET_FOR_STRADDLE_SLOPE_BIPS = 100_000;
+```
+
+
+### MAX_SAT_RESET_FOR_STRADDLE_PREMIUM_BIPS
+Maximum premium when resetting saturation for zero-to-positive straddle positions.
+
+
+```solidity
+uint256 internal constant MAX_SAT_RESET_FOR_STRADDLE_PREMIUM_BIPS = 2000;
 ```
 
 
@@ -314,7 +337,7 @@ int256 internal constant TICKS_PER_TRANCHE = 25;
 
 ### TRANCHE_BASE_OVER_BASE_MINUS_ONE_Q72
 for convenience, used to determine max sat per tranche to not cross in liq swap:
-$$\frac{B}{B-1}$$
+$$\frac`B``B-1`$$
 
 
 ```solidity
@@ -384,16 +407,6 @@ quarters per tranche.
 
 ```solidity
 uint256 private constant NUMBER_OF_QUARTERS = 4;
-```
-
-
-### SATURATION_LIQUIDATION_SCALER
-We make the penalty slightly larger to hit our desired premium for exceeding the
-time buffer.
-
-
-```solidity
-uint256 private constant SATURATION_LIQUIDATION_SCALER = 10_020;
 ```
 
 
@@ -580,9 +593,7 @@ function removeSatFromTrancheStateUpdates(
     Tree storage tree,
     SaturationPair memory oldAccountSaturationInTranche,
     int256 tranche,
-    uint256 oldLeaf,
-    address account,
-    uint256 trancheIndex
+    uint256 oldLeaf
 ) internal;
 ```
 **Parameters**
@@ -593,8 +604,6 @@ function removeSatFromTrancheStateUpdates(
 |`oldAccountSaturationInTranche`|`SaturationPair`|account sat|
 |`tranche`|`int256`| under consideration|
 |`oldLeaf`|`uint256`|where tranche was located before this sat removal|
-|`account`|`address`| needed to accrue penalty|
-|`trancheIndex`|`uint256`|which tranche of the account are we handling?|
 
 
 ### addSatToTranche
@@ -616,13 +625,13 @@ The formula applied here, derived in the introduction, is,
 T_{sat} &=
 s_0
 + \frac{\sum_{i=1}^{n-1} s_i \cdot B^{i}}{b^{t_e-T_0}}
-+ \frac{B^n \cdot  s_n}{b^{t_e-T_0}}
++ \frac`B^n \cdot  s_n`{b^{t_e-T_0}}
 \\
-\frac{(T_{sat} - s_0)b^{t_e-T_0}}{B} - s_1 &=
+\frac{(T_{sat} - s_0)b^{t_e-T_0}}`B` - s_1 &=
 \left(\sum_{i=2}^{n-1} s_i \cdot B^{i-1} \right)
 + B^{n-1} \cdot s_n
 \\
-\frac{\frac{(T_{sat} - s_0)b^{t_e-T_0}}{B} - s_1 }{ B } -s_2 &=
+\frac{\frac{(T_{sat} - s_0)b^{t_e-T_0}}`B` - s_1 }{ B } -s_2 &=
 \left(\sum_{i=2}^{n-1} s_i \cdot B^{i-2} \right)
 + B^{n-2} \cdot s_n
 \end{align*}
@@ -882,6 +891,41 @@ function getPenaltySharesPerSatFromLeaf(
 |`penaltyInBorrowLSharesPerSatInQ72`|`uint256`| total penalty at the leaf, non-negative but returned as an int for recursion|
 
 
+### getEffectivePenalty
+
+get effective penalty for a tranche, combining leaf penalty and tranche adjustment.
+When a tranche moves between leaves, the adjustment bridges the gap between the old and new
+leaf accumulators so that existing accounts' onset values remain valid.
+
+*Invariant: `leafPen + adjustment >= 0` always holds. Within a single tranche
+lifecycle, moves preserve continuity of `effective` (the move logic adds the same delta
+to `adjustment` that it subtracts from `leafPen`), so `effective` only ever grows from
+its initial non-negative value. The `delete` in `removeSatFromTrancheStateUpdates` resets
+the adjustment when a tranche empties so each new lifecycle starts from `adj = 0`.*
+
+
+```solidity
+function getEffectivePenalty(
+    Tree storage tree,
+    uint256 leaf,
+    int256 tranche
+) private view returns (uint256 effectivePenalty);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`tree`|`Tree`|that is being read from|
+|`leaf`|`uint256`| index (0 based) of the leaf containing the tranche|
+|`tranche`|`int256`| the tranche identifier|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`effectivePenalty`|`uint256`| the effective cumulative penalty for this tranche|
+
+
 ### accrueAccountPenalty
 
 calc penalty owed by account for repay, total over all the tranches that might
@@ -934,7 +978,8 @@ function calcNewAccountPenalty(
     uint256 leaf,
     uint256 accountSatInTrancheInLAssets,
     address account,
-    uint256 trancheIndex
+    uint256 trancheIndex,
+    int256 tranche
 ) private view returns (uint256 penaltyInBorrowLShares, uint256 accountTreePenaltyInBorrowLSharesPerSatInQ72);
 ```
 **Parameters**
@@ -946,6 +991,7 @@ function calcNewAccountPenalty(
 |`accountSatInTrancheInLAssets`|`uint256`| the sat of the account in the tranche|
 |`account`|`address`| whose position is being considered|
 |`trancheIndex`|`uint256`| the index of the tranche that is being added to|
+|`tranche`|`int256`||
 
 **Returns**
 
@@ -953,33 +999,6 @@ function calcNewAccountPenalty(
 |----|----|-----------|
 |`penaltyInBorrowLShares`|`uint256`| the penalty owed by the account|
 |`accountTreePenaltyInBorrowLSharesPerSatInQ72`|`uint256`| the penalty owed by the account in the tranche|
-
-
-### calcAndAccrueNewAccountPenalty
-
-calc and accrue new account penalty
-
-
-```solidity
-function calcAndAccrueNewAccountPenalty(
-    Tree storage tree,
-    SaturationPair memory oldAccountSaturationInTranche,
-    uint256 oldLeaf,
-    address account,
-    uint256 trancheIndex,
-    uint256 newTreePenaltyAtOnsetInBorrowLSharesPerSatInQ72PerTranche
-) private;
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`tree`|`Tree`|that is being read from or written to|
-|`oldAccountSaturationInTranche`|`SaturationPair`| the old sat of the account in the tranche|
-|`oldLeaf`|`uint256`| the leaf that the tranche was located in before it was removed|
-|`account`|`address`| whose position is being considered|
-|`trancheIndex`|`uint256`| the index of the tranche that is being added to|
-|`newTreePenaltyAtOnsetInBorrowLSharesPerSatInQ72PerTranche`|`uint256`| the new penalty at onset in borrow l shares per sat in q72 per tranche|
 
 
 ### accruePenalties
@@ -1211,7 +1230,46 @@ function findHighestSetLeafDownwards(
 
 ### calcLiqSqrtPriceQ72
 
-Calc sqrt price at which positions' LTV would reach LTV_MAX
+Calc sqrt price at which positions' LTV would reach LTV_MAX. Given the net $$L$$,
+$$X$$, and Y, we define the the sqrt price $$s_p$$ at which the position would be at the
+expected loan to value of liquidation $$k$$, then the following formulas are what we are
+calculating,
+```math
+\begin{align}
+k &=
+\begin{cases}
+-\frac`L + \frac{X`{s_p}}`L + Y \cdot s_p`
+\text{ if } L+ \frac`X`{s_p} < 0
+\\
+-\frac`L + Y \cdot s_p``L + \frac{X`{s_p}}
+\text{ if } L + Y \cdot s_p < 0
+\end{cases}
+\\
+s_p &=
+\begin{cases}
+\frac{
+-(k+1)L +
+\sqrt{\left((k+1)L\right)^2 - 4 \left( k\cdot Y \right) \left(X \right)}
+}{
+2 \cdot k \cdot Y
+}
+\text{ if } L + \frac`X`{s_p} < 0
+\\
+\frac{
+-(k+1)L -
+\sqrt{((k+1)L)^2-4(Y)(k\cdot X)}
+}{
+2\cdot k
+}
+\text{ if } L + Y \cdot s_p < 0
+\end{cases}
+\end{align}
+```
+The equation gives four solutions due to the plus minus of the radical, but we choose the
+direction due to the conditions. When we have a net debt of x, $$L + \frac`X`{s_p} < 0$$,
+the loan to value will be increasing as the price decreases, thus we choose the positive
+value of the radical. For the net debt of y, $$L + Y \cdot s_p < 0$$ we have the loan to
+value increasing as the price increases, thus we use the negative value of the radical.
 
 Output guarantees $$0 \le liqSqrtPriceXInQ72 \le uint256(type(uint56).max) << 72$$
 (fuzz tested and logic)
@@ -1283,7 +1341,7 @@ function calcSatChangeRatioBips(
     uint256 liqSqrtPriceInYInQ72,
     address account,
     uint256 desiredSaturationMAG2
-) internal view returns (uint256 ratioNetXBips, uint256 ratioNetYBips);
+) internal view returns (uint256 ratioBips);
 ```
 **Parameters**
 
@@ -1300,8 +1358,115 @@ function calcSatChangeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioNetXBips`|`uint256`|The ratio representing the change in netX saturation for account.|
-|`ratioNetYBips`|`uint256`|The ratio representing the change in netY saturation for account.|
+|`ratioBips`|`uint256`|The ratio representing the change in saturation for account.|
+
+
+### calcTreeRatioBips
+
+*Per-tree ratio computation extracted from `calcSatChangeRatioBips`.
+Stored `satPairs[i].satRelativeToL` lives in tranche-i units
+(= 1/B^i of tranche-0 units, modulo the partial first-tranche adjustment).
+`scaleAndSumSaturation` converts each stored sat back to tranche-0 units, so
+the old and new saturation totals are compared in the same unit system.*
+
+
+```solidity
+function calcTreeRatioBips(
+    SaturationPair[] storage satPairs,
+    Validation.InputParams memory inputParams,
+    uint256 liqSqrtPriceInXInQ72,
+    uint256 liqSqrtPriceInYInQ72,
+    uint256 desiredSaturationMAG2,
+    bool netDebtX
+) private view returns (uint256 ratioBips);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`satPairs`|`SaturationPair[]`|Storage array of per-tranche saturation pairs for the tree being evaluated.|
+|`inputParams`|`Validation.InputParams`|User asset balances and pool state used to compute the new saturation.|
+|`liqSqrtPriceInXInQ72`|`uint256`|Liquidation sqrt price (upper root) in Q72, for the netDebtX side.|
+|`liqSqrtPriceInYInQ72`|`uint256`|Liquidation sqrt price (lower root) in Q72, for the netDebtY side.|
+|`desiredSaturationMAG2`|`uint256`|Target saturation level in MAG2 units used to project the new sat.|
+|`netDebtX`|`bool`|True when evaluating the netDebtX tree; false for the netDebtY tree.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`ratioBips`|`uint256`|Growth ratio in BIPS of (old + remaining) / old saturation for this tree; zero when the new saturation does not exceed the absorbed old saturation.|
+
+
+### scaleAndSumSaturation
+
+*Sum stored per-tranche saturation in tranche-0 units.
+`satPairs[i].satRelativeToL` is stored in tranche-`i` units (= 1/B^i of tranche-0 units,
+modulo the partial first-tranche adjustment from `calculateEndOfLiquidationAdjustment`).
+Summing them directly would mix units across tranches and undercount the total. The loop
+tracks an inverse Q72 scale factor `bScaleQ72` that rescales each stored sat back into
+tranche-0 units before accumulation; the first iteration also folds in the partial
+first-tranche `endOfLiquidationAdjustmentQ72`, which then resets to `Q72`.*
+
+
+```solidity
+function scaleAndSumSaturation(
+    SaturationPair[] storage satPairs,
+    int256 endOfLiquidationInTicks,
+    bool netDebtX
+) internal view returns (uint256 oldSatInLAssets);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`satPairs`|`SaturationPair[]`|Storage array of per-tranche saturation pairs.|
+|`endOfLiquidationInTicks`|`int256`|Tick at which liquidation ends (sets the first-tranche offset).|
+|`netDebtX`|`bool`|True when summing the netDebtX tree; false for the netDebtY tree.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`oldSatInLAssets`|`uint256`|Total saturation in tranche-0 (L-asset) units.|
+
+
+### calcStraddlePremiumRatioBips
+
+Calculate the ratio bips for a straddle position transitioning from zero to positive saturation.
+Let $$S$$ be `SAT_RESET_FOR_STRADDLE_SLOPE_BIPS`, the slope that controls how quickly the
+straddle reset premium increases once $$L^2 > X \cdot Y$$.
+Let $$P_{max}$$ be `MAX_SAT_RESET_FOR_STRADDLE_PREMIUM_BIPS`, the maximum premium allowed for
+this zero-to-positive straddle reset path.
+```math
+premiumBips = \min\left(
+P_{max},
+\left\lceil\frac{(L^2 - X \cdot Y) \cdot S}`X \cdot Y`\right\rceil
+\right)
+```
+The ratioBips encodes premium for downstream consumption:
+```math
+\text{ratioBips} = \text{premiumBips} \cdot \text`MAG1` + \text`BIPS`
+```
+and premium is recovered as: `(ratioBips - BIPS) / MAG1`.
+
+
+```solidity
+function calcStraddlePremiumRatioBips(
+    uint256[6] memory userAssets
+) private pure returns (uint256 ratioBips);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`userAssets`|`uint256[6]`|The user's position parameters.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`ratioBips`|`uint256`|The ratio in bips, or 0 if $$L^2 <= X \cdot Y$$.|
 
 
 ### calculateEndOfLiquidationAdjustment
@@ -1314,14 +1479,16 @@ of the liquidation relative to the the boundary of the tranches.
 
 ```solidity
 function calculateEndOfLiquidationAdjustment(
-    int256 endOfLiquidationInTicks
-) private pure returns (uint256 endOfLiquidationSqrtPriceAdjustment);
+    int256 endOfLiquidationInTicks,
+    bool netDebtX
+) internal pure returns (uint256 endOfLiquidationSqrtPriceAdjustment);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`endOfLiquidationInTicks`|`int256`| the tick at which liquidation should end by.|
+|`netDebtX`|`bool`| whether this is a net X debt path.|
 
 **Returns**
 
@@ -1582,7 +1749,7 @@ number of tranches we need to move back,
 \Large\frac{debt}{b^{t_e}(B-1)}
 &\text{ when debt is in X asset }
 \\
-\Large\frac{debt \cdot b^{t_e}}{B-1}
+\Large\frac{debt \cdot b^{t_e}}`B-1`
 &\text{ otherwise }
 \end{cases}
 \end{equation}
@@ -1744,14 +1911,6 @@ if the largest sat in the trees is too large
 error MaxTrancheOverSaturated();
 ```
 
-### NegativeSpan
-raised if the $$log_b(spanSqrtPrice) < 0$$, this shouldn't be possible.
-
-
-```solidity
-error NegativeSpan();
-```
-
 ### LiquidationPassesMinOrMaxTick
 raised if the start of liquidation would occur on the wrong side of the min or max
 tick price from the GeometricTWAP.
@@ -1793,12 +1952,12 @@ struct Tree {
     bool netX;
     uint16 highestSetLeaf;
     uint128 totalSatInLAssets;
-    uint256 tranchesWithSaturation;
     uint256[][LEVELS_WITHOUT_LEAFS] nodes;
     Leaf[LEAFS] leafs;
     mapping(int16 => uint16) trancheToLeaf;
     mapping(int16 => SaturationPair) trancheToSaturation;
     mapping(address => Account) accountData;
+    mapping(int16 => int256) tranchePenaltyAdjustment;
 }
 ```
 
