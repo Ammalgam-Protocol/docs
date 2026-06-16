@@ -12,7 +12,7 @@ create a self-balancing mechanism that maintains the protocol health.
 ## Time-based penalty accrual
 
 The protocol calculates penalty accrual using a time-based system. The
-[accruePenalties](https://docs.ammalgam.xyz/docs/developer-guide/contracts/libraries/Saturation.sol/library.Saturation#accruepenalties)
+[accruePenalties](https://docs.ammalgam.xyz/docs/developer-guide/contracts/libraries/Saturation#accruepenalties)
 function in Saturation.sol takes a `duration` parameter that is defined as the `delta` between the
 current time and the last time penalty was accrued. See the call stack in `AmmalgamPair.sol`:
 `accrueSaturationPenaltiesAndInterest -> mintPenalties -> accruePenalties`.
@@ -43,7 +43,7 @@ Penalty formula:
 penaltyRate = ((1 - u_0) × f_{interest}(u_1) × totalDeposits) / (saturationInPenalty)\
 ```
 
-ref: [calcSaturationPenaltyRatePerSecondInWads](https://docs.ammalgam.xyz/docs/developer-guide/contracts/libraries/Saturation.sol/library.Saturation#calcsaturationpenaltyratepersecondinwads) in Saturation.sol
+ref: [calcSaturationPenaltyRatePerSecondInWads](https://docs.ammalgam.xyz/docs/developer-guide/contracts/libraries/Saturation#calcsaturationpenaltyratepersecondinwads) in Saturation.sol
 
 The penalty rate calculation is a dynamic risk pricing system. The rate will change based on
 `borrow utilization` and `saturation utilization`. The motivation of this design is to ensure that
