@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [InitializablePair](/docs/developer-guide/contracts/proxy/PairBeaconProxy.sol/contract.InitializablePair.md), [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.sol/interface.ITokenController.md)
@@ -86,9 +86,14 @@ uint112[6] private allShares;
 
 
 ### allAssets
+The first position in this array is never stored because it is instead computed as
+$$\sqrt{reserveX * reserveY} + borrowedLAssets$$. We keep this storage spot because
+we heavily use DEPOSIT_L, DEPOSIT_X, DEPOSIT_Y, BORROW_L, BORROW_X, BORROW_Y to look
+up positions throughout the code and didn't want to change all those references.
+
 
 ```solidity
-uint112[6] internal allAssets;
+uint112[6] private allAssets;
 ```
 
 
@@ -131,13 +136,6 @@ uint112 internal referenceReserveY;
 
 ```solidity
 uint32 internal lastLendingTimestamp;
-```
-
-
-### lastReserveLiquidity
-
-```solidity
-uint112 internal lastReserveLiquidity;
 ```
 
 
@@ -204,6 +202,13 @@ uint112 internal transient totalBorrowYAssets;
 ```
 
 
+### activeLiquidityAssets
+
+```solidity
+uint112 internal transient activeLiquidityAssets;
+```
+
+
 ## Functions
 ### _initialize
 
@@ -237,7 +242,7 @@ function underlyingTokens() public view virtual override returns (IERC20, IERC20
 
 
 ```solidity
-function updateAssets(uint256 tokenType, uint112 assets) private;
+function updateAssets(uint256 tokenType, uint112 assets) internal;
 ```
 
 ### updateExternalLiquidity
@@ -294,7 +299,7 @@ function totalShares(
 ```solidity
 function rawTotalAssets(
     uint256 tokenType
-) internal view returns (uint112);
+) internal view returns (uint256 assetAmount);
 ```
 
 ### getRawReserves
@@ -333,10 +338,20 @@ function totalAssetsAndShares(
 
 ### fragileLiquidityAssets
 
+Computes fragile liquidity and validates it can be removed from active liquidity.
+
 
 ```solidity
-function fragileLiquidityAssets() internal view returns (uint256 _fragileLiquidityAssets);
+function fragileLiquidityAssets(
+    uint256 _activeLiquidityAssets
+) internal view returns (uint256 _fragileLiquidityAssets);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`_activeLiquidityAssets`|`uint256`|The active liquidity available before the fragile liquidity decrement.|
+
 
 ### updateFragileLiquidity
 
@@ -492,11 +507,72 @@ function getNetBalances(uint256 _reserveXAssets, uint256 _reserveYAssets) intern
 function missingAssets() internal view returns (uint112 missingXAssets, uint112 missingYAssets);
 ```
 
+### calculateActiveLiquidityAssets
+
+Active liquidity from reserves, using the same depletion adjustment as the swap
+K-check in `calculateReserveAdjustmentsForMissingAssets`. Caching raw `sqrt(X*Y)` is
+non-monotonic across depletion cycles, letting saturation-tree leaves register above the
+post-recovery `maxLeaf` and bricking the pair with `MaxTrancheOverSaturated()`.
+
+
+```solidity
+function calculateActiveLiquidityAssets(
+    uint256 _reserveXAssets,
+    uint256 _reserveYAssets
+) internal view returns (uint256);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`_reserveXAssets`|`uint256`|The reserve X used for the active-liquidity calculation.|
+|`_reserveYAssets`|`uint256`|The reserve Y used for the active-liquidity calculation.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`uint256`|The depletion-adjusted active liquidity, i.e. sqrt of the adjusted-reserve product.|
+
+
+### calculateReserveAdjustmentsForMissingAssets
+
+helper method to calculate balance adjustment for missing assets
+
+*In the depleted case the adjusted reserve is `(reserve - missing) * bufferNumerator`,
+matching the `BUFFER_NUMERATOR` scaling applied by `calculateBalanceAfterFees` so the
+K comparison stays division-free.
+For updateObservation, different scaled `buffer` and `bufferNumerator` values
+are supplied so the adjusted reserve reflects observation-specific logic.*
+
+
+```solidity
+function calculateReserveAdjustmentsForMissingAssets(
+    uint256 reserve,
+    uint256 missing,
+    uint256 buffer,
+    uint256 bufferNumerator
+) internal pure returns (uint256 reserveAdjustment);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`reserve`|`uint256`|the starting reserve|
+|`missing`|`uint256`|the missing assets, zero if deposits > borrows of X or Y|
+|`buffer`|`uint256`| Scaling factor applied to the reserve for the depletion comparison.|
+|`bufferNumerator`|`uint256`| Scaling factor applied to the missing amount for the comparison and for computing the depleted-case adjusted reserve.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`reserveAdjustment`|`uint256`|The adjusted reserve value used for swap or updateObservation depends on the buffer, bufferNumerator to be passed in.|
+
+
 ### getDepositAndActiveLiquidityAssets
 
-Get the deposit, borrow, and active liquidity assets.
-
-*This function is used to get the deposit liquidity assets, borrow liquidity assets (BLA), last active liquidity assets (ALA_0), and current active liquidity assets (ALA_1).*
+Get the deposit, and active liquidity assets.
 
 
 ```solidity

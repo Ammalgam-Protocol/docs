@@ -1,5 +1,5 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/Validation.sol)
 
 SPDX-License-Identifier: GPL-3.0-only
 
@@ -8,63 +8,7 @@ SPDX-License-Identifier: GPL-3.0-only
 ### MAX_BORROW_PERCENTAGE
 
 ```solidity
-uint256 private constant MAX_BORROW_PERCENTAGE = 90;
-```
-
-
-### ONE_HUNDRED_TIMES_N
-
-```solidity
-uint256 private constant ONE_HUNDRED_TIMES_N = 2000;
-```
-
-
-### TWO_Q64
-
-```solidity
-uint256 private constant TWO_Q64 = 0x20000000000000000;
-```
-
-
-### FIVE_Q64
-
-```solidity
-uint256 private constant FIVE_Q64 = 0x50000000000000000;
-```
-
-
-### NINE_Q64
-
-```solidity
-uint256 private constant NINE_Q64 = 0x90000000000000000;
-```
-
-
-### FIFTY_Q64
-
-```solidity
-uint256 private constant FIFTY_Q64 = 0x320000000000000000;
-```
-
-
-### TWO_TIMES_N_Q64
-
-```solidity
-uint256 private constant TWO_TIMES_N_Q64 = 0x280000000000000000;
-```
-
-
-### TWO_Q128
-
-```solidity
-uint256 private constant TWO_Q128 = 0x200000000000000000000000000000000;
-```
-
-
-### TWO_THOUSAND_FIVE_HUNDRED_Q128
-
-```solidity
-uint256 private constant TWO_THOUSAND_FIVE_HUNDRED_Q128 = 0x9c400000000000000000000000000000000;
+uint256 internal constant MAX_BORROW_PERCENTAGE = 90;
 ```
 
 
@@ -118,7 +62,6 @@ to switch them as needed in liquidation and other cases.*
 ```solidity
 function getCheckLtvParams(
     uint256[6] memory userAssets,
-    uint256 activeLiquidityScalerInQ72,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
 ) internal pure returns (CheckLtvParams memory checkLtvParams);
@@ -128,12 +71,14 @@ function getCheckLtvParams(
 |Name|Type|Description|
 |----|----|-----------|
 |`userAssets`|`uint256[6]`|User asset array|
-|`activeLiquidityScalerInQ72`|`uint256`|The active liquidity scaler in Q72|
 |`sqrtPriceMinInQ72`|`uint256`|The minimum sqrt price in Q72|
 |`sqrtPriceMaxInQ72`|`uint256`|The maximum sqrt price in Q72|
 
 
 ### validateBalanceAndLiqAndNotSameAssetsSuppliedAndBorrowed
+
+Verifies that debt is backed by liquidity from an independent provider and
+that users do not borrow the same underlying assets they supply as collateral.
 
 
 ```solidity
@@ -142,6 +87,13 @@ function validateBalanceAndLiqAndNotSameAssetsSuppliedAndBorrowed(
     uint256 activeLiquidityAssets
 ) internal pure;
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`userAssets`|`uint256[6]`|The account's assets by token type.|
+|`activeLiquidityAssets`|`uint256`|The pair's active liquidity assets.|
+
 
 ### validateLTVAndLeverage
 
@@ -162,9 +114,8 @@ function validateSolvency(
     uint256[6] memory userAssets,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72,
-    uint256 activeLiquidityScalerInQ72,
     uint256 activeLiquidityAssets
-) internal pure;
+) external pure;
 ```
 
 ### verifyNotSameAssetsSuppliedAndBorrowed
@@ -194,7 +145,6 @@ function verifyMaxBorrow(
 ```solidity
 function getDepositsInL(
     uint256[6] memory userAssets,
-    uint256 activeLiquidityScalerInQ72,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
 ) private pure returns (uint256 netDepositedXinLAssets, uint256 netDepositedYinLAssets);
@@ -206,7 +156,6 @@ function getDepositsInL(
 ```solidity
 function getBorrowedInL(
     uint256[6] memory userAssets,
-    uint256 activeLiquidityScalerInQ72,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
 ) private pure returns (uint256 netBorrowedXinLAssets, uint256 netBorrowedYinLAssets);
@@ -214,70 +163,56 @@ function getBorrowedInL(
 
 ### convertXToL
 
-The original math:
-L * activeLiquidityScalerInQ72 = x / sqrt(p)
-previous equation:
-amountLAssets = mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding);
-adding activeLiquidityScalerInQ72:
-amountLAssets = (amount * Q72 / sqrtPriceInXInQ72) / (activeLiquidityScalerInQ72 / Q72);
-simplify to:
-(amount * Q72 * Q72) / (sqrtPriceInXInQ72 * activeLiquidityScalerInQ72)
-final equation:
-amountLAssets = mulDiv(mulDiv(amount, Q72, sqrtPriceInXInQ72, rounding), Q72, activeLiquidityScalerInQ72, rounding);
-or more simplified (failed for some tests)
-amountLAssets = mulDiv(amount, Q72 * Q72, sqrtPriceInQ72 * activeLiquidityScalerInQ72);
+Convert X assets to L assets: L = x / sqrt(p)
+amountLAssets = amountInXAssets * Q72 / sqrtPriceInXInQ72
 
 
 ```solidity
 function convertXToL(
     uint256 amountInXAssets,
     uint256 sqrtPriceInXInQ72,
-    uint256 activeLiquidityScalerInQ72,
     bool roundUp
 ) internal pure returns (uint256 amountLAssets);
 ```
 
 ### convertLToX
 
+Convert L assets to X assets: x = L * sqrt(p)
+amountXAssets = amount * sqrtPriceQ72 / Q72
+
 
 ```solidity
 function convertLToX(
     uint256 amount,
     uint256 sqrtPriceQ72,
-    uint256 activeLiquidityScalerInQ72,
     bool roundUp
 ) internal pure returns (uint256 amountXAssets);
 ```
 
 ### convertYToL
 
-The simplified math: L = y * sqrt(p)
-mulDiv(amount, sqrtPriceInXInQ72, rounding);
-amountLAssets = amount * sqrtPriceInXInQ72Scaled / Q72;
-sqrtPriceInXInQ72Scaled = sqrtPriceInXInQ72 / activeLiquidityScalerInQ72 / Q72;
-simplify to:
-amount * sqrtPriceInXInQ72 / activeLiquidityScalerInQ72
-final equation:
-amountLAssets = mulDiv(amount, sqrtPriceInXInQ72, activeLiquidityScalerInQ72, rounding);
+Convert Y assets to L assets: L = y * sqrt(p)
+amountLAssets = amountInYAssets * sqrtPriceInXInQ72 / Q72
 
 
 ```solidity
 function convertYToL(
     uint256 amountInYAssets,
     uint256 sqrtPriceInXInQ72,
-    uint256 activeLiquidityScalerInQ72,
     bool roundUp
 ) internal pure returns (uint256 amountInLAssets);
 ```
 
 ### convertLToY
 
+Convert L assets to Y assets: y = L / sqrt(p)
+amountYAssets = amount * Q72 / sqrtPriceQ72
+
 
 ```solidity
 function convertLToY(
     uint256 amount,
     uint256 sqrtPriceQ72,
-    uint256 activeLiquidityScalerInQ72,
     bool roundUp
 ) internal pure returns (uint256 amountYAssets);
 ```
@@ -432,7 +367,6 @@ struct InputParams {
     int16 maxTick;
     uint256 sqrtPriceMinInQ72;
     uint256 sqrtPriceMaxInQ72;
-    uint256 activeLiquidityScalerInQ72;
     uint256 activeLiquidityAssets;
     uint256 reservesXAssets;
     uint256 reservesYAssets;

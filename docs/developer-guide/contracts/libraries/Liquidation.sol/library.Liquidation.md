@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -45,13 +45,22 @@ uint256 private constant POSITIVE_PREMIUM_INTERCEPT_IN_BIPS = 4444;
 ```
 
 
-### LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR
-The factor to controls the pace of the increase in the premium the leverage
-liquidation premium function.
+### LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR_MAG2
+This factor brings a leveraged position just below the leverage liquidation threshold
 
 
 ```solidity
-uint256 private constant LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR = 5;
+uint256 internal constant LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR_MAG2 = 10;
+```
+
+
+### LEVERAGE_LIQUIDATION_FACTOR
+Leverage liquidation factor derived from max allowed leverage scaled by the break-even factor
+
+
+```solidity
+uint256 internal constant LEVERAGE_LIQUIDATION_FACTOR =
+    ALLOWED_LIQUIDITY_LEVERAGE * MAG2 / LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR_MAG2;
 ```
 
 
@@ -114,7 +123,6 @@ function checkHardPremiums(
 ```solidity
 function calculateNetDebtAndSeizedDeposits(
     uint256[6] memory proposedLiquidation,
-    uint256 activeLiquidityScalerInQ72,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
 ) internal pure returns (uint256 netDebtInLAssets, uint256 netCollateralInLAssets, bool netDebtX);
@@ -127,20 +135,20 @@ function calculateNetDebtAndSeizedDeposits(
 function checkSaturationPremiums(
     ISaturationAndGeometricTWAPState saturationAndGeometricTWAPState,
     Validation.InputParams memory inputParams,
-    address borrower,
-    uint256 depositLToTransferInLAssets,
-    uint256 depositXToTransferInXAssets,
-    uint256 depositYToTransferInYAssets
-) external view;
+    address borrower
+) external view returns (uint256 seizeLAssets, uint256 seizeXAssets, uint256 seizeYAssets);
 ```
 
 ### liquidateLeverageCalcDeltaAndPremium
 
-Calculate the amount to be closed (from both deposit and borrow) and premium to be
-paid. The formula for the premium is calculated with the average net borrow of X and Y
-$$B$$ and the net deposit of X and Y $$B$$ and a scaler $$S$$ that sets the pace at which
-the premium increased, in code we call this `LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR`, and
-allowed leverage $$AL$$, `ALLOWED_LIQUIDITY_LEVERAGE`:
+Calculate weighted leverage liquidation repayments and seized deposits.
+
+*The first three return indices are seized deposits, the last three are required
+repayments, and all values are in each token's native units. The formula for the premium
+is calculated with the average net borrow of X and Y $$B$$ and the net deposit of X and Y
+$$D$$ and a scaler $$S$$ that sets the pace at which the premium increased, in code we
+call this `LEVERAGE_LIQUIDATION_BREAK_EVEN_FACTOR_MAG2`, and allowed leverage $$AL$$,
+`ALLOWED_LIQUIDITY_LEVERAGE`:
 ```math
 premium = \begin{cases}
 S \left(
@@ -152,36 +160,58 @@ S \left(
 0 \text { otherwise }
 \end{cases}
 ```
-This can be visualized [here](https://www.desmos.com/calculator/slheqlelvu).
+This can be visualized [here](https://www.desmos.com/calculator/1cd55f1yhz).
 The premium is a percentage of the total deposit. If the premium is low enough, then we
 we attempt to deleverage the position such that the premium and closed part of the
 position leaves it under the leveraged threshold. If this is not possible, then all of the
 users deposit will be transferred to the liquidator and there will be bad debt.
 Note that the de leveraging relies on the min and max tick to be equal, so the result may
 not be a valid amount of leverage using a min and max price as is done in the Validation
-library.
+library.*
 
 
 ```solidity
 function liquidateLeverageCalcDeltaAndPremium(
-    Validation.InputParams memory inputParams,
-    bool depositXAndY,
-    bool repayXAndY
-) external pure returns (LeveragedLiquidationParams memory leveragedLiquidationParams);
+    Validation.InputParams memory inputParams
+) external pure returns (uint256[6] memory leveragedLiquidationParams, bool badDebt);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`|The params representing the position of the borrower.|
-|`depositXAndY`|`bool`|Flag indicating whether the liquidator is taking deposit of X and Y.|
-|`repayXAndY`|`bool`|Flag indicating whether the liquidator is repaying borrow of X and Y.|
 
 **Returns**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`leveragedLiquidationParams`|`LeveragedLiquidationParams`|a struct of type LeveragedLiquidationParams containing the amounts to be closed and the premium to be paid.|
+|`leveragedLiquidationParams`|`uint256[6]`|Array indexed by DEPOSIT_L, DEPOSIT_X, DEPOSIT_Y, BORROW_L, BORROW_X, BORROW_Y.|
+|`badDebt`|`bool`|Whether the leverage liquidation leaves bad debt to burn.|
+
+
+### calculateLeverageLiquidationAsset
+
+Calculate the amount of an asset to be liquidated in a leverage liquidation.
+
+*we use the min so amounts don't exceed balances*
+
+
+```solidity
+function calculateLeverageLiquidationAsset(
+    uint256 userAsset,
+    uint256 totalShareLAsset,
+    uint256 totalLAsset,
+    bool rounding
+) internal pure returns (uint256);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`userAsset`|`uint256`|The amount of the asset held by the user.|
+|`totalShareLAsset`|`uint256`|The portion getting seized or repaid in L assets, or fraction of the total borrowed l or deposited l respectively.|
+|`totalLAsset`|`uint256`|The total borrowed l or deposited l respectively.|
+|`rounding`|`bool`|Whether to round up the result, we round up for the borrow legs to make sure enough is repaid to cover the seized deposits.|
 
 
 ### calcHardMaxPremiumInBips
@@ -195,7 +225,6 @@ Calculate the maximum premium the liquidator may receive given the LTV of the bo
 function calcHardMaxPremiumInBips(
     uint256[6] memory validatedLiquidation,
     uint256 activeLiquidityAssets,
-    uint256 activeLiquidityScalerInQ72,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
 ) internal pure returns (uint256 maxPremiumInBips);
@@ -268,36 +297,17 @@ function convertLtvToPremium(
 |`maxPremiumInBips`|`uint256`|The maximum premium for the liquidator.|
 
 
-### calcSaturationPremiumBips
-
-Calculate the premium the saturation liquidator is receiving given the borrowers deposit and the depositToTransfer to the liquidator.
-The end premium is the max of the premiums in L, X, Y
-If no saturation liq is requested (liquidationParams.saturationDepositLToBeTransferred==liquidationParams.saturationDepositXToBeTransferred==liquidationParams.saturationDepositYToBeTransferred==0), the premium will be 0
+### calcSaturationSeizedAssets
 
 
 ```solidity
-function calcSaturationPremiumBips(
-    Validation.InputParams memory inputParams,
-    uint256 depositLToTransferInLAssets,
-    uint256 depositXToTransferInXAssets,
-    uint256 depositYToTransferInYAssets
-) internal pure returns (uint256 premiumInBips);
+function calcSaturationSeizedAssets(
+    uint256 depositedLAssets,
+    uint256 depositedXAssets,
+    uint256 depositedYAssets,
+    uint256 premiumInBips
+) internal pure returns (uint256 seizedLAssets, uint256 seizedXAssets, uint256 seizedYAssets);
 ```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`inputParams`|`Validation.InputParams`|The params containing the position of the borrower.|
-|`depositLToTransferInLAssets`|`uint256`||
-|`depositXToTransferInXAssets`|`uint256`||
-|`depositYToTransferInYAssets`|`uint256`||
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`premiumInBips`|`uint256`|The premium being received by the liquidator.|
-
 
 ### calcSaturationMaxPremiumInBips
 
@@ -334,6 +344,12 @@ function calcSaturationMaxPremiumInBips(
 error LiquidationPremiumTooHigh();
 ```
 
+### LiquidationZeroPremium
+
+```solidity
+error LiquidationZeroPremium();
+```
+
 ### NotEnoughRepaidForLiquidation
 
 ```solidity
@@ -350,20 +366,5 @@ error TooMuchDepositToTransferForLeverageLiquidation();
 
 ```solidity
 error LiquidationMutation();
-```
-
-## Structs
-### LeveragedLiquidationParams
-
-```solidity
-struct LeveragedLiquidationParams {
-    uint256 closeInLAssets;
-    uint256 closeInXAssets;
-    uint256 closeInYAssets;
-    uint256 premiumInLAssets;
-    uint256 premiumLInXAssets;
-    uint256 premiumLInYAssets;
-    bool badDebt;
-}
 ```
 

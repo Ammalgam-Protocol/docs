@@ -1,5 +1,5 @@
 # Uint16Set
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/2b185eab2df708b55f7ffa534655c69f626e73b3/contracts/libraries/Uint16Set.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/Uint16Set.sol)
 
 based on https://github.com/rob-Hitchens/SetTypes/blob/master/contracts/UintSet.sol
 
@@ -40,11 +40,11 @@ function insert(Set storage self, uint16 key) internal returns (bool keyAlreadyE
 
 remove a key.
 
-*key to remove must exist.*
+*If the key does not exist, this function is a no-op and returns true.*
 
 
 ```solidity
-function remove(Set storage self, uint16 key) internal returns (bool keyDidNotExist);
+function remove(Set storage self, uint16 key) internal returns (bool isSetEmpty);
 ```
 **Parameters**
 
@@ -57,7 +57,7 @@ function remove(Set storage self, uint16 key) internal returns (bool keyDidNotEx
 
 |Name|Type|Description|
 |----|----|-----------|
-|`keyDidNotExist`|`bool`|whether the key already did not yet exist in the set|
+|`isSetEmpty`|`bool`|whether the key did not exist or the set still has items after removal|
 
 
 ### count
