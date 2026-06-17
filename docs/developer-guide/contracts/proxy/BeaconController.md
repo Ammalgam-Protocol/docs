@@ -1,5 +1,5 @@
 # BeaconController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c2ed0f746da008769436bb8eab6619a109a032f9/contracts/proxy/BeaconController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/704e13b16c0d3807131b6b753ca6085c1fab3045/contracts/proxy/BeaconController.sol)
 
 **Inherits:**
 [IBeaconController](/docs/developer-guide/contracts/proxy/IBeaconController.md), AccessControl

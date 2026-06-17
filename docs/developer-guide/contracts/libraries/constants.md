@@ -1,8 +1,8 @@
 # Constants
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c2ed0f746da008769436bb8eab6619a109a032f9/contracts/libraries/constants.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/704e13b16c0d3807131b6b753ca6085c1fab3045/contracts/libraries/constants.sol)
 
 ### B_IN_Q72
-Tick base in Q72:
+*Tick base in Q72:
 ```math
 B_{Q72}=\operatorname{round}\left(\frac{2^9}{2^9-1}\cdot 2^{72}\right)
 ```
@@ -23,8 +23,9 @@ hex(int(mpm.nint(mpm.fdiv(pow(2, 9), pow(2, 9) - 1) * pow(2, 72))))
 ```
 Solidity-style reference:
 ```solidity
-uint256 bInQ72 = Math.mulDiv(1 << 9, 1 << 72, (1 << 9) - 1);
+uint256 bInQ72 = Math.mulDiv(2 ** 9, 2 ** 72, (2 ** 9) - 1);
 ```
+We store in hex to reduce code size.*
 
 
 ```solidity
@@ -32,7 +33,7 @@ uint256 constant B_IN_Q72 = 0x1008040201008040201;
 ```
 
 ### TRANCHE_B_IN_Q72
-Tranche base in Q72:
+*Tranche base in Q72:
 ```math
 B_{tranche,Q72}=\operatorname{round}\left(\left(\frac{2^9}{2^9-1}\right)^{25}\cdot 2^{72}\right)
 ```
@@ -40,6 +41,7 @@ In Saturation, 25 ticks are combined into one tranche.
 ```python
 hex(int(mpm.nint(pow(mpm.fdiv(pow(2, 9), pow(2, 9) - 1), 25) * pow(2, 72))))
 ```
+We store in hex to reduce code size.*
 
 
 ```solidity
