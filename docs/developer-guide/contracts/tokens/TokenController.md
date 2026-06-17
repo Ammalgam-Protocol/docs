@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1592c5477df75ce2f8b168a6221f7a5e154d286b/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/41405bd809b3ec5c7cb39be8890c13bee26ba0b6/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [InitializablePair](/docs/developer-guide/contracts/proxy/InitializablePair.md), [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.md)
@@ -414,7 +414,7 @@ function computeAssetsState()
 
 |Name|Type|Description|
 |----|----|-----------|
-|`_allAssets`|`uint112[6]`|Array of six `uint112` values: Recalculated total assets for each of the 6 Amalgam token types (post-interest).|
+|`_allAssets`|`uint112[6]`|Array of six `uint112` values: Recalculated total assets for each of the 6 Ammalgam token types (post-interest).|
 |`_reserveXAssets`|`uint112`|Reserve balance for Asset X, updated with LP-earned interest.|
 |`_reserveYAssets`|`uint112`|Reserve balance for Asset Y, updated with LP-earned interest.|
 |`protocolFees`|`uint256[3]`|Array of three `uint256` values: Accumulated protocol fees for DEPOSIT_L, DEPOSIT_X, and DEPOSIT_Y (from interest accrual).|
