@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1592c5477df75ce2f8b168a6221f7a5e154d286b/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [InitializablePair](/docs/developer-guide/contracts/proxy/InitializablePair.md), [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.md)
@@ -87,7 +87,7 @@ uint112[6] private allShares;
 
 ### allAssets
 The first position in this array is never stored because it is instead computed as
-$$\sqrt{reserveX * reserveY} + borrowedLAssets$$. We keep this storage spot because
+$\sqrt{reserveX\cdot reserveY}+borrowedLAssets$. We keep this storage spot because
 we heavily use DEPOSIT_L, DEPOSIT_X, DEPOSIT_Y, BORROW_L, BORROW_X, BORROW_Y to look
 up positions throughout the code and didn't want to change all those references.
 

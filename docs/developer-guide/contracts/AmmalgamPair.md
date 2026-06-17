@@ -1,5 +1,5 @@
 # AmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/AmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1592c5477df75ce2f8b168a6221f7a5e154d286b/contracts/AmmalgamPair.sol)
 
 **Inherits:**
 [IAmmalgamPair](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.md), [TokenController](/docs/developer-guide/contracts/tokens/TokenController.md)

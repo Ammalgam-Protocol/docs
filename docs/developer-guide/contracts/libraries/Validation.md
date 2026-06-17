@@ -1,5 +1,5 @@
 # Validation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/Validation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1592c5477df75ce2f8b168a6221f7a5e154d286b/contracts/libraries/Validation.sol)
 
 SPDX-License-Identifier: GPL-3.0-only
 
@@ -238,51 +238,15 @@ function checkLtv(
 
 ### increaseForSlippage
 
-Calculates the impact slippage of buying the debt in the dex using the currently
-available liquidity $L = \sqrt{x \cdot y}$. Uses a few formulas to simplify to not need
-reserves to calculate the required collateral to buy the debt.
-The reserves available in and out for swapping can be defined in terms of $L$, and price $p$
+Increases an L-denominated debt amount by the constant-product slippage needed
+to buy that debt against the pool's active liquidity.
+Let `D` be `debtLiquidityAssets` and `L` be `activeLiquidityAssets`. The function
+reverts when `D >= L`; otherwise it returns:
 ```math
-\begin{align*}
-reserveIn &= L \cdot \sqrt{p} \\
-reserveOut &= \frac{L}{ \sqrt{p} } \\
-\end{align*}
+D_{in}=\left\lceil\frac{L\cdot D}{L-D}\right\rceil
 ```
-The swap amount $in$ and $out$ can also be defined in terms of $L_{in}$ and
-$L_{out}$
-```math
-\begin{align*}
-in &= L_{in} \cdot 2 \cdot \sqrt{p} \\
-out &= \frac{  2 \cdot L_{out} }{ \sqrt{p} }
-\end{align*}
-```
-Starting with our swap equation we solve for $in$
-```math
-\begin{align*}
-(in + reserveIn)(reserveOut - out) &= reserveOut \cdot reserveIn \\
-in &= \frac{reserveOut \cdot reserveIn} {reserveOut - out} - reserveIn \\
-in &= reserveIn \cdot \left(\frac{reserveOut } {reserveOut - out} - 1 \right) \\
-in &= reserveIn \cdot \frac{ reserveOut - (reserveOut - out) } { reserveOut - out } \\
-in &= \frac{ reserveIn \cdot out } { reserveOut - out } \\
-\end{align*}
-```
-We now plug in liquidity values in place of $reserveIn$, $reserveOut$, $in$, and $out$.
-```math
-\begin{align*}
-L_{in} \cdot 2 \cdot \sqrt{p}
-&=  \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
-{ \frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} } } \\
-L_{in}
-&= \frac{ L \cdot \sqrt{p} \cdot \frac{  2 \cdot L_{out} }{ \sqrt{p} } }
-{ 2 \cdot \sqrt{p} \cdot  \left(\frac{L}{ \sqrt{p} } - \frac{ 2 \cdot L_{out} }{\sqrt{p} }\right)} \\
-L_{in}
-&=  \frac { L \cdot  L_{out} }
-{ (L - 2 \cdot L_{out}) } \\
-\end{align*}
-```
-Using $L_{out}$ described in our method as `debtLiquidityAssets`, $L$ or `activeLiquidityAssets`,
-and our fee, we use the above equation to solve for the amount of liquidity that
-must come into buy the debt.
+This is the amount of L assets that must enter the pool to remove `D` L assets
+of debt from the opposite reserve under the constant-product approximation.
 
 
 ```solidity

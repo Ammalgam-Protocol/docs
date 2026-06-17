@@ -1,5 +1,5 @@
 # Interest
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/Interest.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1592c5477df75ce2f8b168a6221f7a5e154d286b/contracts/libraries/Interest.sol)
 
 This library is used for calculating and accruing interest.
 
@@ -136,7 +136,7 @@ function getReservesAtTick(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`activeLiquidityAssets`|`uint256`|active L where $\sqrt(reserveX * reserveY) = L$|
+|`activeLiquidityAssets`|`uint256`|active L where $\sqrt{reserveX\cdot reserveY}=L$|
 |`lendingStateTick`|`int16`|Average tick value since last lending state update.|
 
 **Returns**

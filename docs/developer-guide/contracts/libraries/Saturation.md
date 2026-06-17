@@ -1,136 +1,96 @@
 # Saturation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/Saturation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1592c5477df75ce2f8b168a6221f7a5e154d286b/contracts/libraries/Saturation.sol)
 
 **Authors:**
 imi@1m1.io, Will duelingGalois@protonmail.com
 
-Saturation, or sat, is defined as the net borrow. In theory, we would want to divide net
-borrow by the total liquidity; in practice, we keep the net borrow only in the tree. The unit
-of sat is relative to active liquidity assets, or the amount of L deposited less the amount
-borrowed.
-When we determine how much a swap moves the price, or square root price, we can define our
-equation using ticks, or tranches (25 ticks), where for some base $b$, the square root price
-is $b^t$ for some tick $t$. Alternatively for a larger base $B = b^{25}$ we can define the
-square root price as $B^T$ for some tranche $T$. Using the square root price, we can define the
-amount of x or y in each tranche as:
+Maintains saturation, or sat, which is the net borrow tracked for each
+liquidation tranche.
+Saturation is measured relative to active liquidity assets: deposited L less borrowed L.
+In practice the tree stores the net borrow amount, while callers interpret it relative
+to active liquidity.
+Price movement is modeled with tick base $b$ and tranche base $B$. A tranche groups
+`TICKS_PER_TRANCHE` ticks:
+```math
+B=b^{\mathrm{TICKS\_PER\_TRANCHE}}
+```
+For a tranche bounded by $T_0$ and $T_1$, liquidity $L=\sqrt{reserveX\cdot reserveY}$
+implies the following X and Y amounts:
 ```math
 \begin{align*}
-x =  L \cdot B^{T_0} - L \cdot B^{T_1} \\
-y = \frac{L}{ B^{T_1}} - \frac{L}{B^{T_0}}
+x &= L\cdot B^{T_0}-L\cdot B^{T_1} \\
+y &= \frac{L}{B^{T_1}}-\frac{L}{B^{T_0}}
 \end{align*}
 ```
-where liquidity is $L = \sqrt{reserveX \cdot reserveY}$. If we want to know how much debt of x
-or y can be liquidated within one tick, we can solve these equations for L and then the amount
-of x and y are considered the debt we would like to see if it could be liquidated in one tick.
-If saturation with respect to our starting $L$ is smaller, that amount of debt can be
-liquidated in one swap in the given ticks. Otherwise it is too big and can not. Note that we
-assume $$t_1 \text{ and } t_0 \in \mathbb{Z}$$ and $$t_0 + 1 = t_1$$. Then our definition of
-saturation relative to L is as follows,
+For one tick, with integer ticks $t_0$ and $t_1$ where $t_0+1=t_1$, saturation relative
+to L is:
 ```math
-\begin{equation}
 saturationRelativeToL =
 \begin{cases}
-\frac{ debtX }{ b^{ t_1 } } \left( \frac{ b }{ b - 1 } \right) \\
-debtY \cdot b^{ t_0 } \cdot \left( \frac{ b }{ b - 1 } \right)
+\frac{debtX}{b^{t_1}}\left(\frac{b}{b-1}\right) \\
+debtY\cdot b^{t_0}\cdot\left(\frac{b}{b-1}\right)
 \end{cases}
-\end{equation}
 ```
-Saturation is kept in a tree, starting with a root, levels and leafs. We keep 2 trees, one for
-net X borrows, another for net Y borrows. The price is always the price of Y in units of X.
-Mostly, the code works with the sqrt of price. A net X borrow refers to a position that if
-liquidated would cause the price to become smaller; the opposite for net Y positions. Ticks are
-along the price dimension and int16. Tranches are 25 ticks, stored as int16.
-Leafs (uint16) split the sat, which is uint112, into intervals. From left to right, the leafs
-of the tree cover the sat space in increasing order. Each account with a position has a price
-at which its LTV would reach LTVMAX, which is its liquidation (=liq) price.
-To place a debt into the appropriate tranche, we think of each debt and its respective
-collateral as a series of sums, where each item in the series fits in one tranche. Using
-formulas above, we determine the number of ticks a debt would cross if liquidated. This is
-considered the span of the liquidation. Using this value we then determine the start and end
-points of the liquidation, where the start would be closer to the prices, on the right of the
-end for net debt of x and on the left of the end for net debt of Y.
-Once we have the liquidation start, end, and span, we begin to place the debt, one tranche at a
-time moving towards the price. In this process we compare the prior recorded saturation and
-allow the insertion up to some max, set at 90% or the configuration set by the user.
-A Tranche contains multiple accounts and thus a total sat. The tranche's sat assigns it to a
-leaf. Each leaf can contain multiple tranches and thus has a total actual sat whilst
-representing a specific sat per tranche range. Leafs and thus tranches and thus accounts above
-a certain sat threshold are considered over saturated. These accounts are penalized for being
-in an over saturated tranche. Each account, tranche and leaf has a total penalty that needs to
-be repaid to close the position fully. Sat is distributed over multiple tranches, in case a
-single tranche does not have enough available sat left. Sat is kept cumulatively in the tree,
-meaning a node contains the sum of the sat of its parents. Updating a sat at the  bottom of the
-tree requires updating all parents. Penalty is kept as a path sum, in uints of LAssets, meaning
-the penalty of an account is the sum of the penalties of all its parents. Updating the penalty
-for a range of leafs only requires updating the appropriate parent. Position (=pos) refers to
-the relative index of a child within its parent. Index refers to the index of a node in within
-its level
-The formula for allocating saturation is derived from,
+Saturation is kept in two trees: one for net X borrows and one for net Y borrows. The
+price is always the price of Y in units of X, and most calculations use sqrt price. A
+net X borrow is a position whose liquidation would push price lower; a net Y borrow
+pushes price higher.
+Leaves split the `uint112` saturation space into ordered intervals. Tranches and leaves
+above the configured threshold are over-saturated and accrue penalties. Saturation is
+cumulative in the tree, so updating a leaf also updates its parents. Penalties are path
+sums in L assets.
+To allocate saturation, a debt and its collateral are represented as a series of tranche
+sized pieces. For liquidation start tick $t_s$ and end tick $t_e$:
 ```math
 \begin{align*}
-X = L \cdot \left( b^{t_e} - b^{t_s} \right) \\
-Y = L \cdot \left( \frac{1}{b^{t_s}} - \frac{1}{b^{t_e}} \right)
+X &= L\cdot\left(b^{t_e}-b^{t_s}\right) \\
+Y &= L\cdot\left(\frac{1}{b^{t_s}}-\frac{1}{b^{t_e}}\right)
 \end{align*}
 ```
-for the start and end of liquidation $$t_s$$ and $$t_e$$ respectively. When we consider our
-buckets of TICKS_PER_TRANCHE we can rewrite this as a series where each boundary of each
-tranche $$T_i$$ where $$T_0 = t_e \% TICKS_PER_TRANCHE$$ for a net debt of X and $$T_0 = (-t_e)
-\% TICKS_PER_TRANCHE$$ for a net debt of Y and $$T_i = T_{i-1} + TICKS_PER_TRANCHE$$ for each
-subsequent tranche and $$B= b^{TICKS_PER_TRANCHE}$$. Thus we can rewrite the equations as:
+The tranche boundaries advance by `TICKS_PER_TRANCHE`. For net X debt,
+$T_0=t_e\bmod \mathrm{TICKS\_PER\_TRANCHE}$; for net Y debt,
+$T_0=(-t_e)\bmod \mathrm{TICKS\_PER\_TRANCHE}$. Each subsequent tranche is
+$T_i=T_{i-1}+\mathrm{TICKS\_PER\_TRANCHE}$.
+The X-side allocation can be rewritten as:
 ```math
 \begin{align*}
 X &=
-L \left(b^{T_1} - b^{t_e} \right)
-+ L \left( b^{T_2} - b^{T_1}\right)
-+ ...
-+ L \left( b^{T_n} - b^{T_{n-1}}\right)
-+ L \left(b^{t_s}-b^{T_n}  \right)
-\\
-\Large\frac{X}{b^{t_e}(B-1)} &=
-\Large L \left(
-\frac{B \cdot b^{t_e-T_0} - 1}{B-1}
-+ \frac{ \sum_{i=1}^{n-1} B^{i} }{ b^{t_e-T_0} }
-+ \frac{B^{n} \left(
-\frac{b^{t_s}}{B^{n} \cdot  b^{T_0}}-1 \right) }{ b^{t_e-T_0}(B-1)}
+L\left(b^{T_1}-b^{t_e}\right)
++ L\left(b^{T_2}-b^{T_1}\right)
++ \dots
++ L\left(b^{T_n}-b^{T_{n-1}}\right)
++ L\left(b^{t_s}-b^{T_n}\right) \\
+\frac{X}{b^{t_e}(B-1)} &=
+L\left(
+\frac{B\cdot b^{t_e-T_0}-1}{B-1}
++ \frac{\sum_{i=1}^{n-1} B^i}{b^{t_e-T_0}}
++ \frac{B^n\left(\frac{b^{t_s}}{B^n\cdot b^{T_0}}-1\right)}
+{b^{t_e-T_0}(B-1)}
 \right)
 \end{align*}
 ```
-We then define the left side of this equation as total saturation $T_{sat}$ or newSaturation as
-we call it in the parameter passed in. Saturation is relative to the saturation in one tranche.
-The right side of the equation defines the saturation in each tranche $s_i$, starting at the
-furthest point from the tranche and moving forward.
+The left side is total saturation $T_{sat}$. The right side splits that total into each
+tranche's saturation $s_i$, starting furthest from the current price and moving toward it:
 ```math
 \begin{align*}
 T_{sat} &=
 s_0
-+ \frac{\sum_{i=1}^{n-1} s_i \cdot B^{i}}{b^{t_e-T_0}}
-+ \frac{B^n \cdot  s_n}{b^{t_e-T_0}}
-\\
-\frac{(T_{sat} - s_0)b^{t_e-T_0}}{B} - s_1 &=
-\left(\sum_{i=2}^{n-1} s_i \cdot B^{i-1} \right)
-+ B^{n-1} \cdot s_n
-\\
-\frac{\frac{(T_{sat} - s_0)b^{t_e-T_0}}{B} - s_1 }{ B } -s_2 &=
-\left(\sum_{i=2}^{n-1} s_i \cdot B^{i-2} \right)
-+ B^{n-2} \cdot s_n
++ \frac{\sum_{i=1}^{n-1}s_i\cdot B^i}{b^{t_e-T_0}}
++ \frac{B^n\cdot s_n}{b^{t_e-T_0}} \\
+\frac{(T_{sat}-s_0)b^{t_e-T_0}}{B}-s_1 &=
+\left(\sum_{i=2}^{n-1}s_i\cdot B^{i-1}\right)
++ B^{n-1}\cdot s_n \\
+\frac{\frac{(T_{sat}-s_0)b^{t_e-T_0}}{B}-s_1}{B}-s_2 &=
+\left(\sum_{i=2}^{n-1}s_i\cdot B^{i-2}\right)
++ B^{n-2}\cdot s_n
 \end{align*}
 ```
-When calculating the case for Y, the result is almost identical, except our definition for
-$T_{sat}$ requires us to multiply by $$b^{t_e}$$ rather than divide.
-The above shows the logic applied in this function. We can allocate saturation across each
-tranche until the total remaining saturation is depleted. We allow less than the ideal
-saturation to be consumed if there is less available. Extra saturation is then carried forward
-to tranches closer to the price, requiring part of the position to be liquidated sooner as
-needed based on the available liquidity.
-Two critical nuances of this algorithm is that we reduce by a factor of $$B$$ after each
-iteration and we multiply one time by $$b^{t_e - T_0}$$ after we allocate $$s_0$$ one time. The
-reduction of $$B$$ each iteration reflects the increase in the size of each tranche relative to
-a unit of X or Y as you move from one tranche to the next towards the price. The one time
-multiplication of $$b^{t_e - T_0}$$ is an adjustment for the offset of the start of liquidation
-relative to the start of the second tranche to minimize the impact of the reduction by $$B$$
-since the first portion of saturation does not use an entire tranche.
-If saturation reaches the minOrMaxTick, we revert as the position is already reaching the limit
-of our probable price range and may require immediate liquidation if opened.
+The Y-side allocation is the same except that $T_{sat}$ multiplies by $b^{t_e}$ rather
+than dividing by it. During iteration, each tranche reduces the remaining saturation by
+a factor of $B$. The first tranche also applies a one-time $b^{t_e-T_0}$ adjustment for
+the offset between the end of liquidation and the tranche boundary.
+If saturation reaches `minOrMaxTick`, the position is already at the edge of the probable
+price range and the calculation reverts.
 
 
 ## State Variables
@@ -163,8 +123,8 @@ uint256 internal constant MAX_INITIAL_SATURATION_MAG2 = 90;
 
 
 ### EXPECTED_SATURATION_LTV_MAG2_TIMES_SAT_BUFFER_SQUARED
-$$EXPECTED_SATURATION_LTV_MAG2 * SATURATION_TIME_BUFFER_IN_MAG2 ** 2$$, a constant
-used in calculations.
+$\mathrm{EXPECTED\_SATURATION\_LTV\_MAG2}\cdot
+\mathrm{SATURATION\_TIME\_BUFFER\_IN\_MAG2}^{2}$, a constant used in calculations.
 
 
 ```solidity
@@ -173,7 +133,7 @@ uint256 internal constant EXPECTED_SATURATION_LTV_MAG2_TIMES_SAT_BUFFER_SQUARED 
 
 
 ### EXPECTED_SATURATION_LTV_PLUS_ONE_MAG2
-$$EXPECTED\_SATURATION\_LTV\_MAG2 + 100$$, a constant used in calculations.
+$\mathrm{EXPECTED\_SATURATION\_LTV\_MAG2}+100$, a constant used in calculations.
 
 
 ```solidity
@@ -234,8 +194,11 @@ int16 private constant TICK_OFFSET = 1112;
 
 
 ### LOWEST_POSSIBLE_IN_PENALTY
-the lowest possible saturation is always in penalty
-$$MAX_ASSETS * START\_SATURATION\_PENALTY\_RATIO_IN_MAG2 / TICKS\_PER\_TRANCHE$$
+The lowest possible saturation is always in penalty:
+```math
+\frac{MAX\_ASSETS\cdot START\_SATURATION\_PENALTY\_RATIO\_IN\_MAG2}
+{\mathrm{TICKS\_PER\_TRANCHE}}
+```
 
 
 ```solidity
@@ -244,8 +207,11 @@ uint256 internal constant LOWEST_POSSIBLE_IN_PENALTY = 0xd9999999999999999999999
 
 
 ### MIN_LIQ_TO_REACH_PENALTY
-the minimum liquidity to reach the possibility of being in penalty.
-$$MINIMUM_LIQUIDITY * START\_SATURATION\_PENALTY\_RATIO\_IN_MAG2 / TICKS\_PER\_TRANCHE$$
+The minimum liquidity to reach the possibility of being in penalty:
+```math
+\frac{MINIMUM\_LIQUIDITY\cdot START\_SATURATION\_PENALTY\_RATIO\_IN\_MAG2}
+{\mathrm{TICKS\_PER\_TRANCHE}}
+```
 
 
 ```solidity
@@ -299,7 +265,7 @@ uint256 internal constant LOWEST_LEVEL_INDEX = 2;
 
 
 ### LEAFS
-$$1 << LEAFS\_IN\_BITS$$
+Number of leaves: $2^{\mathrm{LEAFS\_IN\_BITS}}$.
 
 
 ```solidity
@@ -308,7 +274,7 @@ uint256 internal constant LEAFS = 4096;
 
 
 ### CHILDREN_PER_NODE
-$$1 << 4$$
+Number of children per node: $2^4$.
 
 
 ```solidity
@@ -317,7 +283,7 @@ uint256 internal constant CHILDREN_PER_NODE = 16;
 
 
 ### CHILDREN_AT_THIRD_LEVEL
-$$1 << (2 * 4)$$
+Number of children at the third level: $2^{2\cdot 4}$.
 
 
 ```solidity
@@ -326,8 +292,12 @@ uint256 private constant CHILDREN_AT_THIRD_LEVEL = 256;
 
 
 ### TICKS_PER_TRANCHE
-$$b = \frac{2^9}{2^9-1}$$ is the base for ticks, then the tranche base is
-$$B = b^TICKS\_PER\_TRANCHE$$, int only to not need casting below, equals TICKS_PER_TRANCHE
+Number of ticks grouped into one saturation tranche.
+If $b=\frac{2^9}{2^9-1}$ is the tick base, then the tranche base is:
+```math
+B=b^{\mathrm{TICKS\_PER\_TRANCHE}}
+```
+This is an `int256` only to avoid casts below.
 
 
 ```solidity
@@ -411,7 +381,7 @@ uint256 private constant NUMBER_OF_QUARTERS = 4;
 
 
 ### TWO_Q72
-$$2 * 2**72 * 2$$, used in saturation formula.
+$2\cdot 2^{72}$, used in the saturation formula.
 
 
 ```solidity
@@ -420,7 +390,7 @@ uint256 private constant TWO_Q72 = 0x2000000000000000000;
 
 
 ### FOUR_Q144
-$$4 * 2**128$$, needed in quadratic formula is saturation.
+$4\cdot 2^{128}$, needed in the saturation quadratic formula.
 
 
 ```solidity
@@ -429,7 +399,7 @@ uint256 private constant FOUR_Q144 = 0x4000000000000000000000000000000000000;
 
 
 ### MAG4_TIMES_Q72
-$$MAG4 * Q72$$ constant needed in formula.
+$MAG4\cdot Q72$ constant needed in the formula.
 
 
 ```solidity
@@ -438,7 +408,7 @@ uint256 private constant MAG4_TIMES_Q72 = 0x2710000000000000000000;
 
 
 ### B_SQUARED_Q72_MINUS_ONE
-$$b^2 \cdot Q72 - 1$$ used to round up results of `TickMath.getTickAtPrice()`.
+$b^2\cdot Q72-1$ used to round up results of `TickMath.getTickAtPrice()`.
 
 
 ```solidity
@@ -457,7 +427,7 @@ uint256 private constant Q183 = 0x8000000000000000000000000000000000000000000000
 
 
 ### TICKS_PER_TRANCHE_MAG2
-$$TICKS\_PER\_TRANCHE * MAG2$$ used for calculating available liquidity.
+$\mathrm{TICKS\_PER\_TRANCHE}\cdot MAG2$, used for calculating available liquidity.
 
 
 ```solidity
@@ -1568,37 +1538,32 @@ function satToLeaf(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`leaf`|`uint256`| resulting leaf from 0 to 2**12-1|
+|`leaf`|`uint256`| resulting leaf from 0 to $2^{12}-1$|
 
 
 ### calcSatAvailableToAddToTranche
 
-calc how much sat can be added to a tranche such that it is healthy
-
-*There are some important properties of the relationships between the returned values
-and the input values, specifically the input `newSaturationRelativeToLAssets` and the
-return values `satAvailableToAddRelativeToLAssets` and `targetCapacityRelativeToLAssets`.
-For brevity we call these `newSat`, `satAvailable`, and `target` respectively in the
-explanation below,
-Three cases,
-1) $$newSat > trancheSat$$,
-2) $$trancheSat >= newSat >= trancheSat - currentTrancheSat$$
-3) $$trancheSat - currentTrancheSat > newSat$$
-if (1) $$newSat > trancheSat $$ then
-$$satAvailable = trancheSat - currentTrancheSat$$
-$$target = trancheSat$$
-therefore $$target >= satAvailable$$
-if (2) $$trancheSat >= newSat >= trancheSat - currentTrancheSat$$ then
-$$satAvailable = trancheSat - currentTrancheSat$$
-$$target = newSat$$
-therefore $$target >= satAvailable$$ since $$newSat >= trancheSat - currentTrancheSat$$
-if (3) $$trancheSat - currentTrancheSat > newSat$$ then
-$$satAvailable = newSat$$
-$$target = newSat$$
-therefore $$target = satAvailable$$
-In all cases $$target >= satAvailable$$.
-Also, we know by the limiting $$target = min(trancheSat, newSat)$$ that
-$$newSat >= target$$*
+Calculates how much saturation can be added to one tranche while keeping it healthy.
+The target saturation for the usable portion of the tranche is:
+```math
+trancheSat=\left\lceil
+\frac{
+activeLiquidityInLAssets\cdot userSaturationRatioMAG2\cdot usableTicks
+}{
+\mathrm{TICKS\_PER\_TRANCHE}\cdot MAG2
+}
+\right\rceil
+```
+Let `newSat` be `newSaturationRelativeToLAssets` and `currentSat` be
+`currentTrancheSatRelativeToLAssets`. The returned amount is:
+```math
+satAvailable=\min\left(newSat,\max(trancheSat,currentSat)-currentSat\right)
+```
+The returned target capacity is:
+```math
+target=\min(trancheSat,newSat)
+```
+Therefore `target >= satAvailable` in every branch, and `newSat >= target`.
 
 
 ```solidity
@@ -1614,18 +1579,18 @@ function calcSatAvailableToAddToTranche(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`activeLiquidityInLAssets`|`uint256`| of the pair|
-|`newSaturationRelativeToLAssets`|`uint128`| the sat that we want to add|
-|`currentTrancheSatRelativeToLAssets`|`uint128`| the sat that the tranche already holds|
-|`userSaturationRatioMAG2`|`uint256`| the user's desired saturation ratio|
-|`usableTicks`|`uint256`| the number of usable ticks within the tranche, restricted by either the end of liquidation or the min/max tick.|
+|`activeLiquidityInLAssets`|`uint256`|Active liquidity of the pair.|
+|`newSaturationRelativeToLAssets`|`uint128`|The saturation that should be added.|
+|`currentTrancheSatRelativeToLAssets`|`uint128`|The saturation already held by the tranche.|
+|`userSaturationRatioMAG2`|`uint256`|The user's desired saturation ratio.|
+|`usableTicks`|`uint256`|The number of usable ticks within the tranche, restricted by either the end of liquidation or the min/max tick.|
 
 **Returns**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`satAvailableToAddRelativeToLAssets`|`uint128`| considering the `currentTrancheSatRelativeToLAssets` and the max a tranche can have|
-|`targetCapacityRelativeToLAssets`|`uint256`||
+|`satAvailableToAddRelativeToLAssets`|`uint128`|Amount that can be added after accounting for current tranche saturation.|
+|`targetCapacityRelativeToLAssets`|`uint256`|Target tranche capacity after limiting by the new saturation amount.|
 
 
 ### calcLastTickAndSaturation

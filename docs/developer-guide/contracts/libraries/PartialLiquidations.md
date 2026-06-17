@@ -1,5 +1,5 @@
 # PartialLiquidations
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/PartialLiquidations.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1592c5477df75ce2f8b168a6221f7a5e154d286b/contracts/libraries/PartialLiquidations.sol)
 
 We allow liquidations to happen in parts when the position is spread across more than
 one tranche. These partial liquidations allow the liquidator to specify how many tranches they
@@ -156,11 +156,11 @@ function calcMutation(
 Applies the L weight to both L legs and returns the resulting signed L delta.
 The raw L legs are both included at the same weight:
 ```math
-depositL_\Delta=depositL\cdot w_L,\qquad borrowL_\Delta=borrowL\cdot w_L
+depositL_{\Delta}=depositL\cdot w_L,\qquad borrowL_{\Delta}=borrowL\cdot w_L
 ```
 The signed L contribution is:
 ```math
-L_\Delta=depositL_\Delta-borrowL_\Delta
+L_{\Delta}=depositL_{\Delta}-borrowL_{\Delta}
 ```
 
 
@@ -304,12 +304,15 @@ function calcRemainingSideDelta(
 ### calcXWeightQ72
 
 Calculates the partial liquidation weight for asset X.
-Formula for `w_X`:
+In unscaled terms, `sqrtStartWeightQ72` is $\sqrt{w_s}$ and
+`sqrtEndWeightQ72` is $\sqrt{w_e}$. The branch matches which side of
+one the saturation window starts on:
 ```math
-w_X &=  \large  \frac{
-1- \sqrt{w_s}
-}{
-\sqrt{w_e}-\sqrt{w_s} }
+w_X =
+\begin{cases}
+\dfrac{\sqrt{w_s}-1}{\sqrt{w_s}-\sqrt{w_e}} & \text{if } \sqrt{w_s}>1 \\
+\dfrac{1-\sqrt{w_s}}{\sqrt{w_e}-\sqrt{w_s}} & \text{otherwise}
+\end{cases}
 ```
 
 

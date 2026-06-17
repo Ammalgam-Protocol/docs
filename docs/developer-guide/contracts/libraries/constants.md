@@ -1,33 +1,30 @@
 # Constants
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/ec51218155bd2f8c1e5dc761ed4728baae81a01b/contracts/libraries/constants.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/1592c5477df75ce2f8b168a6221f7a5e154d286b/contracts/libraries/constants.sol)
 
 ### B_IN_Q72
-*This basis was a modification to Uniswap V3's basis, to fit ticks into int16 instead of
-int24. We use the form $$\frac{2^{9}}{2^{9}-1}$$ which is just under 1.002. This basis
-format gives smaller errors since the fraction is more compatible with binary Q128
-fractions since the base is inverted in the tick math library before multiplications are
-applied.
+Tick base in Q72:
+```math
+B_{Q72}=\operatorname{round}\left(\frac{2^9}{2^9-1}\cdot 2^{72}\right)
+```
+This basis modifies the Uniswap V3 basis to fit ticks into `int16` instead of `int24`.
+The base $\frac{2^9}{2^9-1}$ is just under 1.002 and is compatible with binary fixed-point
+arithmetic. TickMath uses the inverse base during multiplication:
 ```math
 \begin{align*}
-&   \frac{2^{9}}{2^{9}-1}^{-1} \cdot 2^{128}
-& & \frac{10001}{10000}^{-1} \cdot 2^{128}
-\\
-&   \frac{2^{9}-1}{2^{9}} \cdot 2^{256}
-& & \frac{10000\cdot2^{256}}{10001}
-\\
-&   339617752923046005526922703901628039168
-& & \frac{3402823669209384634633746074317682114560000}{10001}
-\\
-&   0xff800000000000000000000000000000
-& & 0xfffcb933bd6fad37aa2d162d1a594001
-\\
+\left(\frac{2^9}{2^9-1}\right)^{-1}\cdot 2^{128}
+&= \frac{2^9-1}{2^9}\cdot 2^{128} \\
+&= 339617752923046005526922703901628039168 \\
+&= \mathtt{0xff800000000000000000000000000000}
 \end{align*}
 ```
-We use this constant outside of the tick math library, and use a Q72 as that format is
-easier to work with multiplication without overflows.
+Python reference:
 ```python
->>> hex(int(mpm.nint(mpm.fdiv(2**9, 2**9-1) * 2**72)))
-```*
+hex(int(mpm.nint(mpm.fdiv(pow(2, 9), pow(2, 9) - 1) * pow(2, 72))))
+```
+Solidity-style reference:
+```solidity
+uint256 bInQ72 = Math.mulDiv(1 << 9, 1 << 72, (1 << 9) - 1);
+```
 
 
 ```solidity
@@ -35,10 +32,14 @@ uint256 constant B_IN_Q72 = 0x1008040201008040201;
 ```
 
 ### TRANCHE_B_IN_Q72
-*In Saturation we combine 25 ticks to make one tranche.
+Tranche base in Q72:
+```math
+B_{tranche,Q72}=\operatorname{round}\left(\left(\frac{2^9}{2^9-1}\right)^{25}\cdot 2^{72}\right)
+```
+In Saturation, 25 ticks are combined into one tranche.
 ```python
->>> hex(int(mpm.nint(mpm.fdiv(2**9, 2**9-1)**25 * 2**72)))
-```*
+hex(int(mpm.nint(pow(mpm.fdiv(pow(2, 9), pow(2, 9) - 1), 25) * pow(2, 72))))
+```
 
 
 ```solidity
@@ -81,7 +82,7 @@ uint256 constant EXPECTED_SATURATION_LTV_MAG2 = 85;
 
 ### MAX_SATURATION_RATIO_IN_MAG2
 *percentage of max sat per tranche considered healthy; max sat per
-tranche is $$liquidity \frac{B-1}{2}$$ with B the tranche basis, which is the max
+tranche is $liquidity \cdot \frac{B-1}{2}$ with B the tranche basis, which is the max
 sat such that the liquidation would not cause a swap larger than a tranche*
 
 
@@ -98,7 +99,7 @@ address constant ZERO_ADDRESS = address(0);
 ```
 
 ### Q16
-*2**16*
+*$2^{16}$.*
 
 
 ```solidity
@@ -106,7 +107,7 @@ uint256 constant Q16 = 0x10000;
 ```
 
 ### Q32
-*2**32*
+*$2^{32}$.*
 
 
 ```solidity
@@ -114,7 +115,7 @@ uint256 constant Q32 = 0x100000000;
 ```
 
 ### Q56
-*2**56.*
+*$2^{56}$.*
 
 
 ```solidity
@@ -122,7 +123,7 @@ uint256 constant Q56 = 0x100000000000000;
 ```
 
 ### Q64
-*2**64.*
+*$2^{64}$.*
 
 
 ```solidity
@@ -130,7 +131,7 @@ uint256 constant Q64 = 0x10000000000000000;
 ```
 
 ### Q72
-*2**72.*
+*$2^{72}$.*
 
 
 ```solidity
@@ -138,7 +139,7 @@ uint256 constant Q72 = 0x1000000000000000000;
 ```
 
 ### Q88
-*2**88.*
+*$2^{88}$.*
 
 
 ```solidity
@@ -146,7 +147,7 @@ uint256 constant Q88 = 0x10000000000000000000000;
 ```
 
 ### Q112
-*2**112.*
+*$2^{112}$.*
 
 
 ```solidity
@@ -154,7 +155,7 @@ uint256 constant Q112 = 0x10000000000000000000000000000;
 ```
 
 ### Q128
-*2**128.*
+*$2^{128}$.*
 
 
 ```solidity
@@ -162,7 +163,7 @@ uint256 constant Q128 = 0x100000000000000000000000000000000;
 ```
 
 ### Q144
-*2**144.*
+*$2^{144}$.*
 
 
 ```solidity
@@ -170,7 +171,7 @@ uint256 constant Q144 = 0x1000000000000000000000000000000000000;
 ```
 
 ### Q200
-*2**200.*
+*$2^{200}$.*
 
 
 ```solidity
