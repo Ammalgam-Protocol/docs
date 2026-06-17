@@ -1,5 +1,5 @@
 # Saturation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/609f8dd84eb0f59fc67f71da5364b9c59ba343f4/contracts/libraries/Saturation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c2ed0f746da008769436bb8eab6619a109a032f9/contracts/libraries/Saturation.sol)
 
 **Authors:**
 imi@1m1.io, Will duelingGalois@protonmail.com

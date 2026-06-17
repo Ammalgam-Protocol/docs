@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/609f8dd84eb0f59fc67f71da5364b9c59ba343f4/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c2ed0f746da008769436bb8eab6619a109a032f9/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -266,20 +266,19 @@ function calcHardPremiumInBips(
 ### convertLtvToPremium
 
 Calculates the maximum premium the liquidator should receive based on borrower LTV.
-`ltvBips` and the returned premium are both denominated in bips. The premium is flat
-below the negative-premium threshold, then follows the two linear segments used by
-the implementation:
+`ltvBips` and the returned premium are both denominated in bips. Let `l` be
+`ltvBips`, `a` and `b` be the two LTV thresholds, `m` be a slope, and `c` be an
+intercept. The negative-premium segment uses `m_-` and `c_-`; the positive-premium
+segment uses `m_+` and `c_+`.
 ```math
-P(ltv)=
+P(l)=
 \begin{cases}
 0
-& ltv \le START\_NEGATIVE\_PREMIUM\_LTV\_BIPS \\
-\left\lfloor\frac{NEGATIVE\_PREMIUM\_SLOPE\_IN\_BIPS\cdot ltv}{BIPS}\right\rfloor
-- NEGATIVE\_PREMIUM\_INTERCEPT\_IN\_BIPS
-& START\_NEGATIVE\_PREMIUM\_LTV\_BIPS < ltv < START\_PREMIUM\_LTV\_BIPS \\
-\left\lfloor\frac{POSITIVE\_PREMIUM\_SLOPE\_IN\_BIPS\cdot ltv}{BIPS}\right\rfloor
-+ POSITIVE\_PREMIUM\_INTERCEPT\_IN\_BIPS
-& START\_PREMIUM\_LTV\_BIPS \le ltv
+& l \le a \\
+\left\lfloor\frac{m_{-}\cdot l}{BIPS}\right\rfloor-c_{-}
+& a < l < b \\
+\left\lfloor\frac{m_{+}\cdot l}{BIPS}\right\rfloor+c_{+}
+& b \le l
 \end{cases}
 ```
 

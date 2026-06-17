@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/609f8dd84eb0f59fc67f71da5364b9c59ba343f4/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c2ed0f746da008769436bb8eab6619a109a032f9/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [InitializablePair](/docs/developer-guide/contracts/proxy/InitializablePair.md), [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.md)

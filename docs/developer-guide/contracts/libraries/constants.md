@@ -1,16 +1,30 @@
 # Constants
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/609f8dd84eb0f59fc67f71da5364b9c59ba343f4/contracts/libraries/constants.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/c2ed0f746da008769436bb8eab6619a109a032f9/contracts/libraries/constants.sol)
 
 ### B_IN_Q72
-*Tick base in Q72:
-$B_{Q72}=\operatorname{round}\left(\frac{2^9}{2^9-1}\cdot 2^{72}\right)$.
+Tick base in Q72:
+```math
+B_{Q72}=\operatorname{round}\left(\frac{2^9}{2^9-1}\cdot 2^{72}\right)
+```
 This basis modifies the Uniswap V3 basis to fit ticks into `int16` instead of `int24`.
 The base $\frac{2^9}{2^9-1}$ is just under 1.002 and is compatible with binary fixed-point
 arithmetic. TickMath uses the inverse base during multiplication:
-$\left(\frac{2^9}{2^9-1}\right)^{-1}\cdot 2^{128}=339617752923046005526922703901628039168$.
-Hex form: $\mathtt{0xff800000000000000000000000000000}$.
-Python reference: `hex(int(mpm.nint(mpm.fdiv(pow(2, 9), pow(2, 9) - 1) * pow(2, 72))))`.
-Solidity reference: `Math.mulDiv(1 << 9, 1 << 72, (1 << 9) - 1)`.*
+```math
+\begin{align*}
+\left(\frac{2^9}{2^9-1}\right)^{-1}\cdot 2^{128}
+&= \frac{2^9-1}{2^9}\cdot 2^{128} \\
+&= 339617752923046005526922703901628039168 \\
+&= \mathtt{0xff800000000000000000000000000000}
+\end{align*}
+```
+Python reference:
+```python
+hex(int(mpm.nint(mpm.fdiv(pow(2, 9), pow(2, 9) - 1) * pow(2, 72))))
+```
+Solidity-style reference:
+```solidity
+uint256 bInQ72 = Math.mulDiv(1 << 9, 1 << 72, (1 << 9) - 1);
+```
 
 
 ```solidity
@@ -18,11 +32,14 @@ uint256 constant B_IN_Q72 = 0x1008040201008040201;
 ```
 
 ### TRANCHE_B_IN_Q72
-*Tranche base in Q72:
-$B_{tranche,Q72}=\operatorname{round}\left(\left(\frac{2^9}{2^9-1}\right)^{25}\cdot 2^{72}\right)$.
+Tranche base in Q72:
+```math
+B_{tranche,Q72}=\operatorname{round}\left(\left(\frac{2^9}{2^9-1}\right)^{25}\cdot 2^{72}\right)
+```
 In Saturation, 25 ticks are combined into one tranche.
-Python reference:
-`hex(int(mpm.nint(pow(mpm.fdiv(pow(2, 9), pow(2, 9) - 1), 25) * pow(2, 72))))`.*
+```python
+hex(int(mpm.nint(pow(mpm.fdiv(pow(2, 9), pow(2, 9) - 1), 25) * pow(2, 72))))
+```
 
 
 ```solidity
