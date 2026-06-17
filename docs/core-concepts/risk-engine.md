@@ -12,7 +12,7 @@ Users can borrow across multiple collateral types - tokens ($X$, $Y$) and liquid
 Each loan must be worth less than 75% of collateral provided to secure it, and often much less depending on the depth of liquidity with respect to the size of the loan. When borrowing one asset against the other, the calculation of loan to value (LTV) is as expected, $L_{TV} = \frac{Debt Value}{ Collateral Value}$. When we calculate the loan to value for market making positions, the calculation may not be as obvious. First we look at what we call $L_X$ and $L_Y$, the individual quantity of $X$ and $Y$ in the market making position and net it with the amount of $X$ and $Y$ deposited and borrowed. If the net of $X$ or $Y$ is negative, then that asset is treated as the debt and the other asset is treated as the collateral. We use the following equation to calculate LTV:
 
 $$
-L_{TV} = 
+L_{TV} =
   \begin{cases}
     \frac{-(X + L_X)}{Y + L_X} & \text{if } X + L_X < 0 \\
     \frac{-(Y + L_Y)}{X + L_X} & \text{if } Y + L_Y < 0 \\
@@ -24,12 +24,12 @@ Each variable $X$, $Y$, $L_X$, & $L_Y$ can be negative or positive depending if 
 ### Slippage added to LTV
 To deter large unsustainable loans, we consider slippage when calculating the LTV. To consider the slippage created when needing to liquidate collateral to repay the debt, we consider the amount of collateral needed to buy the requested debt using the current reserves. The needed collateral is then compared to the total collateral provided to ensure it fits within the allowed LTV. This will have a negligible impact on small loans concerning available liquidity and more restrictive for large loans. Flash loan manipulation attacks like C.R.E.A.M Finance and Mango become impossible when the slippage would require all the liquidity in the protocol pushing the LTV price from its high manipulated price back down to zero (the price required to buy all of the debt from the AMM to fund liquidation when the debt is the size of all of that asset in the AMM). Similar to Tranche Limitations, these limits could be expanded by the same configuration for more liquid trading pairs in which arbitrageurs can be assumed.
 
-### [NatSpec and Implementation ↗ ](/docs/developer-guide/contracts/libraries/Validation.sol/library.Validation#increaseforslippage)
+### [NatSpec and Implementation ↗ ](/docs/developer-guide/contracts/libraries/Validation#increaseforslippage)
 
 ### Cost to liquidate X or Y
 <iframe src="https://www.desmos.com/calculator/v08sn8yn6r?embed"
-  frameBorder="0" 
+  frameBorder="0"
   allowFullScreen
   width="100%"
   height="600"
-></iframe> 
+></iframe>

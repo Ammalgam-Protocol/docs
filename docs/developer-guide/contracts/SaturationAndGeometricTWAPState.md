@@ -1,0 +1,486 @@
+# SaturationAndGeometricTWAPState
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/609f8dd84eb0f59fc67f71da5364b9c59ba343f4/contracts/SaturationAndGeometricTWAPState.sol)
+
+**Inherits:**
+Initializable, [ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.md), OwnableUpgradeable
+
+
+## State Variables
+### midTermIntervalConfig
+
+```solidity
+uint24 public midTermIntervalConfig;
+```
+
+
+### longTermIntervalConfig
+
+```solidity
+uint24 public longTermIntervalConfig;
+```
+
+
+### satDataGivenPair
+
+```solidity
+mapping(address => Saturation.SaturationStruct) internal satDataGivenPair;
+```
+
+
+### TWAPDataGivenPair
+
+```solidity
+mapping(address => GeometricTWAP.Observations) internal TWAPDataGivenPair;
+```
+
+
+### maxNewPositionSaturationInMAG2
+
+```solidity
+mapping(address => mapping(address => uint256)) maxNewPositionSaturationInMAG2;
+```
+
+
+### lastUsedActiveLiquidityInLAssets
+
+```solidity
+mapping(address => mapping(address => uint256)) lastUsedActiveLiquidityInLAssets;
+```
+
+
+### isPairInitialized
+
+```solidity
+mapping(address => bool) internal isPairInitialized;
+```
+
+
+### priceExtremesGivenPair
+
+```solidity
+mapping(address => PriceExtremes.State) internal priceExtremesGivenPair;
+```
+
+
+## Functions
+### constructor
+
+
+```solidity
+constructor();
+```
+
+### initialize
+
+
+```solidity
+function initialize(uint24 _midTermIntervalConfig, uint24 _longTermIntervalConfig, address _owner) public initializer;
+```
+
+### isInitialized
+
+
+```solidity
+modifier isInitialized();
+```
+
+### _isInitialized
+
+
+```solidity
+function _isInitialized() internal view;
+```
+
+### init
+
+initializes the sat and TWAP struct
+
+*initCheck can be removed once the tree structure is fixed*
+
+
+```solidity
+function init(uint256 reserveXAssets, uint256 reserveYAssets) external;
+```
+
+### setNewPositionSaturation
+
+
+```solidity
+function setNewPositionSaturation(address pair, uint256 maxDesiredSaturationMag2) external;
+```
+
+### getTree
+
+
+```solidity
+function getTree(address pairAddress, bool netDebtX) private view returns (Saturation.Tree storage);
+```
+
+### getTreeLeafDetails
+
+
+```solidity
+function getTreeLeafDetails(
+    address pairAddress,
+    bool netDebtX,
+    uint256 leafIndex
+)
+    external
+    view
+    returns (
+        Saturation.SaturationPair memory saturation,
+        uint256 currentPenaltyInBorrowLSharesPerSatInQ72,
+        uint128 totalSatInLAssets,
+        uint16 highestSetLeaf,
+        uint16[] memory tranches
+    );
+```
+
+### getTrancheDetails
+
+
+```solidity
+function getTrancheDetails(
+    address pairAddress,
+    bool netDebtX,
+    int16 tranche
+) external view returns (uint16 leaf, Saturation.SaturationPair memory saturation);
+```
+
+### getAccount
+
+
+```solidity
+function getAccount(
+    address pairAddress,
+    bool netDebtX,
+    address accountAddress
+) external view returns (Saturation.Account memory);
+```
+
+### accountExistsInSaturation
+
+Check if an account exists in either netX or netY saturation tree
+
+
+```solidity
+function accountExistsInSaturation(address pairAddress, address accountAddress) external view returns (bool exists);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The address of the pair|
+|`accountAddress`|`address`|The address of the account to check|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`exists`|`bool`|True if the account exists in either tree|
+
+
+### _accountExistsInSaturation
+
+Internal sibling of `accountExistsInSaturation` so callers within this contract
+can check tree membership without paying the external-call overhead or making the
+getter `public`.
+
+
+```solidity
+function _accountExistsInSaturation(address pairAddress, address accountAddress) private view returns (bool exists);
+```
+
+### update
+
+update the borrow position of an account and potentially check (and revert) if the
+resulting sat is too high
+
+*run accruePenalties before running this function. `lastUsedActiveLiquidityInLAssets`
+is captured only on the transition into saturation, so third-party-triggered updates
+cannot clobber a position's baseline ALA (OV-6-1).*
+
+
+```solidity
+function update(
+    Validation.InputParams memory inputParams,
+    address account,
+    bool skipMinOrMaxTickCheck
+) public virtual isInitialized;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`inputParams`|`Validation.InputParams`| contains the position and pair params, like account borrows/deposits, current price and active liquidity|
+|`account`|`address`| for which is position is being updated|
+|`skipMinOrMaxTickCheck`|`bool`||
+
+
+### scaleDesiredSaturation
+
+Scales the desired saturation threshold based on changes in Active Liquidity Assets (ALA).
+
+*When liquidity is burned from the pool, ALA decreases. Without scaling, this would cause
+existing positions to appear more saturated (since saturation = borrows / ALA), potentially
+triggering unwarranted liquidation premiums. This function scales the desired saturation
+proportionally to ALA changes to maintain the position's relative health.
+The scaling formula: scaled = lastUsedALA * desiredSat / currentALA.
+Scaling is applied only while the account is in the saturation tree, so baselines
+left over from previously-closed positions cannot influence a freshly-opened one.*
+
+
+```solidity
+function scaleDesiredSaturation(
+    address pair,
+    address account,
+    uint256 currentALA,
+    bool capAtPenaltyStart
+) internal view returns (uint256 desiredSaturationInMAG2);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pair`|`address`|The address of the pair contract.|
+|`account`|`address`|The account whose saturation threshold is being scaled.|
+|`currentALA`|`uint256`|The current active liquidity assets in the pool.|
+|`capAtPenaltyStart`|`bool`|If `true`, caps the scaled value at START_SATURATION_PENALTY_RATIO_IN_MAG2. Used in _update() to prevent excessive. Set to `false` in calcSatChangeRatioBips() for accurate premium calculations.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`desiredSaturationInMAG2`|`uint256`|The scaled desired saturation threshold.|
+
+
+### accruePenalties
+
+accrue penalties since last accrual based on all over saturated positions
+
+
+```solidity
+function accruePenalties(
+    address account,
+    uint256 externalLiquidity,
+    uint256 duration,
+    uint256 allAssetsDepositL,
+    uint256 allAssetsBorrowL,
+    uint256 allSharesBorrowL
+) external isInitialized returns (uint112 penaltyInBorrowLShares, uint112 accountPenaltyInBorrowLShares);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`account`|`address`||
+|`externalLiquidity`|`uint256`| Swap liquidity outside this pool|
+|`duration`|`uint256`| since last accrual of penalties|
+|`allAssetsDepositL`|`uint256`| allAsset[DEPOSIT_L]|
+|`allAssetsBorrowL`|`uint256`| allAsset[BORROW_L]|
+|`allSharesBorrowL`|`uint256`| allShares[BORROW_L]|
+
+
+### calcSatChangeRatioBips
+
+Calculate the ratio by which the saturation has changed for `account`.
+
+
+```solidity
+function calcSatChangeRatioBips(
+    Validation.InputParams memory inputParams,
+    uint256 liqSqrtPriceInXInQ72,
+    uint256 liqSqrtPriceInYInQ72,
+    address pairAddress,
+    address account
+) external view virtual isInitialized returns (uint256 ratioBips);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`inputParams`|`Validation.InputParams`|The params containing the position of `account`.|
+|`liqSqrtPriceInXInQ72`|`uint256`|The liquidation sqrt price for netX in Q72; pass 0 if not applicable.|
+|`liqSqrtPriceInYInQ72`|`uint256`|The liquidation sqrt price for netY in Q72; pass 0 if not applicable.|
+|`pairAddress`|`address`|The address of the pair|
+|`account`|`address`|The account for which we are calculating the saturation change ratio.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`ratioBips`|`uint256`|The ratio representing the change saturation for account.|
+
+
+### recordPriceExtreme
+
+
+```solidity
+function recordPriceExtreme(
+    uint256 priceQ128
+) external isInitialized;
+```
+
+### getObservations
+
+
+```solidity
+function getObservations(
+    address pairAddress
+) external view returns (GeometricTWAP.Observations memory);
+```
+
+### configLongTermInterval
+
+Configures the interval of long-term observations.
+
+*This function is used to set the long-term interval between observations for the long-term buffer.*
+
+
+```solidity
+function configLongTermInterval(address pairAddress, uint24 _longTermIntervalConfig) external onlyOwner;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The address of the pair for which the long-term interval is being configured.|
+|`_longTermIntervalConfig`|`uint24`|The desired duration for each long-term period. The size is set as a factor of the mid-term interval to ensure a sufficient buffer, requiring at least 16 * 12 = 192 seconds per period, resulting in a total of ~25 minutes (192 * 8 = 1536 seconds) for the long-term buffer.|
+
+
+### recordObservation
+
+Records a new observation tick value and updates the observation data.
+
+*This function is used to record new observation data for the contract. It ensures that
+the provided tick value is stored appropriately in both mid-term and long-term
+observations, updates interval counters, and handles tick cumulative values based
+on the current interval configuration. Ensures that this function is called in
+chronological order, with increasing timestamps. Returns in case the
+provided block timestamp is less than or equal to the last recorded timestamp.*
+
+
+```solidity
+function recordObservation(int16 newTick, uint32 timeElapsed) public virtual isInitialized returns (bool);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`newTick`|`int16`|The new tick value to be recorded, representing the most recent update of reserveXAssets and reserveYAssets.|
+|`timeElapsed`|`uint32`|The time elapsed since the last observation.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`bool`|bool indicating whether the observation was recorded or not.|
+
+
+### getTickRange
+
+Gets the min and max range of tick values from the stored oracle observations.
+
+*This function calculates the minimum and maximum tick values among three observed ticks:
+long-term tick, mid-term tick, and current tick.*
+
+
+```solidity
+function getTickRange(
+    address pair,
+    uint256 reserveXAssets,
+    uint256 reserveYAssets,
+    bool includeLongTermTick
+) external view virtual returns (int16 minTick, int16 maxTick);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pair`|`address`|The address of the pair for which the tick range is being calculated.|
+|`reserveXAssets`|`uint256`|The current pair reserves of asset X.|
+|`reserveYAssets`|`uint256`|The current pair reserves of asset Y.|
+|`includeLongTermTick`|`bool`|Boolean value indicating whether to include the long-term tick in the range.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`minTick`|`int16`|The minimum tick value among the three observed ticks.|
+|`maxTick`|`int16`|The maximum tick value among the three observed ticks.|
+
+
+### getLendingStateTickAndCheckpoint
+
+Gets the tick value representing the TWAP since the last
+lending update and checkpoints the current lending cumulative sum
+as `self.lendingCumulativeSum` and the current block timestamp as `self.lastLendingTimestamp`.
+
+*See `getLendingStateTick` for implementation details which was
+separated to allow view access without any state updates.*
+
+
+```solidity
+function getLendingStateTickAndCheckpoint(
+    uint32 timeElapsedSinceUpdate,
+    uint32 timeElapsedSinceLendingUpdate
+) external isInitialized returns (int16 lendingStateTick, uint256 maxSatInWads);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`timeElapsedSinceUpdate`|`uint32`|The time elapsed since the last price update.|
+|`timeElapsedSinceLendingUpdate`|`uint32`|The time elapsed since the last lending update.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`lendingStateTick`|`int16`|The tick value representing the TWAP since the last lending update.|
+|`maxSatInWads`|`uint256`||
+
+
+### getObservedMidTermTick
+
+*Retrieves the mid-term tick value based on the stored observations.*
+
+
+```solidity
+function getObservedMidTermTick() external view returns (int16);
+```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`int16`|midTermTick The mid-term tick value.|
+
+
+### getLendingStateTick
+
+Gets the tick value representing the TWAP since the last lending update.
+
+
+```solidity
+function getLendingStateTick(
+    int56 newTick,
+    uint32 timeElapsedSinceUpdate,
+    uint32 timeElapsedSinceLendingUpdate
+) external view returns (int16 lendingStateTick, uint256 maxSatInWads);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`newTick`|`int56`|The new tick value to be recorded, representing the most recent update of reserveXAssets and reserveYAssets.|
+|`timeElapsedSinceUpdate`|`uint32`|The time elapsed since the last price update.|
+|`timeElapsedSinceLendingUpdate`|`uint32`|The time elapsed since the last lending update.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`lendingStateTick`|`int16`|The tick value representing the TWAP since the last lending update.|
+|`maxSatInWads`|`uint256`|The maximum saturation in WADs.|
+
+
