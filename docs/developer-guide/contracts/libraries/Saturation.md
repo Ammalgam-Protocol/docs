@@ -7,7 +7,7 @@ imi@1m1.io, Will duelingGalois@protonmail.com
 Saturation, or sat, is defined as the net borrow. In theory, we would want to divide net
 borrow by the total liquidity; in practice, we keep the net borrow only in the tree. The unit
 of sat is relative to active liquidity assets, or the amount of L deposited less the amount
-borrowed.\
+borrowed.
 When we determine how much a swap moves the price, or square root price, we can define our
 equation using ticks, or tranches (25 ticks), where for some base $b$, the square root price
 is $b^t$ for some tick $t$. Alternatively for a larger base $B = b^{25}$ we can define the
@@ -39,10 +39,10 @@ Saturation is kept in a tree, starting with a root, levels and leafs. We keep 2 
 net X borrows, another for net Y borrows. The price is always the price of Y in units of X.
 Mostly, the code works with the sqrt of price. A net X borrow refers to a position that if
 liquidated would cause the price to become smaller; the opposite for net Y positions. Ticks are
-along the price dimension and int16. Tranches are 25 ticks, stored as int16.\
+along the price dimension and int16. Tranches are 25 ticks, stored as int16.
 Leafs (uint16) split the sat, which is uint112, into intervals. From left to right, the leafs
 of the tree cover the sat space in increasing order. Each account with a position has a price
-at which its LTV would reach LTVMAX, which is its liquidation (=liq) price.\
+at which its LTV would reach LTVMAX, which is its liquidation (=liq) price.
 To place a debt into the appropriate tranche, we think of each debt and its respective
 collateral as a series of sums, where each item in the series fits in one tranche. Using
 formulas above, we determine the number of ticks a debt would cross if liquidated. This is
@@ -51,7 +51,7 @@ points of the liquidation, where the start would be closer to the prices, on the
 end for net debt of x and on the left of the end for net debt of Y.
 Once we have the liquidation start, end, and span, we begin to place the debt, one tranche at a
 time moving towards the price. In this process we compare the prior recorded saturation and
-allow the insertion up to some max, set at 90% or the configuration set by the user.\
+allow the insertion up to some max, set at 90% or the configuration set by the user.
 A Tranche contains multiple accounts and thus a total sat. The tranche's sat assigns it to a
 leaf. Each leaf can contain multiple tranches and thus has a total actual sat whilst
 representing a specific sat per tranche range. Leafs and thus tranches and thus accounts above
@@ -64,7 +64,7 @@ tree requires updating all parents. Penalty is kept as a path sum, in uints of L
 the penalty of an account is the sum of the penalties of all its parents. Updating the penalty
 for a range of leafs only requires updating the appropriate parent. Position (=pos) refers to
 the relative index of a child within its parent. Index refers to the index of a node in within
-its level\
+its level
 The formula for allocating saturation is derived from,
 ```math
 \begin{align*}
@@ -117,19 +117,19 @@ s_0
 \end{align*}
 ```
 When calculating the case for Y, the result is almost identical, except our definition for
-$T_{sat}$ requires us to multiply by $$b^{t_e}$$ rather than divide.\
+$T_{sat}$ requires us to multiply by $$b^{t_e}$$ rather than divide.
 The above shows the logic applied in this function. We can allocate saturation across each
 tranche until the total remaining saturation is depleted. We allow less than the ideal
 saturation to be consumed if there is less available. Extra saturation is then carried forward
 to tranches closer to the price, requiring part of the position to be liquidated sooner as
-needed based on the available liquidity.\
+needed based on the available liquidity.
 Two critical nuances of this algorithm is that we reduce by a factor of $$B$$ after each
 iteration and we multiply one time by $$b^{t_e - T_0}$$ after we allocate $$s_0$$ one time. The
 reduction of $$B$$ each iteration reflects the increase in the size of each tranche relative to
 a unit of X or Y as you move from one tranche to the next towards the price. The one time
 multiplication of $$b^{t_e - T_0}$$ is an adjustment for the offset of the start of liquidation
 relative to the start of the second tranche to minimize the impact of the reduction by $$B$$
-since the first portion of saturation does not use an entire tranche.\
+since the first portion of saturation does not use an entire tranche.
 If saturation reaches the minOrMaxTick, we revert as the position is already reaching the limit
 of our probable price range and may require immediate liquidation if opened.
 
@@ -164,9 +164,8 @@ uint256 internal constant MAX_INITIAL_SATURATION_MAG2 = 90;
 
 
 ### EXPECTED_SATURATION_LTV_MAG2_TIMES_SAT_BUFFER_SQUARED
-$$\mathrm{EXPECTED\_SATURATION\_LTV\_MAG2} \cdot
-\mathrm{SATURATION\_TIME\_BUFFER\_IN\_MAG2}^{2}$$, a constant
-used in calculations.
+$$\mathrm{EXPECTED\_SATURATION\_LTV\_MAG2} \cdot \mathrm{SATURATION\_TIME\_BUFFER\_IN\_MAG2}^{2}$$,
+a constant used in calculations.
 
 
 ```solidity
@@ -237,8 +236,7 @@ int16 private constant TICK_OFFSET = 1112;
 
 ### LOWEST_POSSIBLE_IN_PENALTY
 the lowest possible saturation is always in penalty
-$$MAX\_ASSETS \cdot \mathrm{START\_SATURATION\_PENALTY\_RATIO\_IN\_MAG2} /
-\mathrm{TICKS\_PER\_TRANCHE}$$
+$$MAX\_ASSETS \cdot \mathrm{START\_SATURATION\_PENALTY\_RATIO\_IN\_MAG2} / \mathrm{TICKS\_PER\_TRANCHE}$$
 
 
 ```solidity
@@ -248,8 +246,7 @@ uint256 internal constant LOWEST_POSSIBLE_IN_PENALTY = 0xd9999999999999999999999
 
 ### MIN_LIQ_TO_REACH_PENALTY
 the minimum liquidity to reach the possibility of being in penalty.
-$$MINIMUM\_LIQUIDITY \cdot \mathrm{START\_SATURATION\_PENALTY\_RATIO\_IN\_MAG2} /
-\mathrm{TICKS\_PER\_TRANCHE}$$
+$$MINIMUM\_LIQUIDITY \cdot \mathrm{START\_SATURATION\_PENALTY\_RATIO\_IN\_MAG2} / \mathrm{TICKS\_PER\_TRANCHE}$$
 
 
 ```solidity
