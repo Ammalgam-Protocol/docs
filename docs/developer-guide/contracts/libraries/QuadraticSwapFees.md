@@ -1,31 +1,35 @@
 # QuadraticSwapFees
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/704e13b16c0d3807131b6b753ca6085c1fab3045/contracts/libraries/QuadraticSwapFees.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/libraries/QuadraticSwapFees.sol)
 
 **Author:**
 Will
 
 A library to calculate fees that grow with respect to price deviation from a reference point.
-This library relies on a reference reserve from the start of the block to determine total
-same-block price movement.
-## Fee model overview
-The fee structure uses two models depending on the magnitude of price deviation:
-1. Quadratic fee model for moderate price changes:
-- Used when price deviation is relatively small.
-- Fee grows proportionally to the square of the price movement.
-- If one swap would pay fee `F`, splitting it into two equal swaps pays two fees
-that sum to approximately `F`.
-2. Linear fee model for extreme price changes:
-- Used when price deviation exceeds the quadratic threshold.
-- Fee grows linearly beyond the threshold point, capping at `MAX_QUADRATIC_FEE_PERCENT`.
-- This keeps very large swaps from reaching a non-monotonic fee curve.
-## Why two models?
-- Quadratic fees alone can become so high that larger swaps eventually receive less output
-than smaller swaps, breaking the expected monotonic behavior.
-- Linear fees alone do not provide enough protection against moderate price manipulation.
-## Price movement behavior
-- If the price moves away from the reference and then back toward it, the fee is minimal
-until the price crosses the starting reference price again.
-- Only the net price deviation from the start-of-block reference is charged.
+This library relies on a reference reserve from the start of the block to determine what the overall
+growth in price has been in the current block.
+Fee Model Overview:
+The fee structure uses two distinct models depending on the magnitude of price deviation:
+1. Quadratic Fee Model (for moderate price changes):
+- Used when price deviation is relatively small
+- Fee grows proportionally to the square of the price movement
+- This creates a smooth, incentive-aligned fee curve that discourages large single swaps
+while keeping fees reasonable for normal market activity
+- Key property: If one swap would pay fee `F`, splitting it into two equal swaps would pay
+two fees that sum to approximately `F`
+2. Linear Fee Model (for extreme price changes):
+- Used when price deviation exceeds the quadratic threshold
+- Fee grows linearly beyond the threshold point, capping at `MAX_QUADRATIC_FEE_PERCENT`
+- This prevents fees from becoming prohibitively expensive for very large swaps while
+still maintaining strong economic disincentives against massive price manipulations
+- The linear growth provides a more predictable fee structure for extreme market conditions
+Why Two Models?
+- Quadratic fees alone would become so high that the invariant curve property of being monotonic, leading
+larger swaps amounts in would eventually lead to less assets out than smaller swaps in.
+- Linear fees alone wouldn't provide enough protection against price manipulation for moderate swaps
+Price Movement Behavior:
+- If the price moves away from the reference, and then back toward it, the fee is minimal until
+the price again crosses the starting reference price
+- Only the net price deviation from the start-of-block reference is charged
 
 
 ## State Variables
@@ -97,7 +101,7 @@ uint256 private constant MAX_QUADRATIC_FEE_PERCENT_BIPS = 4000;
 
 
 ### N_TIMES_BIPS_Q64_PER_PERCENT
-$N \cdot 100 \cdot Q64$, or `N` times bips in one percent in Q64.
+$$N \cdot 100 \cdot Q64$$ or `N` times bips in one percent in Q64
 
 
 ```solidity
@@ -115,7 +119,7 @@ uint256 private constant TWO_Q64 = 0x20000000000000000;
 
 
 ### MAX_QUADRATIC_FEE_Q64
-`MAX_QUADRATIC_FEE_PERCENT` in Q64, $MAX\_QUADRATIC\_FEE\_PERCENT \cdot Q64$.
+`MAX_QUADRATIC_FEE_PERCENT` in Q64, $$MAX\_QUADRATIC\_FEE\_PERCENT \cdot Q64$$
 
 
 ```solidity
