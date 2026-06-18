@@ -1,0 +1,35 @@
+.logoStrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 0 5rem 0;
+  gap: 0 2rem;
+}
+
+.logoItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  transition: all 0.2s ease;
+  opacity: 0.5;
+
+  &:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+    opacity: 1;
+  }
+}
+
+.logoImg {
+  max-height: 80px;
+  max-width: 250px;
+  object-fit: contain;
+}
+
+.logoWordmark {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ifm-font-color-base);
+}

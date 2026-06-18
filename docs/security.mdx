@@ -1,0 +1,110 @@
+---
+sidebar_position: 7
+title: Security
+description: How Ammalgam approaches security through a layered process of audits, an audit competition, formal verification, and operational safeguards.
+---
+
+import LogoStrip from '@site/src/components/SecurityPage/LogoStrip';
+
+# Security at Ammalgam
+
+Ammalgam unifies lending, borrowing, and trading inside a single liquidity
+system. That design unlocks capital efficiency, but it also concentrates
+complexity that simpler lending markets and AMMs never have to reason about.
+We treated security as an ongoing, layered process rather than a one-time
+milestone. Every review was set up to challenge the protocol from a different
+angle and shrink the space of unknowns before anyone deposits a dollar.
+
+## A layered review process
+
+### Independent audits
+
+Our first reviews came from **ChainSecurity** and **0xMacro**, while the
+protocol was still taking shape. They surfaced issues across the core of the
+system. Some required redesigns, and others challenged assumptions that looked
+reasonable until an outside expert pulled on them. That work reshaped parts of
+our financial logic, liquidation architecture, and accounting, and became part
+of the foundation the final design is built on.
+
+### Expanding the review surface
+
+ChainSecurity returned for a second review, and we opened the same code to a
+**Cantina audit competition**, a format where a large field of independent
+researchers hunt for bugs in parallel, each bringing different backgrounds and
+methods. Breadth matters here. Some findings overlapped with earlier reviews,
+but many did not, which reinforced a lesson we saw throughout development: every
+layer of review finds something the previous layers missed.
+
+### Formal verification, manual, and AI review
+
+For the most complex parts of the protocol we engaged a formal verification
+team, applying invariant testing, fuzzing, and mathematical proofs to validate
+key properties across a wide range of conditions. We added further manual
+review from a top-ranked researcher from the competition, and expanded our use
+of AI-assisted security tooling. AI scanners are noisy, and many findings turn
+out to be duplicates or false positives. Even so, the high false-positive rate
+repeatedly forced us to recheck our assumptions and confirm the code behaves
+exactly as intended, and the findings that survived that scrutiny were among
+the most thorough we saw from any single method.
+
+### Reviewing the fixes
+
+Finding issues is only half the job. The other half is making sure the fixes
+don't introduce new ones. A final stage re-examined every remediation and the
+new assumptions created while fixing earlier findings, challenging those
+changes the same way the original code had been challenged.
+
+## Beyond the smart contract
+
+Many of the most serious incidents in crypto never touched a contract bug. They
+came from compromised credentials, social engineering, infrastructure failures,
+or operational mistakes. As confidence in the codebase has grown, our attention
+has shifted toward operational security: incident-response planning, hardened
+internal processes, and participation in industry initiatives such as
+**SEAL 911**.
+
+## Balancing safety and decentralization
+
+We believe in immutability, and our long-term goal is to remove administrative
+control entirely. But launching a fully immutable lending protocol on day one
+carries its own risks. Real users and real markets expose assumptions that no
+test environment can. For that reason Ammalgam currently keeps a small set of
+safeguards built strictly around user protection:
+
+- **A 7-day timelock** on protocol upgrades, so changes are visible well before
+  they take effect.
+- **A preconfigured emergency pause**, so activity can be halted immediately if
+  a serious issue is found.
+
+These mechanisms exist to provide time and protection. They give no arbitrary
+control over user funds or protocol state, and we intend to wind them down as
+the protocol proves itself under real conditions.
+
+## Looking forward
+
+Security in DeFi is no longer just about smart-contract bugs. It now spans
+protocol design, market structure, operational security, governance, and human
+behavior. We've approached it as a layered process across all of these, knowing
+that we have to find and fix every bug while an attacker needs only one. No set
+of measures guarantees perfection, but each layer increases the confidence that
+the protocol has been challenged from every angle before your capital is
+inside, and we'll keep investing in that as tools and threats evolve.
+
+
+## Trusted reviewers
+
+The protocol has been examined by established audit firms and a competitive
+field of independent researchers, alongside formal verification and
+AI-assisted analysis.
+
+<LogoStrip
+  logos={[
+    { name: 'ChainSecurity', href: 'https://www.chainsecurity.com/', src: '/img/security/chainsecurity.svg' },
+    { name: '0xMacro', href: 'https://0xmacro.com/', src: '/img/security/0xmacro.svg' },
+    { name: 'Cantina', href: 'https://cantina.xyz/', src: '/img/security/cantina.svg' },
+    { name: 'Octane', href: 'https://www.octane.security/', src: '/img/security/octane.svg' },
+    { name: 'Octane', href: 'https://savant.chat/', src: '/img/security/savant.svg' },
+    { name: 'Octane', href: 'https://pruvendo.com/', src: '/img/security/pruvendo.svg' },
+    { name: 'Octane', href: 'https://v12.sh/', src: '/img/security/v12.svg' },
+  ]}
+/>

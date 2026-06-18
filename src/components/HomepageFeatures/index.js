@@ -65,6 +65,16 @@ const FeatureList = [
     link: './docs/dual-purpose-pools'
   },
   {
+    title: 'Security',
+    icon: require('@site/static/icons/security.png').default,
+    description: (
+      <>
+        How we've audited and hardened the protocol
+      </>
+    ),
+    link: './docs/security'
+  },
+  {
     title: 'Developer Guide',
     icon: require('@site/static/icons/developer_guide.png').default,
     description: (
