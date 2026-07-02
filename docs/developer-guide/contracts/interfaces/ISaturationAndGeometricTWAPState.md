@@ -1,5 +1,5 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
@@ -151,7 +151,8 @@ function accruePenalties(
     uint256 duration,
     uint256 allAssetsDepositL,
     uint256 allAssetsBorrowL,
-    uint256 allSharesBorrowL
+    uint256 allSharesBorrowL,
+    uint256 fragileLiquidityAssets
 ) external returns (uint112 penaltyInBorrowLShares, uint112 accountPenaltyInBorrowLShares);
 ```
 **Parameters**
@@ -164,6 +165,7 @@ function accruePenalties(
 |`allAssetsDepositL`|`uint256`| allAsset[DEPOSIT_L]|
 |`allAssetsBorrowL`|`uint256`| allAsset[BORROW_L]|
 |`allSharesBorrowL`|`uint256`| allShares[BORROW_L]|
+|`fragileLiquidityAssets`|`uint256`| fragile liquidity removed from active liquidity so the penalty threshold reads the same liquidity we use to measure risk capacity in update()|
 
 
 ### calcSatChangeRatioBips

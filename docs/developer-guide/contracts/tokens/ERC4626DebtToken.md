@@ -1,5 +1,5 @@
 # ERC4626DebtToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/tokens/ERC4626DebtToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/tokens/ERC4626DebtToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20DebtBase](/docs/developer-guide/contracts/tokens/ERC20DebtBase.md)
@@ -119,7 +119,7 @@ function previewMint(
 
 ### _deposit
 
-*ERC4626 facade for [IAmmalgamPair-borrow](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.md#borrow).
+*ERC4626 facade for IAmmalgamPair-borrow.
 both deposit and mint calls _deposit
 This is called when the user is borrowing*
 
@@ -130,7 +130,7 @@ function _deposit(address caller, address receiver, uint256 assets, uint256) int
 
 ### _withdraw
 
-*ERC4626 facade for [IAmmalgamPair-repay](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.md#repay).
+*ERC4626 facade for IAmmalgamPair-repay.
 both withdraw and redeem calls _withdraw
 This is called when the user is repaying their debt*
 

@@ -1,5 +1,5 @@
 # Saturation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/libraries/Saturation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/Saturation.sol)
 
 **Authors:**
 imi@1m1.io, Will duelingGalois@protonmail.com
@@ -1015,7 +1015,8 @@ function accruePenalties(
     uint256 duration,
     uint256 allAssetsDepositL,
     uint256 allAssetsBorrowL,
-    uint256 allSharesBorrowL
+    uint256 allSharesBorrowL,
+    uint256 fragileLiquidityAssets
 ) internal returns (uint112 penaltyInBorrowLShares, uint112 accountPenaltyInBorrowLShares);
 ```
 **Parameters**
@@ -1029,6 +1030,7 @@ function accruePenalties(
 |`allAssetsDepositL`|`uint256`| allAsset[DEPOSIT_L]|
 |`allAssetsBorrowL`|`uint256`| allAsset[BORROW_L]|
 |`allSharesBorrowL`|`uint256`| allShares[BORROW_L]|
+|`fragileLiquidityAssets`|`uint256`| fragile liquidity removed from active liquidity so the penalty threshold reads the same liquidity we use to measure risk capacity in update()|
 
 **Returns**
 
@@ -1046,7 +1048,7 @@ calc new penalties
 ```solidity
 function calcNewPenalties(
     SaturationStruct storage satStruct,
-    uint256 externalLiquidity,
+    uint256 thresholdLeaf,
     uint256 duration,
     uint256 allAssetsDepositL,
     uint256 allAssetsBorrowL,
@@ -1058,8 +1060,7 @@ function calcNewPenalties(
         uint256 penaltyNetXInBorrowLShares,
         uint256 penaltyNetXInBorrowLSharesPerSatInQ72,
         uint256 penaltyNetYInBorrowLShares,
-        uint256 penaltyNetYInBorrowLSharesPerSatInQ72,
-        uint256 thresholdLeaf
+        uint256 penaltyNetYInBorrowLSharesPerSatInQ72
     );
 ```
 **Parameters**
@@ -1067,7 +1068,7 @@ function calcNewPenalties(
 |Name|Type|Description|
 |----|----|-----------|
 |`satStruct`|`SaturationStruct`| main data struct|
-|`externalLiquidity`|`uint256`| Swap liquidity outside this pool|
+|`thresholdLeaf`|`uint256`| the leaf at and above which saturation is in penalty; derived from the active liquidity with fragile liquidity removed so it matches saturation updates and liquidation.|
 |`duration`|`uint256`| since last accrual of penalties|
 |`allAssetsDepositL`|`uint256`| allAsset[DEPOSIT_L]|
 |`allAssetsBorrowL`|`uint256`| allAsset[BORROW_L]|
@@ -1081,7 +1082,6 @@ function calcNewPenalties(
 |`penaltyNetXInBorrowLSharesPerSatInQ72`|`uint256`| the penalty net X in borrow l shares per sat in q72|
 |`penaltyNetYInBorrowLShares`|`uint256`| the penalty net Y in borrow l shares|
 |`penaltyNetYInBorrowLSharesPerSatInQ72`|`uint256`| the penalty net Y in borrow l shares per sat in q72|
-|`thresholdLeaf`|`uint256`| the threshold leaf|
 
 
 ### calcNewPenaltiesGivenTree
@@ -1373,7 +1373,7 @@ the old and new saturation totals are compared in the same unit system.*
 
 ```solidity
 function calcTreeRatioBips(
-    SaturationPair[] storage satPairs,
+    Account storage accountData,
     Validation.InputParams memory inputParams,
     uint256 liqSqrtPriceInXInQ72,
     uint256 liqSqrtPriceInYInQ72,
@@ -1385,7 +1385,7 @@ function calcTreeRatioBips(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`satPairs`|`SaturationPair[]`|Storage array of per-tranche saturation pairs for the tree being evaluated.|
+|`accountData`|`Account`|Stored account saturation data for the tree being evaluated.|
 |`inputParams`|`Validation.InputParams`|User asset balances and pool state used to compute the new saturation.|
 |`liqSqrtPriceInXInQ72`|`uint256`|Liquidation sqrt price (upper root) in Q72, for the netDebtX side.|
 |`liqSqrtPriceInYInQ72`|`uint256`|Liquidation sqrt price (lower root) in Q72, for the netDebtY side.|
@@ -1406,15 +1406,17 @@ function calcTreeRatioBips(
 modulo the partial first-tranche adjustment from `calculateEndOfLiquidationAdjustment`).
 Summing them directly would mix units across tranches and undercount the total. The loop
 tracks an inverse Q72 scale factor `bScaleQ72` that rescales each stored sat back into
-tranche-0 units before accumulation; the first iteration also folds in the partial
-first-tranche `endOfLiquidationAdjustmentQ72`, which then resets to `Q72`.*
+tranche-0 units before accumulation. When the current endpoint has drifted from the stored
+`lastTranche`, `trancheShift` keeps the stored array anchored to its original tranches.*
 
 
 ```solidity
 function scaleAndSumSaturation(
     SaturationPair[] storage satPairs,
     int256 endOfLiquidationInTicks,
-    bool netDebtX
+    bool netDebtX,
+    int256 storedLastTranche,
+    int256 currentLastTranche
 ) internal view returns (uint256 oldSatInLAssets);
 ```
 **Parameters**
@@ -1424,6 +1426,8 @@ function scaleAndSumSaturation(
 |`satPairs`|`SaturationPair[]`|Storage array of per-tranche saturation pairs.|
 |`endOfLiquidationInTicks`|`int256`|Tick at which liquidation ends (sets the first-tranche offset).|
 |`netDebtX`|`bool`|True when summing the netDebtX tree; false for the netDebtY tree.|
+|`storedLastTranche`|`int256`|Account tranche anchor when the stored saturation array was written.|
+|`currentLastTranche`|`int256`|Current tranche anchor implied by `endOfLiquidationInTicks`.|
 
 **Returns**
 

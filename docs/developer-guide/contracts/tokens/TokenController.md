@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [InitializablePair](/docs/developer-guide/contracts/proxy/InitializablePair.md), [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.md)
@@ -420,6 +420,28 @@ function computeAssetsState()
 |`protocolFees`|`uint256[3]`|Array of three `uint256` values: Accumulated protocol fees for DEPOSIT_L, DEPOSIT_X, and DEPOSIT_Y (from interest accrual).|
 
 
+### accrueSaturationPenaltiesAndInterest
+
+
+```solidity
+function accrueSaturationPenaltiesAndInterest(
+    address affectedAccount,
+    uint256 minimumTimeBeforeUpdate
+) internal returns (uint256 _reserveXAssets, uint256 _reserveYAssets, uint256 balanceXAssets, uint256 balanceYAssets);
+```
+
+### updateObservation
+
+
+```solidity
+function updateObservation(
+    uint256 _reserveXAssets,
+    uint256 _reserveYAssets,
+    uint32 currentTimestamp,
+    uint32 deltaUpdateTimestamp
+) private;
+```
+
 ### mintPenalties
 
 
@@ -464,7 +486,12 @@ function updateReferenceReserve(
 
 
 ```solidity
-function mintProtocolFees(uint256 tokenType, address feeTo, uint256 protocolFee) internal;
+function mintProtocolFees(
+    uint256 tokenType,
+    address feeTo,
+    uint256 protocolFee,
+    bool feeIncludedInTotalAssets
+) internal;
 ```
 
 ### updateReserves
@@ -533,41 +560,6 @@ function calculateActiveLiquidityAssets(
 |Name|Type|Description|
 |----|----|-----------|
 |`<none>`|`uint256`|The depletion-adjusted active liquidity, i.e. sqrt of the adjusted-reserve product.|
-
-
-### calculateReserveAdjustmentsForMissingAssets
-
-helper method to calculate balance adjustment for missing assets
-
-*In the depleted case the adjusted reserve is `(reserve - missing) * bufferNumerator`,
-matching the `BUFFER_NUMERATOR` scaling applied by `calculateBalanceAfterFees` so the
-K comparison stays division-free.
-For updateObservation, different scaled `buffer` and `bufferNumerator` values
-are supplied so the adjusted reserve reflects observation-specific logic.*
-
-
-```solidity
-function calculateReserveAdjustmentsForMissingAssets(
-    uint256 reserve,
-    uint256 missing,
-    uint256 buffer,
-    uint256 bufferNumerator
-) internal pure returns (uint256 reserveAdjustment);
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`reserve`|`uint256`|the starting reserve|
-|`missing`|`uint256`|the missing assets, zero if deposits > borrows of X or Y|
-|`buffer`|`uint256`| Scaling factor applied to the reserve for the depletion comparison.|
-|`bufferNumerator`|`uint256`| Scaling factor applied to the missing amount for the comparison and for computing the depleted-case adjusted reserve.|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`reserveAdjustment`|`uint256`|The adjusted reserve value used for swap or updateObservation depends on the buffer, bufferNumerator to be passed in.|
 
 
 ### getDepositAndActiveLiquidityAssets
