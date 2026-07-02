@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -102,6 +102,7 @@ function verifyHardLiquidation(
     address pairAddress,
     Validation.InputParams memory inputParams,
     uint256[6] memory proposedLiquidation,
+    uint256 fragileLiquidityAssets,
     address borrower
 ) external view returns (uint256[6] memory partialLiquidation, bool badDebt);
 ```

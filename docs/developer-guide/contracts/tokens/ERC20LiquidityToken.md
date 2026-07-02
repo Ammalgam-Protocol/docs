@@ -1,5 +1,5 @@
 # ERC20LiquidityToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/tokens/ERC20LiquidityToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/tokens/ERC20LiquidityToken.sol)
 
 **Inherits:**
 [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.md)
@@ -17,7 +17,7 @@ constructor(
 
 ### ownerMint
 
-*override [ERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC4626DebtToken.md#ownermint).*
+*override [ERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC4626DepositToken.md#ownermint).*
 
 
 ```solidity
@@ -26,7 +26,7 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override [ERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC4626DebtToken.md#ownerburn).*
+*override [ERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC4626DepositToken.md#ownerburn).*
 
 
 ```solidity

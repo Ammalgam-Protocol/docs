@@ -1,5 +1,5 @@
 # AmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/AmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/AmmalgamPair.sol)
 
 **Inherits:**
 [IAmmalgamPair](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.md), [TokenController](/docs/developer-guide/contracts/tokens/TokenController.md)
@@ -558,28 +558,6 @@ function skim(
 
 ```solidity
 function sync() external virtual lock;
-```
-
-### accrueSaturationPenaltiesAndInterest
-
-
-```solidity
-function accrueSaturationPenaltiesAndInterest(
-    address affectedAccount,
-    uint256 minimumTimeBeforeUpdate
-) private returns (uint256 _reserveXAssets, uint256 _reserveYAssets, uint256 balanceXAssets, uint256 balanceYAssets);
-```
-
-### updateObservation
-
-
-```solidity
-function updateObservation(
-    uint256 _reserveXAssets,
-    uint256 _reserveYAssets,
-    uint32 currentTimestamp,
-    uint32 deltaUpdateTimestamp
-) private;
 ```
 
 ### validateOnUpdate

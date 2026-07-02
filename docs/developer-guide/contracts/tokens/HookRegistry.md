@@ -1,5 +1,5 @@
 # HookRegistry
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/tokens/HookRegistry.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/tokens/HookRegistry.sol)
 
 **Inherits:**
 [IHookRegistry](/docs/developer-guide/contracts/interfaces/tokens/IHookRegistry.md), Ownable

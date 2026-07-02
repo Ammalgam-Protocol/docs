@@ -1,5 +1,5 @@
 # Interest
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/a0b9995bda8dd0ed6d91e1e89a251ac412f67e6e/contracts/libraries/Interest.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/Interest.sol)
 
 This library is used for calculating and accruing interest.
 
@@ -145,6 +145,30 @@ function getReservesAtTick(
 |----|----|-----------|
 |`reserveXAssets`|`uint256`|approximate average reserve since last lending state update.|
 |`reserveYAssets`|`uint256`|approximate average reserve since last lending state update.|
+
+
+### missingAssetsInReserve
+
+Reserve tokens borrowed out beyond the single-sided deposit, i.e. `max(borrow, deposit) - deposit`.
+
+
+```solidity
+function missingAssetsInReserve(
+    uint112[6] memory startingAssets
+) private pure returns (uint256 missingXAssets, uint256 missingYAssets);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`startingAssets`|`uint112[6]`|Asset balances indexed by token type.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`missingXAssets`|`uint256`|Reserve X borrowed beyond the X deposit.|
+|`missingYAssets`|`uint256`|Reserve Y borrowed beyond the Y deposit.|
 
 
 ### getUtilizationsInWads
