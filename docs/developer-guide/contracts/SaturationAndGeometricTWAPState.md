@@ -1,5 +1,5 @@
 # SaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/SaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/SaturationAndGeometricTWAPState.sol)
 
 **Inherits:**
 Initializable, [ISaturationAndGeometricTWAPState](/docs/developer-guide/contracts/interfaces/ISaturationAndGeometricTWAPState.md), OwnableUpgradeable
@@ -59,6 +59,13 @@ mapping(address => bool) internal isPairInitialized;
 
 ```solidity
 mapping(address => PriceExtremes.State) internal priceExtremesGivenPair;
+```
+
+
+### lastActiveLiquidityAssets
+
+```solidity
+mapping(address => uint256) internal lastActiveLiquidityAssets;
 ```
 
 
@@ -144,7 +151,7 @@ function getTrancheDetails(
     address pairAddress,
     bool netDebtX,
     int16 tranche
-) external view returns (uint16 leaf, Saturation.SaturationPair memory saturation);
+) external view returns (uint16 leaf, Saturation.SaturationPair memory saturation, int256 penaltyAdjustment);
 ```
 
 ### getAccount
@@ -164,7 +171,7 @@ Check if an account exists in either netX or netY saturation tree
 
 
 ```solidity
-function accountExistsInSaturation(address pairAddress, address accountAddress) external view returns (bool exists);
+function accountExistsInSaturation(address pairAddress, address accountAddress) public view returns (bool exists);
 ```
 **Parameters**
 
@@ -179,17 +186,6 @@ function accountExistsInSaturation(address pairAddress, address accountAddress) 
 |----|----|-----------|
 |`exists`|`bool`|True if the account exists in either tree|
 
-
-### _accountExistsInSaturation
-
-Internal sibling of `accountExistsInSaturation` so callers within this contract
-can check tree membership without paying the external-call overhead or making the
-getter `public`.
-
-
-```solidity
-function _accountExistsInSaturation(address pairAddress, address accountAddress) private view returns (bool exists);
-```
 
 ### update
 
@@ -363,14 +359,17 @@ provided block timestamp is less than or equal to the last recorded timestamp.*
 
 
 ```solidity
-function recordObservation(int16 newTick, uint32 timeElapsed) public virtual isInitialized returns (bool);
+function recordObservation(
+    int16 newTick,
+    uint32 timeElapsedSinceLendingUpdate
+) public virtual isInitialized returns (bool);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`newTick`|`int16`|The new tick value to be recorded, representing the most recent update of reserveXAssets and reserveYAssets.|
-|`timeElapsed`|`uint32`|The time elapsed since the last observation.|
+|`timeElapsedSinceLendingUpdate`|`uint32`|The time elapsed since the last lending update.|
 
 **Returns**
 
@@ -416,7 +415,7 @@ function getTickRange(
 
 Gets the tick value representing the TWAP since the last
 lending update and checkpoints the current lending cumulative sum
-as `self.lendingCumulativeSum` and the current block timestamp as `self.lastLendingTimestamp`.
+as `self.lendingCumulativeSum`. The calling pair checkpoints its lending timestamp.
 
 *See `getLendingStateTick` for implementation details which was
 separated to allow view access without any state updates.*
@@ -449,8 +448,16 @@ function getLendingStateTickAndCheckpoint(
 
 
 ```solidity
-function getObservedMidTermTick() external view returns (int16);
+function getObservedMidTermTick(
+    address pairAddress
+) external view returns (int16);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The pair whose observations should be used.|
+
 **Returns**
 
 |Name|Type|Description|

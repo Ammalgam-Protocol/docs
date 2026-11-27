@@ -1,5 +1,5 @@
 # Saturation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/Saturation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/libraries/Saturation.sol)
 
 **Authors:**
 imi@1m1.io, Will duelingGalois@protonmail.com
@@ -182,26 +182,22 @@ uint256 internal constant EXPECTED_SATURATION_LTV_PLUS_ONE_MAG2 = 185;
 ```
 
 
-### SAT_RESET_FOR_STRADDLE_SLOPE_BIPS
-Slope for calculating premium when resetting saturation for straddle positions
-where $$L^2 < X \cdot Y$$ transitions to $$L^2 > X \cdot Y$$. Applied to
-$$(L^{2} - X \cdot Y) / (X \cdot Y)$$ to produce `premiumBips`. Matches the
-Desmos coefficient $$\frac{BIPS}{10} \cdot 100 = 100000$$. At
-$$L^{2} = 1.02 \cdot X \cdot Y$$ the raw premium evaluates to
-`MAX_SAT_RESET_FOR_STRADDLE_PREMIUM_BIPS`; past that point the cap engages.
+### ZERO_TO_POSITIVE_SATURATION_SLOPE_BIPS
+Premium bips added for each `activeLiquidityAssets / BIPS` of new saturation when
+resetting a position that previously had no saturation.
 
 
 ```solidity
-uint256 internal constant SAT_RESET_FOR_STRADDLE_SLOPE_BIPS = 100_000;
+uint256 internal constant ZERO_TO_POSITIVE_SATURATION_SLOPE_BIPS = 20;
 ```
 
 
-### MAX_SAT_RESET_FOR_STRADDLE_PREMIUM_BIPS
-Maximum premium when resetting saturation for zero-to-positive straddle positions.
+### MAX_ZERO_TO_POSITIVE_SATURATION_PREMIUM_BIPS
+Maximum premium when resetting a position from zero to positive saturation.
 
 
 ```solidity
-uint256 internal constant MAX_SAT_RESET_FOR_STRADDLE_PREMIUM_BIPS = 2000;
+uint256 internal constant MAX_ZERO_TO_POSITIVE_SATURATION_PREMIUM_BIPS = 2000;
 ```
 
 
@@ -709,7 +705,6 @@ parameters.
 ```solidity
 function getAddSatToTrancheStateUpdatesParams(
     Tree storage tree,
-    address account,
     int256 tranche,
     SaturationPair memory newSaturation,
     uint256 activeLiquidityInLAssets,
@@ -722,7 +717,6 @@ function getAddSatToTrancheStateUpdatesParams(
 |Name|Type|Description|
 |----|----|-----------|
 |`tree`|`Tree`|that is being read from or written to|
-|`account`|`address`|whose position is being considered|
 |`tranche`|`int256`|under consideration|
 |`newSaturation`|`SaturationPair`|the saturation values to add|
 |`activeLiquidityInLAssets`|`uint256`|of the pair|
@@ -978,8 +972,7 @@ function calcNewAccountPenalty(
     Tree storage tree,
     uint256 leaf,
     uint256 accountSatInTrancheInLAssets,
-    address account,
-    uint256 trancheIndex,
+    uint256 accountTreePenaltyAtOnsetInBorrowLSharesPerSatInQ72,
     int256 tranche
 ) private view returns (uint256 penaltyInBorrowLShares, uint256 accountTreePenaltyInBorrowLSharesPerSatInQ72);
 ```
@@ -990,8 +983,7 @@ function calcNewAccountPenalty(
 |`tree`|`Tree`|that is being read from or written to|
 |`leaf`|`uint256`| the leaf that the tranche belongs to|
 |`accountSatInTrancheInLAssets`|`uint256`| the sat of the account in the tranche|
-|`account`|`address`| whose position is being considered|
-|`trancheIndex`|`uint256`| the index of the tranche that is being added to|
+|`accountTreePenaltyAtOnsetInBorrowLSharesPerSatInQ72`|`uint256`|account penalty checkpoint|
 |`tranche`|`int256`||
 
 **Returns**
@@ -1302,8 +1294,49 @@ function calcLiqSqrtPriceQ72(
 
 ### calcLiqSqrtPriceQ72HandleAllABCNonZero
 
-calc liq price when the quadratic has all 3 terms, netY,netL,netX, i.e. X, Y, L are
-all significant
+Calc liq price when the quadratic has all 3 terms, netY, netL, netX, i.e. X, Y, L
+are all significant.
+Roots are not from the naive form of the quadratic formula. We use Fix 1 from
+Lomont,
+[A better quadratic formula algorithm](https://lomont.org/posts/2022/a-better-quadratic-formula-algorithm/):
+rewrite the cancellation-prone root via the conjugate so one root uses the sum
+$$|netL| + \sqrt{radical}$$ and the other uses $$2|netX|$$ over that sum.
+```math
+\begin{align*}
+r_{diff}
+&= \frac{\left| |netL| - \sqrt{radical} \right|}{2|netY|}
+\\
+&= \frac{\left| |netL| - \sqrt{radical} \right|}{2|netY|}
+\cdot \frac{|netL| + \sqrt{radical}}{|netL| + \sqrt{radical}}
+\\
+&= \frac{\left| |netL|^{2} - radical \right|}{2|netY|\left(|netL| + \sqrt{radical}\right)}
+\\
+&= \frac{\left| |netL|^{2} - \bigl(netL^{2} - 4\,netY\cdot netX\bigr) \right|}
+{2|netY|\left(|netL| + \sqrt{radical}\right)}
+\\
+&= \frac{4|netY\cdot netX|}{2|netY|\left(|netL| + \sqrt{radical}\right)}
+\\
+&= \frac{2|netX|}{|netL| + \sqrt{radical}}
+\end{align*}
+```
+The numerator is an exact product and the denominator is a sum, so no cancellation is
+possible. The sum magnitude $$|netL| + \sqrt{radical}$$ is exact as-is. Which of
+plus/minus carries the difference depends on the sign of $$netL$$:
+```math
+\begin{align*}
+netL > 0 &\colon
++\text{ numerator } = netL + \sqrt{radical} \text{ (sum)}, \\
+&\phantom{\colon}
+-\text{ numerator } = netL - \sqrt{radical} \text{ (difference)}
+\\
+netL < 0 &\colon
++\text{ numerator } = netL + \sqrt{radical}
+= \sqrt{radical} - |netL| \text{ (difference)}, \\
+&\phantom{\colon}
+-\text{ numerator } = netL - \sqrt{radical}
+= -(|netL| + \sqrt{radical}) \text{ (sum)}
+\end{align*}
+```
 
 
 ```solidity
@@ -1436,43 +1469,53 @@ function scaleAndSumSaturation(
 |`oldSatInLAssets`|`uint256`|Total saturation in tranche-0 (L-asset) units.|
 
 
-### calcStraddlePremiumRatioBips
+### calcZeroToPositiveSaturationRatioBips
 
-Calculate the ratio bips for a straddle position transitioning from zero to positive saturation.
-Let $$S$$ be `SAT_RESET_FOR_STRADDLE_SLOPE_BIPS`, the slope that controls how quickly the
-straddle reset premium increases once $$L^2 > X \cdot Y$$.
-Let $$P_{max}$$ be `MAX_SAT_RESET_FOR_STRADDLE_PREMIUM_BIPS`, the maximum premium allowed for
-this zero-to-positive straddle reset path.
-```math
-premiumBips = \min\left(
-P_{max},
-\left\lceil\frac{(L^2 - X \cdot Y) \cdot S}{X \cdot Y}\right\rceil
-\right)
-```
-The ratioBips encodes premium for downstream consumption:
-```math
-\text{ratioBips} = \text{premiumBips} \cdot \text{MAG1} + \text{BIPS}
-```
-and premium is recovered as: `(ratioBips - BIPS) / MAG1`.
+Calculate the premium ratio for a position transitioning from zero to positive saturation.
+
+*The conceptual reference saturation is `activeLiquidityAssets / BIPS`. Combining that
+division with the slope avoids a zero intermediate reference for small pools:
+`premiumBips = min(2000, ceil(newSatInLAssets * 20 * BIPS / activeLiquidityAssets))`.
+The returned growth ratio encodes that raw premium for the shared downstream conversion:
+`premiumBips = (ratioBips - BIPS) / MAG1`. The premium must be rounded before it is
+magnified so every positive saturation produces at least one premium bip.
+The downstream net-equity adjustment remains responsible for reducing this raw premium.*
 
 
 ```solidity
-function calcStraddlePremiumRatioBips(
-    uint256[6] memory userAssets
-) private pure returns (uint256 ratioBips);
+function calcZeroToPositiveSaturationRatioBips(
+    uint256 newSatInLAssets,
+    uint256 activeLiquidityAssets
+) internal pure returns (uint256 ratioBips);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`userAssets`|`uint256[6]`|The user's position parameters.|
+|`newSatInLAssets`|`uint256`|New effective saturation in tranche-0 L-asset units.|
+|`activeLiquidityAssets`|`uint256`|Active liquidity after the caller's fragile-liquidity adjustment.|
 
 **Returns**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`ratioBips`|`uint256`|The ratio in bips, or 0 if $$L^2 <= X \cdot Y$$.|
+|`ratioBips`|`uint256`|Encoded premium ratio, or zero when active liquidity is zero.|
 
+
+### isWrongSideLiquidation
+
+Whether this side's liquidation point is unreachable from the current price before
+the opposite side liquidates.
+
+
+```solidity
+function isWrongSideLiquidation(
+    Validation.InputParams memory inputParams,
+    uint256 netXLiqSqrtPriceInXInQ72,
+    uint256 netYLiqSqrtPriceInXInQ72,
+    bool netDebtX
+) internal pure returns (bool);
+```
 
 ### calculateEndOfLiquidationAdjustment
 
@@ -1580,14 +1623,10 @@ function satToLeaf(
 
 calc how much sat can be added to a tranche such that it is healthy.
 With `newSaturationRelativeToLAssets` as `newSat` and
-`currentTrancheSatRelativeToLAssets` as `currentSat`, the return values are:
+`currentTrancheSatRelativeToLAssets` as `currentSat`, the return value is:
 ```math
 satAvailable = min(newSat, max(trancheSat, currentSat) - currentSat)
 ```
-```math
-target = min(trancheSat, newSat)
-```
-Therefore `target >= satAvailable` and `newSat >= target`.
 
 
 ```solidity
@@ -1597,7 +1636,7 @@ function calcSatAvailableToAddToTranche(
     uint128 currentTrancheSatRelativeToLAssets,
     uint256 userSaturationRatioMAG2,
     uint256 usableTicks
-) internal pure returns (uint128 satAvailableToAddRelativeToLAssets, uint256 targetCapacityRelativeToLAssets);
+) internal pure returns (uint128 satAvailableToAddRelativeToLAssets);
 ```
 **Parameters**
 
@@ -1614,7 +1653,6 @@ function calcSatAvailableToAddToTranche(
 |Name|Type|Description|
 |----|----|-----------|
 |`satAvailableToAddRelativeToLAssets`|`uint128`| considering the `currentTrancheSatRelativeToLAssets` and the max a tranche can have|
-|`targetCapacityRelativeToLAssets`|`uint256`||
 
 
 ### calcLastTickAndSaturation
@@ -1891,6 +1929,25 @@ function calcSaturationPenaltyRatePerSecondInWads(
 |`penaltyRatePerSecondInWads`|`uint256`|The penalty rate per second in WADs|
 
 
+## Events
+### SaturationUpdated
+Emitted after an account's saturation allocation changes in one tree.
+
+*`pair` is the calling pair whose tree changed. Entries start at `lastTranche` and follow the tree
+direction. An empty array indicates removal, with `lastTranche` retaining the removed allocation's
+starting tranche.*
+
+
+```solidity
+event SaturationUpdated(
+    address indexed pair,
+    address indexed account,
+    bool indexed netDebtX,
+    int16 lastTranche,
+    SaturationPair[] saturationPerTranche
+);
+```
+
 ## Errors
 ### MaxTrancheOverSaturated
 if the largest sat in the trees is too large
@@ -2003,8 +2060,6 @@ struct AddSatToTrancheStateUpdatesStruct {
     SaturationPair oldTrancheSaturation;
     SaturationPair newTrancheSaturation;
     SaturationPair satAvailableToAdd;
-    uint256 targetCapacityRelativeToLAssets;
-    address account;
 }
 ```
 

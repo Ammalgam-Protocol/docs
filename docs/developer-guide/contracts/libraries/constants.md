@@ -1,5 +1,5 @@
 # Constants
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/constants.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/libraries/constants.sol)
 
 ### B_IN_Q72
 *This basis was a modification to Uniswap V3's basis, to fit ticks into int16 instead of
@@ -273,7 +273,7 @@ respect to the price change.*
 
 
 ```solidity
-uint256 constant N_TIMES_FEE = 20;
+uint256 constant N_TIMES_FEE = 40;
 ```
 
 ### MAG1
@@ -343,7 +343,7 @@ uint256 constant SAT_PERCENTAGE_DELTA_DEFAULT_WAD = 95e16;
 ### LIQUIDITY_INTEREST_RATE_MAGNIFICATION
 
 ```solidity
-uint256 constant LIQUIDITY_INTEREST_RATE_MAGNIFICATION = 5;
+uint256 constant LIQUIDITY_INTEREST_RATE_MAGNIFICATION = 2;
 ```
 
 ### MAX_SATURATION_PERCENT_IN_WAD

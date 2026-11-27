@@ -1,18 +1,18 @@
 # Convert
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/Convert.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/libraries/Convert.sol)
 
 
 ## Functions
 ### toLiquidityAssets
 
+Converts deposit L-assets into reserve X/Y-assets for a burn payout.
+
 
 ```solidity
 function toLiquidityAssets(
-    uint256 liquidityShares,
+    uint256 liquidityAssets,
     uint256 reservesAssets,
-    uint256 activeLiquidityAssets,
-    uint256 depositLiquidityAssets,
-    uint256 depositLiquidityShares
+    uint256 activeLiquidityAssets
 ) internal pure returns (uint256);
 ```
 

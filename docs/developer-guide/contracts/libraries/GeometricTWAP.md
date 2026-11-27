@@ -1,5 +1,5 @@
 # GeometricTWAP
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/GeometricTWAP.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/libraries/GeometricTWAP.sol)
 
 
 ## State Variables
@@ -119,7 +119,7 @@ provided block timestamp is less than or equal to the last recorded timestamp.*
 function recordObservation(
     Observations storage self,
     int16 newTick,
-    uint32 timeElapsed
+    uint32 timeElapsedSinceLendingUpdate
 ) internal returns (bool updated);
 ```
 **Parameters**
@@ -128,7 +128,7 @@ function recordObservation(
 |----|----|-----------|
 |`self`|`Observations`|The storage structure containing observation data.|
 |`newTick`|`int16`|The new tick value to be recorded, representing the most recent update of reserveXAssets and reserveYAssets.|
-|`timeElapsed`|`uint32`|The time elapsed since the last observation.|
+|`timeElapsedSinceLendingUpdate`|`uint32`|The time elapsed since the last lending update.|
 
 **Returns**
 
@@ -318,7 +318,7 @@ function getNextIndex(uint256 currentIndex, uint256 indexLength) private pure re
 
 Gets the tick value representing the TWAP since the last
 lending update and checkpoints the current lending cumulative sum
-as `self.lendingCumulativeSum` and the current block timestamp as `self.lastLendingTimestamp`.
+as `self.lendingCumulativeSum`. The caller checkpoints its lending timestamp.
 
 *See `getLendingStateTick` for implementation details which was
 separated to allow view access without any state updates.*

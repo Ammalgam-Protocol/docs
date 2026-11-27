@@ -1,5 +1,5 @@
 # Interest
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/Interest.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/libraries/Interest.sol)
 
 This library is used for calculating and accruing interest.
 
@@ -12,7 +12,7 @@ current assets.*
 ### OPTIMAL_UTILIZATION
 
 ```solidity
-uint256 internal constant OPTIMAL_UTILIZATION = 0.8e18;
+uint256 internal constant OPTIMAL_UTILIZATION = 0.7e18;
 ```
 
 
@@ -26,35 +26,35 @@ uint256 internal constant DANGER_UTILIZATION = 0.925e18;
 ### SLOPE1
 
 ```solidity
-uint256 internal constant SLOPE1 = 0.1e18;
+uint256 internal constant SLOPE1 = 0.014285714285714285e18;
 ```
 
 
 ### SLOPE2
 
 ```solidity
-uint256 internal constant SLOPE2 = 2e18;
+uint256 internal constant SLOPE2 = 0.95e18;
 ```
 
 
 ### SLOPE3
 
 ```solidity
-uint256 internal constant SLOPE3 = 20e18;
+uint256 internal constant SLOPE3 = 18e18;
 ```
 
 
 ### BASE_OPTIMAL_UTILIZATION
 
 ```solidity
-uint256 internal constant BASE_OPTIMAL_UTILIZATION = 0.08e18;
+uint256 internal constant BASE_OPTIMAL_UTILIZATION = 0.01e18;
 ```
 
 
 ### BASE_DANGER_UTILIZATION
 
 ```solidity
-uint256 internal constant BASE_DANGER_UTILIZATION = 0.33e18;
+uint256 internal constant BASE_DANGER_UTILIZATION = 0.22375e18;
 ```
 
 
@@ -76,13 +76,6 @@ uint256 private constant MAX_UINT112 = type(uint112).max;
 
 ```solidity
 uint256 private constant LAST_DEPOSIT = 2;
-```
-
-
-### NO_RESERVES_FOR_L
-
-```solidity
-uint256 private constant NO_RESERVES_FOR_L = 0;
 ```
 
 
@@ -201,6 +194,20 @@ function accrueInterestWithAssets(
     );
 ```
 
+### capLInterestAndUpdateAssets
+
+
+```solidity
+function capLInterestAndUpdateAssets(
+    uint112[6] memory startingAssets,
+    uint112[6] memory newAssets,
+    AccrueInterestParams memory params,
+    uint256 interestXPortionForLP,
+    uint256 interestYPortionForLP,
+    uint256[3] memory protocolFeeAssets
+) private pure returns (uint256, uint256);
+```
+
 ### getUtilizationInWads
 
 
@@ -236,17 +243,15 @@ function mutateUtilizationForSaturation(uint256 utilization, uint256 maxSatInWad
 |`<none>`|`uint256`|The adjusted utilization value|
 
 
-### computeInterestAssets
+### computeInterestAssetSet
 
 
 ```solidity
-function computeInterestAssets(
-    uint256 duration,
-    uint256 utilization,
-    uint256 reserveAssets,
-    uint256 borrowedAssets,
-    uint256 depositedAssets
-) internal pure returns (uint256);
+function computeInterestAssetSet(
+    AccrueInterestParams memory params,
+    uint112[6] memory startingAssets,
+    uint256[3] memory utilizationsInWads
+) internal pure returns (uint256[3] memory interestAssetSet);
 ```
 
 ### computeInterestAssetsGivenRate

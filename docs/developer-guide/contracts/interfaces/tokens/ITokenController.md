@@ -1,5 +1,5 @@
 # ITokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/interfaces/tokens/ITokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/interfaces/tokens/ITokenController.sol)
 
 The interface of a ERC20 facade for multiple token types with functionality similar to ERC1155.
 
@@ -25,11 +25,17 @@ function underlyingTokens() external view returns (IERC20, IERC20);
 
 ### getReserves
 
-Fetches the current reserves and the last update timestamp.
+Fetches the reserves a swap would execute against and the last interest accrual timestamp.
+
+*Reserves include unaccrued interest once `INTEREST_PERIOD_FOR_SWAP` has elapsed since
+`lastLendingTimestamp`, matching the interest a swap accrues before pricing.*
 
 
 ```solidity
-function getReserves() external view returns (uint112 reserveXAssets, uint112 reserveYAssets, uint32 lastTimestamp);
+function getReserves()
+    external
+    view
+    returns (uint112 reserveXAssets, uint112 reserveYAssets, uint32 lastLendingTimestamp);
 ```
 **Returns**
 
@@ -37,7 +43,7 @@ function getReserves() external view returns (uint112 reserveXAssets, uint112 re
 |----|----|-----------|
 |`reserveXAssets`|`uint112`|The raw reserveX or reserveX plus unaccrued interest.|
 |`reserveYAssets`|`uint112`|The raw reserveY or reserveY plus unaccrued interest.|
-|`lastTimestamp`|`uint32`|The timestamp of the last operation.|
+|`lastLendingTimestamp`|`uint32`|The timestamp of the last interest accrual.|
 
 
 ### externalLiquidity

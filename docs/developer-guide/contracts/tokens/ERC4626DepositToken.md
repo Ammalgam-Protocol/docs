@@ -1,5 +1,5 @@
 # ERC4626DepositToken
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/tokens/ERC4626DepositToken.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/tokens/ERC4626DepositToken.sol)
 
 **Inherits:**
 ERC4626, [ERC20Base](/docs/developer-guide/contracts/tokens/ERC20Base.md)
@@ -15,7 +15,7 @@ constructor(ERC20BaseConfig memory config, address _asset) ERC4626(IERC20(_asset
 
 ### ownerMint
 
-*override `ERC20Base-ownerMint`.*
+*override [ERC20Base-ownerMint](/docs/developer-guide/contracts/tokens/ERC20LiquidityToken.md#ownermint).*
 
 
 ```solidity
@@ -33,7 +33,7 @@ function ownerMint(address sender, address to, uint256 assets, uint256 shares) p
 
 ### ownerBurn
 
-*override `ERC20Base-ownerBurn`.*
+*override [ERC20Base-ownerBurn](/docs/developer-guide/contracts/tokens/ERC20LiquidityToken.md#ownerburn).*
 
 
 ```solidity
@@ -51,7 +51,7 @@ function ownerBurn(address sender, address to, uint256 assets, uint256 shares) p
 
 ### _deposit
 
-*ERC4626 facade for IAmmalgamPair-deposit.
+*ERC4626 facade for [IAmmalgamPair-deposit](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.md#deposit).
 both deposit and mint calls _deposit*
 
 
@@ -61,12 +61,18 @@ function _deposit(address caller, address receiver, uint256 assets, uint256) int
 
 ### _withdraw
 
-*ERC4626 facade for IAmmalgamPair-withdraw.
+*ERC4626 facade for [IAmmalgamPair-withdraw](/docs/developer-guide/contracts/proxy/PairLockedLoans.md#withdraw).
 both withdraw and redeem calls _withdraw*
 
 
 ```solidity
-function _withdraw(address caller, address receiver, address, uint256, uint256 shares) internal virtual override;
+function _withdraw(
+    address caller,
+    address receiver,
+    address owner,
+    uint256,
+    uint256 shares
+) internal virtual override;
 ```
 
 ### _update
