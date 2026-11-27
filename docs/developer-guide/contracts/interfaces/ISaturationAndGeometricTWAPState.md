@@ -1,5 +1,5 @@
 # ISaturationAndGeometricTWAPState
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/interfaces/ISaturationAndGeometricTWAPState.sol)
 
 
 ## Functions
@@ -85,7 +85,7 @@ function getTrancheDetails(
     address pairAddress,
     bool netDebtX,
     int16 tranche
-) external view returns (uint16 leaf, Saturation.SaturationPair memory saturation);
+) external view returns (uint16 leaf, Saturation.SaturationPair memory saturation, int256 penaltyAdjustment);
 ```
 
 ### getAccount
@@ -241,14 +241,14 @@ provided block timestamp is less than or equal to the last recorded timestamp.*
 
 
 ```solidity
-function recordObservation(int16 newTick, uint32 timeElapsed) external returns (bool);
+function recordObservation(int16 newTick, uint32 timeElapsedSinceLendingUpdate) external returns (bool);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`newTick`|`int16`|The new tick value to be recorded, representing the most recent update of reserveXAssets and reserveYAssets.|
-|`timeElapsed`|`uint32`|The time elapsed since the last observation.|
+|`timeElapsedSinceLendingUpdate`|`uint32`|The time elapsed since the last lending update.|
 
 
 ### getTickRange
@@ -288,7 +288,7 @@ function getTickRange(
 
 Gets the tick value representing the TWAP since the last
 lending update and checkpoints the current lending cumulative sum
-as `self.lendingCumulativeSum` and the current block timestamp as `self.lastLendingTimestamp`.
+as `self.lendingCumulativeSum`. The calling pair checkpoints its lending timestamp.
 
 *See `getLendingStateTick` for implementation details which was
 separated to allow view access without any state updates.*
@@ -321,8 +321,16 @@ function getLendingStateTickAndCheckpoint(
 
 
 ```solidity
-function getObservedMidTermTick() external view returns (int16 midTermTick);
+function getObservedMidTermTick(
+    address pairAddress
+) external view returns (int16 midTermTick);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pairAddress`|`address`|The pair whose observations should be used.|
+
 **Returns**
 
 |Name|Type|Description|

@@ -1,5 +1,5 @@
 # Liquidation
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/Liquidation.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/libraries/Liquidation.sol)
 
 
 ## State Variables
@@ -93,43 +93,256 @@ uint256 internal constant LEVERAGE = 2;
 
 
 ## Functions
-### verifyHardLiquidation
+### calculateHardLiquidation
+
+Computes the hard-liquidation mutation for the borrower's first tranche.
+
+*The selected side determines the saturation tree, and tranche size is always the first
+stored saturation tranche for that side. Repayment sufficiency is checked against the
+computed debt slice after this mutation is calculated.*
 
 
 ```solidity
-function verifyHardLiquidation(
+function calculateHardLiquidation(
     ISaturationAndGeometricTWAPState saturationState,
     address pairAddress,
     Validation.InputParams memory inputParams,
-    uint256[6] memory proposedLiquidation,
     uint256 fragileLiquidityAssets,
     address borrower
 ) external view returns (uint256[6] memory partialLiquidation, bool badDebt);
 ```
+**Parameters**
 
-### checkHardPremiums
+|Name|Type|Description|
+|----|----|-----------|
+|`saturationState`|`ISaturationAndGeometricTWAPState`|The saturation state used to fetch the borrower's selected side.|
+|`pairAddress`|`address`|The pair address whose saturation tree stores the borrower.|
+|`inputParams`|`Validation.InputParams`|The borrower's full position, reserves, active liquidity, and TWAP bounds.|
+|`fragileLiquidityAssets`|`uint256`|Active liquidity excluded from tranche scaling.|
+|`borrower`|`address`|The account being liquidated.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`partialLiquidation`|`uint256[6]`|Executed debt repayment and collateral seizure amounts.|
+|`badDebt`|`bool`|Whether the liquidation exhausts collateral and burns remaining debt.|
+
+
+### applyHardPremiumToFirstTranche
+
+Applies the hard-liquidation premium to a first-tranche debt slice.
+
+*Non-bad-debt liquidations repay the first-tranche debt and scale collateral up or down
+to the allowed premium. Bad-debt liquidations seize all collateral and scale debt repayment
+down to the minimum that still satisfies the premium cap. For non-bad debt, all terms are
+valued in L. The premium path calls `getCheckLtvParams` with the min and max TWAP bounds
+swapped. The math below uses `sqrtPriceMin` and `sqrtPriceMax` for the original lower
+and upper bounds, respectively. For `netDebtX == true`, the L-valued token legs are:
+```math
+\begin{aligned}
+D_L &= DEPOSIT\_L \\
+D_{LX} &= \frac{DEPOSIT\_X}{\sqrt{P_{min}}} \\
+D_{LY} &= DEPOSIT\_Y \cdot \sqrt{P_{max}} \\
+B_L &= BORROW\_L \\
+B_{LX} &= \frac{BORROW\_X}{\sqrt{P_{max}}} \\
+B_{LY} &= BORROW\_Y \cdot \sqrt{P_{min}}
+\end{aligned}
+```
+Below `MAX_PREMIUM_IN_BIPS`, the non-bad-debt path keeps the first-tranche selected-side
+direct deposit fixed and scales the collateral deposits by `w`. `DEPOSIT_L` is part of
+both selected deposits and opposite deposits, so scaling it changes both the debt and
+collateral sides. `BORROW_L` is likewise part of both selected borrows and opposite
+borrows. For `netDebtX == false`, swap X and Y. The code stores the allowed premium in
+bips; the equations below use `premium` as the normalized collateral/debt ratio. For
+`netDebtX == true`, the legacy collateral scale `w` is solved directly:
+```math
+\begin{aligned*}
+debt(w) &= (B_L + B_{LX}) - (w \cdot D_L + D_{LX}) \\
+collateral(w) &= w \cdot (D_L + D_{LY}) - (B_L + B_{LY})
+\end{aligned*}
+```
+Requiring the collateral/debt ratio to equal `premium`:
+```math
+\frac{collateral(w)}{debt(w)} = premium
+```
+gives:
+```math
+w =
+\frac{
+premium \cdot \left((B_L + B_{LX}) - D_{LX}\right) + B_L + B_{LY}
+}{
+D_L + D_{LY} + premium \cdot D_L
+}
+```
+At or above `MAX_PREMIUM_IN_BIPS`, when the raw first-tranche collateral is at or below the
+requested payout, every deposit expands from its first-tranche amount `T_i` toward its
+full amount `U_i` by one fraction `t`. Let `debt_0` and `collateral_0` be the first-tranche
+values and let `deltaSelected` and `deltaOpposite` be the unused deposit headroom in the
+two oriented L-valued buckets:
+```math
+t = \frac{
+premium \cdot debt_0 - collateral_0
+}{
+deltaOpposite + premium \cdot deltaSelected
+},
+\qquad deposit_i = T_i + t(U_i-T_i)
+```
+If all deposits cannot support the first-tranche debt at the allowed premium, the existing
+bad-debt branch seizes all deposits and scales the borrower's full debt vector.*
 
 
 ```solidity
-function checkHardPremiums(
-    uint256 repaidDebtInL,
-    uint256 seizedCollateralValueInL,
-    uint256 maxAllowedPremiumBips
-) internal pure;
+function applyHardPremiumToFirstTranche(
+    Validation.InputParams memory inputParams,
+    uint256[6] memory firstTranche,
+    uint256 maxAllowedPremiumBips,
+    uint256 debtInL,
+    uint256 firstCollateralInL,
+    bool netDebtX
+) internal pure returns (uint256[6] memory liquidation, bool badDebt);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`inputParams`|`Validation.InputParams`|The borrower's full position and TWAP bounds.|
+|`firstTranche`|`uint256[6]`|The first-tranche position selected from saturation state.|
+|`maxAllowedPremiumBips`|`uint256`|Maximum collateral/debt ratio allowed for this liquidation.|
+|`debtInL`|`uint256`|First-tranche net debt valued in L assets.|
+|`firstCollateralInL`|`uint256`|First-tranche net collateral valued in L assets.|
+|`netDebtX`|`bool`|True when the first tranche has net X-side debt.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`liquidation`|`uint256[6]`|Executed debt repayment and collateral seizure amounts.|
+|`badDebt`|`bool`|Whether the liquidation exhausts collateral and burns remaining debt.|
+
+
+### scaleBadDebtDebtFromFullCollateral
+
+Scales debt repayment when hard liquidation seizes all available collateral.
+
+*Preserves the existing selected-side scaling below `MAX_PREMIUM_IN_BIPS`. At or above
+that boundary, applies one full-position repayment fraction to `BORROW_L`, `BORROW_X`, and
+`BORROW_Y`. Since `BORROW_L` contributes to both oriented borrow buckets, its coefficient
+in the full-position denominator is `BIPS + maxAllowedPremiumBips`. Repayment rounds up.*
+
+
+```solidity
+function scaleBadDebtDebtFromFullCollateral(
+    Validation.InputParams memory inputParams,
+    uint256[6] memory firstTranche,
+    uint256[6] memory liquidation,
+    HardPremiumBuckets memory buckets,
+    uint256 maxAllowedPremiumBips,
+    bool netDebtX
+) private pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`inputParams`|`Validation.InputParams`|The borrower's full position and TWAP bounds.|
+|`firstTranche`|`uint256[6]`|The first-tranche debt ceiling used by the legacy premium region.|
+|`liquidation`|`uint256[6]`|Full-collateral liquidation vector, mutated with scaled debt repayment.|
+|`buckets`|`HardPremiumBuckets`|Maximum-collateral buckets containing first-tranche debts.|
+|`maxAllowedPremiumBips`|`uint256`|Maximum collateral/debt ratio allowed for this liquidation.|
+|`netDebtX`|`bool`|True when the selected debt side is X.|
+
+
+### hardPremiumBuckets
+
+Orients full-collateral LTV values around the selected hard-liquidation side.
+
+
+```solidity
+function hardPremiumBuckets(
+    Validation.CheckLtvParams memory checkLtvParams,
+    bool netDebtX
+) private pure returns (HardPremiumBuckets memory buckets);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`checkLtvParams`|`Validation.CheckLtvParams`|Full-collateral LTV values using liquidation price ordering.|
+|`netDebtX`|`bool`|True when X is the selected debt side; false when Y is selected.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`buckets`|`HardPremiumBuckets`|Selected/opposite deposit and borrow values in L assets.|
+
 
 ### calculateNetDebtAndSeizedDeposits
+
+Values a liquidation vector as net repaid debt and net seized collateral in L terms.
+
+*Min and max prices are swapped before LTV netting to value borrows conservatively and
+deposits favorably for the borrower.*
 
 
 ```solidity
 function calculateNetDebtAndSeizedDeposits(
-    uint256[6] memory proposedLiquidation,
+    uint256[6] memory liquidation,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
 ) internal pure returns (uint256 netDebtInLAssets, uint256 netCollateralInLAssets, bool netDebtX);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`liquidation`|`uint256[6]`|Liquidation vector indexed by token type.|
+|`sqrtPriceMinInQ72`|`uint256`|Lower TWAP price bound.|
+|`sqrtPriceMaxInQ72`|`uint256`|Upper TWAP price bound.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`netDebtInLAssets`|`uint256`|Net debt repaid by the liquidation, valued in L assets.|
+|`netCollateralInLAssets`|`uint256`|Net collateral seized by the liquidation, valued in L assets.|
+|`netDebtX`|`bool`|True when the vector has net X-side debt.|
+
+
+### selectHardLiquidationSide
+
+Selects the deterministic saturation side for hard liquidation.
+
+*Direct one-sided borrow positions pick that borrow side. Direct two-sided borrows first
+require current net debt and opposite collateral. Ambiguous direct-borrow positions cannot
+be hard-liquidated because there is no deterministic collateral side to seize.
+Pure borrowed-liquidity straddles use the position's current-price apex.*
+
+
+```solidity
+function selectHardLiquidationSide(
+    Validation.InputParams memory inputParams
+) internal pure returns (bool netDebtX);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`inputParams`|`Validation.InputParams`|The borrower's full position and pool prices.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`netDebtX`|`bool`|True when the net-X-debt saturation account should be liquidated.|
+
 
 ### checkSaturationPremiums
+
+Computes the saturation liquidation collateral transfer for a borrower.
+
+*Reverts when the current saturation premium is zero.*
 
 
 ```solidity
@@ -139,6 +352,22 @@ function checkSaturationPremiums(
     address borrower
 ) external view returns (uint256 seizeLAssets, uint256 seizeXAssets, uint256 seizeYAssets);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`saturationAndGeometricTWAPState`|`ISaturationAndGeometricTWAPState`|The contract containing saturation and TWAP state.|
+|`inputParams`|`Validation.InputParams`|The borrower's full position, reserves, active liquidity, and TWAP bounds.|
+|`borrower`|`address`|The account being liquidated.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`seizeLAssets`|`uint256`|The L assets to seize.|
+|`seizeXAssets`|`uint256`|The X assets to seize.|
+|`seizeYAssets`|`uint256`|The Y assets to seize.|
+
 
 ### liquidateLeverageCalcDeltaAndPremium
 
@@ -173,7 +402,8 @@ library.*
 
 ```solidity
 function liquidateLeverageCalcDeltaAndPremium(
-    Validation.InputParams memory inputParams
+    Validation.InputParams memory inputParams,
+    int16 midTermTick
 ) external pure returns (uint256[6] memory leveragedLiquidationParams, bool badDebt);
 ```
 **Parameters**
@@ -181,6 +411,7 @@ function liquidateLeverageCalcDeltaAndPremium(
 |Name|Type|Description|
 |----|----|-----------|
 |`inputParams`|`Validation.InputParams`|The params representing the position of the borrower.|
+|`midTermTick`|`int16`||
 
 **Returns**
 
@@ -228,13 +459,19 @@ function calcHardMaxPremiumInBips(
     uint256 activeLiquidityAssets,
     uint256 sqrtPriceMinInQ72,
     uint256 sqrtPriceMaxInQ72
-) internal pure returns (uint256 maxPremiumInBips);
+)
+    internal
+    pure
+    returns (uint256 maxPremiumInBips, uint256 netDebtInLAssets, uint256 netCollateralInLAssets, bool netDebtX);
 ```
 **Returns**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`maxPremiumInBips`|`uint256`|The max premium allowed to be received by the liquidator.|
+|`netDebtInLAssets`|`uint256`|Slippage-adjusted liquidation net debt.|
+|`netCollateralInLAssets`|`uint256`|Raw liquidation net collateral.|
+|`netDebtX`|`bool`|True when the liquidation has net X-side debt.|
 
 
 ### calcHardPremiumInBips
@@ -306,6 +543,8 @@ function convertLtvToPremium(
 
 ### calcSaturationSeizedAssets
 
+Scales deposited assets by the saturation liquidation premium.
+
 
 ```solidity
 function calcSaturationSeizedAssets(
@@ -315,19 +554,37 @@ function calcSaturationSeizedAssets(
     uint256 premiumInBips
 ) internal pure returns (uint256 seizedLAssets, uint256 seizedXAssets, uint256 seizedYAssets);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`depositedLAssets`|`uint256`|Borrower's deposited L assets.|
+|`depositedXAssets`|`uint256`|Borrower's deposited X assets.|
+|`depositedYAssets`|`uint256`|Borrower's deposited Y assets.|
+|`premiumInBips`|`uint256`|Saturation premium denominated in bips.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`seizedLAssets`|`uint256`|The L assets to seize.|
+|`seizedXAssets`|`uint256`|The X assets to seize.|
+|`seizedYAssets`|`uint256`|The Y assets to seize.|
+
 
 ### calcSaturationMaxPremiumInBips
 
 Calculate the max premium the saturation liquidator can receive given position of
-`account`.
+`account`, adjusted to apply only to net equity.
 
 
 ```solidity
 function calcSaturationMaxPremiumInBips(
     ISaturationAndGeometricTWAPState saturationAndGeometricTWAPState,
     Validation.InputParams memory inputParams,
+    address pairAddress,
     address account
-) internal view returns (uint256 maxPremiumBips);
+) internal view returns (uint256 adjustedPremiumInBips);
 ```
 **Parameters**
 
@@ -335,22 +592,27 @@ function calcSaturationMaxPremiumInBips(
 |----|----|-----------|
 |`saturationAndGeometricTWAPState`|`ISaturationAndGeometricTWAPState`|The contract containing the saturation state.|
 |`inputParams`|`Validation.InputParams`|The params containing the position of `account`.|
+|`pairAddress`|`address`|The pair address whose saturation tree stores `account`.|
 |`account`|`address`|The account of the borrower.|
 
 **Returns**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`maxPremiumBips`|`uint256`|The max premium for the liquidator.|
+|`adjustedPremiumInBips`|`uint256`|The max premium for the liquidator.|
 
 
-## Errors
-### LiquidationPremiumTooHigh
+### adjustSaturationPremiumForNetEquity
+
 
 ```solidity
-error LiquidationPremiumTooHigh();
+function adjustSaturationPremiumForNetEquity(
+    Validation.InputParams memory inputParams,
+    uint256 premiumInBips
+) internal pure returns (uint256 adjustedPremiumInBips);
 ```
 
+## Errors
 ### LiquidationZeroPremium
 
 ```solidity
@@ -369,9 +631,19 @@ error NotEnoughRepaidForLiquidation();
 error TooMuchDepositToTransferForLeverageLiquidation();
 ```
 
-### LiquidationMutation
+## Structs
+### HardPremiumBuckets
+L-valued buckets for hard liquidation premium math.
+
+*`selected` is the debt side being liquidated; `opposite` is the collateral side.*
+
 
 ```solidity
-error LiquidationMutation();
+struct HardPremiumBuckets {
+    uint256 selectedDeposits;
+    uint256 selectedBorrows;
+    uint256 oppositeDeposits;
+    uint256 oppositeBorrows;
+}
 ```
 

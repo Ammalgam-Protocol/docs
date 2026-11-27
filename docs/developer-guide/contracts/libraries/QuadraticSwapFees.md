@@ -1,5 +1,5 @@
 # QuadraticSwapFees
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/QuadraticSwapFees.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/libraries/QuadraticSwapFees.sol)
 
 **Author:**
 Will
@@ -61,12 +61,12 @@ uint256 internal constant MAX_QUADRATIC_FEE_PERCENT = 40;
 
 
 ### N
-A scaler that controls how fast the fee grows, at 20, 9x price change will be
+A scaler that controls how fast the fee grows, at 40, 4x price change will be
 a 40% fee.
 
 
 ```solidity
-uint256 internal constant N = 20;
+uint256 internal constant N = 40;
 ```
 
 
@@ -80,14 +80,14 @@ uint256 private constant RESERVE_MULTIPLIER = 2;
 
 
 ### LINEAR_START_REFERENCE_SCALER
-the $$\sqrt{price}$$ at which we switch from quadratic fee to a more linear fee.
+The $$\sqrt{price}$$ scaler at which we switch from quadratic fee to a more linear fee.
 ```math
-\frac{MAX\_QUADRATIC\_FEE\_PERCENT + 2\cdot N}{N}
+\frac{MAX\_QUADRATIC\_FEE\_PERCENT + RESERVE\_MULTIPLIER\cdot N}{N}
 ```
 
 
 ```solidity
-uint256 private constant LINEAR_START_REFERENCE_SCALER = 4;
+uint256 private constant LINEAR_START_REFERENCE_SCALER = (MAX_QUADRATIC_FEE_PERCENT + RESERVE_MULTIPLIER * N) / N;
 ```
 
 
@@ -105,7 +105,7 @@ $$N \cdot 100 \cdot Q64$$ or `N` times bips in one percent in Q64
 
 
 ```solidity
-uint256 private constant N_TIMES_BIPS_Q64_PER_PERCENT = 0x7d00000000000000000;
+uint256 private constant N_TIMES_BIPS_Q64_PER_PERCENT = N * (100 << 64);
 ```
 
 
@@ -134,7 +134,8 @@ Computes the swap fee based on the `input` amount and the pool's
 `currentReserve` and `referenceReserve` for the input asset.
 Control flow by scenario:
 - `currentReserve >= referenceReserve` (price already at/away from reference):
-- If `input + RESERVE_MULTIPLIER * currentReserve < referenceReserve * LINEAR_START_REFERENCE_SCALER`:
+- If `input + RESERVE_MULTIPLIER * currentReserve` is at most
+`referenceReserve * LINEAR_START_REFERENCE_SCALER`:
 Use the quadratic fee model (closer to reference, pre-threshold).
 - Otherwise:
 Use the linear fee model (farther from reference, post-threshold).
@@ -144,7 +145,7 @@ Does not cross the reference. Only the global minimum fee will apply at the end.
 - If `input + currentReserve > referenceReserve`:
 Crosses the reference. The portion beyond the reference (`pastBy`) is charged using
 either the quadratic or linear model depending on `pastBy`:
-- `pastBy > RESERVE_MULTIPLIER * referenceReserve` → use linear fee model
+- `N * pastBy > MAX_QUADRATIC_FEE_PERCENT * referenceReserve` → use linear fee model
 - otherwise → use quadratic fee model
 The resulting fee for the beyond-reference portion is then weighted by `pastBy / input`.
 ```math
@@ -156,9 +157,9 @@ n \cdot \frac{2(X_{0}-X_{R})+X_{in}}{X_{R}}
 M_Q \left( 2 - X_R \frac{M_Q}{n\left( X_{in} + 2 (X_0 - X_R) \right)} \right)
 &\text {if } X_0 \ge X_R \text{ \& } X_{in} + 2X_{0} \ge X_{R}\left(\frac{M_Q+\ 2n}{n}\right) \\
 \frac{n \cdot \left( \frac{pastBy^2}{X_R} \right)}{X_{in}}
-&\text{ if } X_0 + X_{in} \gt X_R \text{ \& } X_{in} + 2 X_{0} \le X_{R}\left(\frac{M_Q +\ 2n}{n}\right) \\
+&\text{ if } X_0 + X_{in} \gt X_R \text{ \& } n \cdot pastBy \le M_Q X_R \\
 \frac{M_Q \left( 2 - X_R \frac{M_Q}{n \cdot pastBy} \right) \cdot pastBy}{X_{in}}
-&\text{ if } X_0 + X_{in} \gt X_R \text{ \& } X_{in} + 2 X_{0} \ge X_{R}\left(\frac{M_Q +\ 2n}{n}\right) \\
+&\text{ if } X_0 + X_{in} \gt X_R \text{ \& } n \cdot pastBy \gt M_Q X_R \\
 MinBips &\text{ otherwise } X_0 + X_{in} \le  X_R \\
 \end{cases}
 \end{equation*}

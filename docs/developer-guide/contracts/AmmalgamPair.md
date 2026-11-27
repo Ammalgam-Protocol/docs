@@ -1,5 +1,5 @@
 # AmmalgamPair
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/AmmalgamPair.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/AmmalgamPair.sol)
 
 **Inherits:**
 [IAmmalgamPair](/docs/developer-guide/contracts/interfaces/IAmmalgamPair.md), [TokenController](/docs/developer-guide/contracts/tokens/TokenController.md)
@@ -285,16 +285,7 @@ liquidation.
 
 
 ```solidity
-function liquidate(
-    address borrower,
-    address to,
-    uint256 seizedLAssets,
-    uint256 seizedXAssets,
-    uint256 seizedYAssets,
-    uint256 repayXAssets,
-    uint256 repayYAssets,
-    uint256 liquidationType
-) external virtual lock;
+function liquidate(address borrower, address to, uint256 liquidationType) external virtual lock;
 ```
 **Parameters**
 
@@ -302,24 +293,19 @@ function liquidate(
 |----|----|-----------|
 |`borrower`|`address`|The account being liquidated.|
 |`to`|`address`|The account to send the liquidated deposit to|
-|`seizedLAssets`|`uint256`|The amount of L tokens to be transferred from the hard deposit.|
-|`seizedXAssets`|`uint256`|The amount of X tokens to be transferred from the hard deposit.|
-|`seizedYAssets`|`uint256`|The amount of Y tokens to be transferred from the hard deposit.|
-|`repayXAssets`|`uint256`|The amount of X assets being repaid on behalf of the borrower.|
-|`repayYAssets`|`uint256`|The amount of Y assets being repaid on behalf of the|
 |`liquidationType`|`uint256`|The type of liquidation to be performed: HARD, SATURATION, LEVERAGE|
 
 
 ### liquidateHard
 
 LTV based liquidation. The LTV dictates the max premium that can be had by the
-liquidator. We determine the amount of borrowed liquidity to be repaid by reducing the
-actual amount transferred prior to calling `liquidate()` by the amount passed in for the
-repayXAssets and repayYAssets parameters.
+liquidator. The liquidator transfers tokens before calling `liquidate()`, and the
+deterministic hard-liquidation vector determines how those actual transfers are split
+between direct borrow repayment and borrowed-liquidity repayment.
 ## Calculating a Hard Liquidation
-Hard liquidations can be partial subset of the borrower's entire position based on
-tranche saturation composition. Use `LiquidationUtils.calculatePartialLiquidationAmount()`
-to compute the partial position, max premium, and the amounts needed for the call.
+Hard liquidations deterministically compute the first tranche of the borrower's
+saturated position, then apply the current max premium to derive the repayment and
+seized collateral amounts.
 Three prices are in play and each is used at a different stage:
 | Price               | Source                  | Where used                         |
 |---------------------|-------------------------|------------------------------------|
@@ -332,8 +318,8 @@ Three prices are in play and each is used at a different stage:
 | sqrtPriceMax (TWAP) | geometric TWAP high tick| Verification converts:             |
 |                     |                         |   BORROW_Y → L (worst-case borrow) |
 |                     |                         |   DEPOSIT_X → L (worst-case dep.)  |
-Verification (`verifyHardLiquidation`) swaps min and max when calling
-`getCheckLtvParams(proposed, sqrtPriceMax, sqrtPriceMin)`. This values deposits at
+Hard-liquidation premium checks swap min and max when calling
+`getCheckLtvParams(liquidation, sqrtPriceMax, sqrtPriceMin)`. This values deposits at
 their highest and borrows at their lowest, favoring the borrower by making the
 position appear as healthy as possible. This limits the ability of liquidators to
 manipulate premiums.
@@ -391,16 +377,15 @@ totalXTransfer = BORROW_X + repayLX
 totalYTransfer = repayLY
 ```
 These use reserve prices because `_repayLiquidity` splits tokens by the reserve ratio.
-The seized Y amount uses TWAP prices because `verifyHardLiquidation` operates in that
+The seized Y amount uses TWAP prices because hard-liquidation validation operates in that
 domain.
 
 
 ```solidity
 function liquidateHard(
+    Validation.InputParams memory inputParams,
     address borrower,
     address to,
-    Validation.InputParams memory inputParams,
-    uint256[6] memory proposedLiquidation,
     uint256 actualRepaidXAssets,
     uint256 actualRepaidYAssets
 ) private;
@@ -409,10 +394,9 @@ function liquidateHard(
 
 |Name|Type|Description|
 |----|----|-----------|
+|`inputParams`|`Validation.InputParams`|The input parameters for the liquidation, including reserves and price limits.|
 |`borrower`|`address`|The account being liquidated|
 |`to`|`address`|The account to send the liquidated deposit to|
-|`inputParams`|`Validation.InputParams`|The input parameters for the liquidation, including reserves and price limits.|
-|`proposedLiquidation`|`uint256[6]`|The inputted amount of deposits to be seized and borrows to be repaid.|
 |`actualRepaidXAssets`|`uint256`|The actual amount of X assets repaid by the liquidator.|
 |`actualRepaidYAssets`|`uint256`|The actual amount of Y assets repaid by the liquidator.|
 
@@ -466,7 +450,7 @@ Repays the borrow legs of a liquidation and verifies the liquidator repaid enoug
 *Shared by hard and leverage liquidations. The required X/Y repayments must be fully
 covered by the assets the liquidator sent in; any remainder repays borrowed liquidity.
 `liquidationParams[BORROW_L]` carries the minimum liquidity that must be repaid and is
-overwritten with the liquidity actually repaid so `verifyHardLiquidation` can read it back.*
+overwritten with the liquidity actually repaid.*
 
 
 ```solidity
@@ -541,7 +525,7 @@ function liquidationTransfer(
 |`to`|`address`|The account the deposit is being transferred to.|
 |`depositToTransferInAssets`|`uint256`|The amount being transferred to the liquidator.|
 |`tokenType`|`uint256`|The deposit token type being transferred.|
-|`isBadDebt`|`bool`||
+|`isBadDebt`|`bool`|Whether this is a terminal bad-debt liquidation that seizes all deposit shares.|
 
 
 ### skim
@@ -578,7 +562,7 @@ function _validateOnUpdate(address validate, address update, bool alwaysUpdate) 
 
 
 ```solidity
-function validateSolvency(address validate, bool alwaysUpdate) private;
+function validateSolvency(address validate, bool alwaysUpdate, bool nonBlocking) private;
 ```
 
 ### updateSaturationIfNeeded
@@ -592,15 +576,14 @@ until the end of the borrow call after the callback concludes.*
 
 
 ```solidity
-function updateSaturationIfNeeded(
-    address toUpdate
-) private;
+function updateSaturationIfNeeded(address toUpdate, bool nonBlocking) private;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`toUpdate`|`address`|The account to update saturation for.|
+|`nonBlocking`|`bool`|Clamp fragile liquidity instead of reverting when it exceeds active liquidity.|
 
 
 ### getInputParams
@@ -609,7 +592,7 @@ function updateSaturationIfNeeded(
 ```solidity
 function getInputParams(
     address toCheck,
-    bool includeLongTermPrice
+    bool isLiquidation
 ) internal view returns (Validation.InputParams memory inputParams);
 ```
 

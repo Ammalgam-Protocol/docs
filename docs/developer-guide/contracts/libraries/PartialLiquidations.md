@@ -1,16 +1,15 @@
 # PartialLiquidations
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/libraries/PartialLiquidations.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/libraries/PartialLiquidations.sol)
 
-We allow liquidations to happen in parts when the position is spread across more than
-one tranche. These partial liquidations allow the liquidator to specify how many tranches they
-are liquidating based on how much they are repaying. Smaller slices start with the tranche range
-closest to the current price and move outward, so the slice reaches expected LTV before the full
-position on the same debt side does. In most cases, one tranche will be liquidated at one time,
-but in some cases, a sliver of liquidity in the first tranche may not be worth the cost to
-liquidate until it and the next tranche have become profitable to liquidate.
-Once we determine the number of tranches to liquidate, we build the liquidated slice from the
-debt side first. L uses a weight because both deposit and borrow L can be included together;
-the opposing side is then solved directly so the slice lands on the expected liquidation LTV.
+Hard partial liquidations remove the borrower's first saturation tranche: the tranche
+closest to the current price on the selected debt side. If the borrower only occupies one
+tranche, or effective active liquidity has reached the protocol floor, the whole position is
+liquidated. Otherwise, the slice reaches expected LTV before the full position on the same debt
+side does.
+The liquidated slice is built from the selected debt-side coordinate first. Its direct deposit
+and borrow legs use the same coordinate weight. L uses a weight because both deposit and borrow
+L can be included together; the opposing side is then solved directly so the slice lands on the
+expected liquidation LTV.
 A partial liquidation splits the signed position into the liquidated slice and the remaining
 position:
 ```math
@@ -31,7 +30,7 @@ X_0 &= depositX - borrowX \\
 Y_0 &= depositY - borrowY
 \end{align}
 ```
-The slice is constructed from the debt-side component first. Throughout this library, `s` is
+The slice is constructed from the selected-side coordinate first. Throughout this library, `s` is
 a square-root price, not a price. At square-root price `s`, X is measured in L as `X / s` and
 Y is measured in L as `Y * s`.
 Let `k` be the unscaled expected liquidation LTV:
@@ -61,11 +60,11 @@ int256 internal constant MAG2_INT = int256(MAG2);
 ## Functions
 ### calculatePartialLiquidation
 
-Calculates the partial liquidation slice for the tranches covered by the repayment.
+Calculates the partial liquidation slice for the borrower's first saturation tranche.
 
-*Returns the full user asset array when every tranche is included. Returns the zero array
-when no L-denominated debt is repaid. The tranche count is chosen from absolute
-`satInLAssets`, while the slice geometry uses the corresponding relative saturation values.*
+*Returns the full user asset array when the borrower occupies only one tranche. Returns
+the zero array when the borrower has no saturation tranche or the first tranche has no
+L-denominated debt.*
 
 
 ```solidity
@@ -74,8 +73,6 @@ function calculatePartialLiquidation(
     int16 lastTranche,
     uint256[6] memory userAssets,
     uint256 activeLiquidityAssets,
-    uint256 netRepaidLAssets,
-    uint256 netSeizedLAssets,
     bool netDebtX
 ) internal pure returns (uint256[6] memory liquidation);
 ```
@@ -87,8 +84,6 @@ function calculatePartialLiquidation(
 |`lastTranche`|`int16`|Last tranche occupied by the borrower in the liquidation direction.|
 |`userAssets`|`uint256[6]`|Borrower assets in `[depositL, depositX, depositY, borrowL, borrowX, borrowY]` order.|
 |`activeLiquidityAssets`|`uint256`|Active liquidity used to scale tranche saturation.|
-|`netRepaidLAssets`|`uint256`|Net debt repaid by the liquidator, denominated in L.|
-|`netSeizedLAssets`|`uint256`|Net collateral seized by the liquidator, denominated in L.|
 |`netDebtX`|`bool`|Whether the liquidation repays net X debt. If false, it repays net Y debt.|
 
 **Returns**
@@ -102,25 +97,25 @@ function calculatePartialLiquidation(
 
 Builds a liquidation slice from raw tranche-boundary and saturation inputs.
 It derives the target square-root price and asset weights from the same saturation window,
-applies L through a shared weight, then solves the deposit-side delta directly from the
-exact-LTV equation.
+applies the selected direct coordinate and L through their weights, then solves the
+opposite-side delta directly from the exact-LTV equation.
 The target slice square-root price is the selected tranche boundary moved by the start
 weight from the same saturation walk:
 ```math
 s_\Delta=b^T\sqrt{w_s}
 ```
-In signed notation, the debt-side slice then fixes one raw borrow amount:
+In signed notation, the selected-side slice weights its complete direct coordinate:
 ```math
-X_\Delta=-borrowX\cdot w_X
+X_\Delta=(depositX-borrowX)\cdot w_X
 \qquad \text{for net debt X}
 ```
 ```math
-Y_\Delta=-borrowY\cdot w_Y
+Y_\Delta=(depositY-borrowY)\cdot w_Y
 \qquad \text{for net debt Y}
 ```
-L is selected next. The remaining side is solved last from the exact-LTV equation and may be
-either collateral seized or same-side borrow repaid, depending on the sign of the solved
-delta.
+L is selected next. Positive remaining-side collateral chooses the lower feasible endpoint.
+Remaining-side debt mirrors the borrowed-L case by using the selected-side weight for L.
+The actual remaining-side delta is then solved from the exact-LTV equation.
 
 
 ```solidity
@@ -188,7 +183,7 @@ function applyLMutation(
 
 ### calcDebtSideWeightQ72
 
-Calculates the saturation-derived weight for the debt-side borrow asset.
+Calculates the saturation-derived weight for the selected-side asset coordinate.
 The selected debt-side weight is:
 ```math
 w_{debt}=
@@ -218,7 +213,7 @@ function calcDebtSideWeightQ72(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`debtSideWeightQ72`|`uint256`|Q72 weight applied to the debt-side borrow amount.|
+|`debtSideWeightQ72`|`uint256`|Q72 weight applied to the selected-side deposit or borrow amount.|
 
 
 ### applyRemainingSideDelta
@@ -249,27 +244,29 @@ function applyRemainingSideDelta(
 |----|----|-----------|
 |`liquidation`|`uint256[6]`|Liquidation array being built.|
 |`userAssets`|`uint256[6]`|Borrower assets in `[depositL, depositX, depositY, borrowL, borrowX, borrowY]` order.|
-|`remainingSideDelta`|`int256`|Signed amount for the side opposite the fixed debt-side borrow.|
+|`remainingSideDelta`|`int256`|Signed amount for the side opposite the fixed selected-side coordinate.|
 |`depositIndex`|`uint256`|Deposit token index for the remaining side.|
 |`borrowIndex`|`uint256`|Borrow token index for the remaining side.|
 
 
 ### calcRemainingSideDelta
 
-Solves the signed remaining-side delta for the fixed debt-side repayment.
+Solves the signed remaining-side delta for the fixed selected-side coordinate.
 The returned delta is positive when the slice must seize deposit-side collateral and
 negative when it must repay borrow on that side to land on expected LTV.
-For net debt X, define the fixed X-side debt value in L-units:
+For net debt X, define the signed X-side debt value in L-units:
 ```math
-debtSideValueInL=-\frac{X_\Delta}{s_\Delta}=\frac{borrowX_\Delta}{s_\Delta}
+debtSideValueInL=-\frac{X_\Delta}{s_\Delta}
+=\frac{borrowX_\Delta-depositX_\Delta}{s_\Delta}
 ```
 Then:
 ```math
 Y_\Delta=\dfrac{debtSideValueInL-(1+k)L_\Delta}{ks_\Delta}
 ```
-For net debt Y, define the fixed Y-side debt value in L-units:
+For net debt Y, define the signed Y-side debt value in L-units:
 ```math
-debtSideValueInL=-Y_\Delta s_\Delta=borrowY_\Delta s_\Delta
+debtSideValueInL=-Y_\Delta s_\Delta
+=(borrowY_\Delta-depositY_\Delta)s_\Delta
 ```
 Then:
 ```math
@@ -279,6 +276,7 @@ X_\Delta=\dfrac{s_\Delta(debtSideValueInL-(1+k)L_\Delta)}{k}
 
 ```solidity
 function calcRemainingSideDelta(
+    uint256 depositDelta,
     uint256 borrowDelta,
     int256 lDelta,
     uint256 sqrtPriceQ72,
@@ -289,7 +287,8 @@ function calcRemainingSideDelta(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`borrowDelta`|`uint256`|Final debt-side borrow amount repaid by the liquidation.|
+|`depositDelta`|`uint256`|Final selected-side deposit amount seized by the liquidation.|
+|`borrowDelta`|`uint256`|Final selected-side borrow amount repaid by the liquidation.|
 |`lDelta`|`int256`|Signed L contribution already included in the liquidation.|
 |`sqrtPriceQ72`|`uint256`|Target liquidation sqrt price for the slice.|
 |`netDebtX`|`bool`|Whether the debt side is X. If false, the debt side is Y.|
@@ -373,7 +372,7 @@ For net-borrow L:
 ```math
 L_\Delta=L_0\cdot w_{debt}
 ```
-For net-deposit L, L is the free collateral-side variable:
+For net-deposit L with no remaining-side debt, L is the free collateral-side variable:
 ```math
 0 \le L_\Delta \le L_0
 ```
@@ -394,15 +393,21 @@ remainingCollateralInL=
 0 & \text{otherwise}
 \end{cases}
 ```
-Exact LTV gives the lower feasible endpoint. Only positive remaining-side collateral changes
-that endpoint; zero or net-borrow remaining-side value uses the same lower bound:
+Exact LTV gives the lower feasible endpoint when the remaining side is collateral or empty.
+When the remaining side is debt, L uses the selected-side weight, symmetric to the existing
+borrowed-L case, and the remaining debt is subsequently solved from the actual rounded L amount:
 ```math
 L_\Delta=\max\left(0,\frac{debtSideValueInL-k\cdot remainingCollateralInL}{1+k}\right)
 \qquad \text{when } remainingCollateralInL>0
 ```
 ```math
 L_\Delta=\frac{debtSideValueInL}{1+k}
-\qquad \text{when } remainingCollateralInL=0
+\qquad \text{when the remaining side is empty}
+```
+```math
+depositL_\Delta=depositL\cdot w_{debt},\qquad
+borrowL_\Delta=borrowL\cdot w_{debt}
+\qquad \text{when the remaining side is net debt}
 ```
 
 
@@ -554,16 +559,4 @@ function weightInNumeratorOrDenominator(
 |----|----|-----------|
 |`adjustedSqrtWeight`|`uint256`|Q72 sqrt weight oriented for the debt side.|
 
-
-## Structs
-### LoopMemoryState
-
-```solidity
-struct LoopMemoryState {
-    uint256 satArrayLength;
-    uint256 partialSatInLAssets;
-    uint256 includedTranches;
-    uint256 partialSatLimit;
-}
-```
 

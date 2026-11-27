@@ -1,5 +1,5 @@
 # TokenController
-[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/539fb3333b1a5bdb57027ffabb33730a0eae663d/contracts/tokens/TokenController.sol)
+[Git Source](https://github.com/Ammalgam-Protocol/core-v1/blob/5137887ca618a782644b16aaae53310f175487d9/contracts/tokens/TokenController.sol)
 
 **Inherits:**
 [InitializablePair](/docs/developer-guide/contracts/proxy/InitializablePair.md), [ITokenController](/docs/developer-guide/contracts/interfaces/tokens/ITokenController.md)
@@ -245,6 +245,15 @@ function underlyingTokens() public view virtual override returns (IERC20, IERC20
 function updateAssets(uint256 tokenType, uint112 assets) internal;
 ```
 
+### updateCachedActiveLiquidity
+
+*The caller must have already checked `totalDepositLAssets != 0`*
+
+
+```solidity
+function updateCachedActiveLiquidity() private;
+```
+
 ### updateExternalLiquidity
 
 
@@ -258,7 +267,13 @@ function updateExternalLiquidity(
 
 
 ```solidity
-function mintId(uint256 tokenType, address sender, address to, uint256 assets, uint256 shares_) internal;
+function mintId(
+    uint256 tokenType,
+    address sender,
+    address to,
+    uint256 assets,
+    uint256 shares_
+) internal returns (bool fragileLiquidityIncreased);
 ```
 
 ### burnId
@@ -311,14 +326,27 @@ function getRawReserves() internal view returns (uint112 _reserveXAssets, uint11
 
 ### getReserves
 
+Fetches the reserves a swap would execute against and the last interest accrual timestamp.
+
+*Reserves include unaccrued interest once `INTEREST_PERIOD_FOR_SWAP` has elapsed since
+`lastLendingTimestamp`, matching the interest a swap accrues before pricing.*
+
 
 ```solidity
 function getReserves()
     public
     view
     virtual
-    returns (uint112 _reserveXAssets, uint112 _reserveYAssets, uint32 _lastUpdateTimestamp);
+    returns (uint112 _reserveXAssets, uint112 _reserveYAssets, uint32 _lastLendingTimestamp);
 ```
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`_reserveXAssets`|`uint112`|reserveXAssets The raw reserveX or reserveX plus unaccrued interest.|
+|`_reserveYAssets`|`uint112`|reserveYAssets The raw reserveY or reserveY plus unaccrued interest.|
+|`_lastLendingTimestamp`|`uint32`|lastLendingTimestamp The timestamp of the last interest accrual.|
+
 
 ### referenceReserves
 
@@ -343,7 +371,8 @@ Computes fragile liquidity and validates it can be removed from active liquidity
 
 ```solidity
 function fragileLiquidityAssets(
-    uint256 _activeLiquidityAssets
+    uint256 _activeLiquidityAssets,
+    bool nonBlocking
 ) internal view returns (uint256 _fragileLiquidityAssets);
 ```
 **Parameters**
@@ -351,7 +380,15 @@ function fragileLiquidityAssets(
 |Name|Type|Description|
 |----|----|-----------|
 |`_activeLiquidityAssets`|`uint256`|The active liquidity available before the fragile liquidity decrement.|
+|`nonBlocking`|`bool`||
 
+
+### updateSaturationState
+
+
+```solidity
+function updateSaturationState(Validation.InputParams memory inputParams, address account, bool nonBlocking) internal;
+```
 
 ### updateFragileLiquidity
 
@@ -374,7 +411,7 @@ deposits.*
 ```solidity
 function updateFragileLiquidity(
     address user
-) internal;
+) internal returns (bool fragileLiquidityIncreased);
 ```
 **Parameters**
 
@@ -438,8 +475,18 @@ function updateObservation(
     uint256 _reserveXAssets,
     uint256 _reserveYAssets,
     uint32 currentTimestamp,
-    uint32 deltaUpdateTimestamp
+    uint32 deltaUpdateTimestamp,
+    uint32 deltaLendingTimestamp
 ) private;
+```
+
+### getTickFromAdjustedReserves
+
+*Tick used for observation recording and `referenceReserves()` preview when mid-term elapsed.*
+
+
+```solidity
+function getTickFromAdjustedReserves(uint256 _reserveXAssets, uint256 _reserveYAssets) private view returns (int16);
 ```
 
 ### mintPenalties
@@ -471,15 +518,6 @@ function updateTokenController(
     uint256 _reserveXAssets,
     uint256 _reserveYAssets
 ) internal returns (uint256 updatedReservesX, uint256 updatedReservesY);
-```
-
-### updateReferenceReserve
-
-
-```solidity
-function updateReferenceReserve(
-    int256 newTick
-) internal;
 ```
 
 ### mintProtocolFees
